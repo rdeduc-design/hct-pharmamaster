@@ -1909,109 +1909,161 @@ function openDrug(name) {
   document.getElementById('m-pharmacoclass-chip').textContent = drug.pharmacoClass || 'Not specified';
   document.getElementById('m-pharmacoclass').textContent = drug.pharmacoClass || '';
 
-  // ── Core text helpers ──
+  // ── Text processing helpers ──
 
-  // Strip boilerplate filler phrases that pad without adding info
-  function strip(t) {
+  // 1. Deep clean: strip markdown, artifacts, legal padding, double spaces
+  function clean(t) {
     return (t || '')
       .replace(/####\s*/g, '')
-      .replace(/\b(in pts|in patients|in adults|in children|of age|greater than or equal to|less than or equal to)\b/gi, '')
-      .replace(/\b(the following|as follows|including but not limited to)\b/gi, '')
+      .replace(/\*\*/g, '')
+      .replace(/\bgreater than or equal to\b/gi, '≥')
+      .replace(/\bless than or equal to\b/gi, '≤')
+      .replace(/\bgreater than\b/gi, '>')
+      .replace(/\bless than\b/gi, '<')
+      .replace(/\bin pts\b/gi, '')
+      .replace(/\bin patients\b/gi, '')
+      .replace(/\bof age\b/gi, '')
+      .replace(/\bthe following\b/gi, '')
+      .replace(/\bas follows\b/gi, '')
+      .replace(/\bincluding but not limited to\b/gi, 'including')
       .replace(/\bTherapeutic Effect:\s*/i, '')
+      .replace(/\bNote:\s*/gi, '')
+      .replace(/\bsee Appendix [A-Z]\b/gi, '')
+      .replace(/\bfor dosage\b/gi, '')
+      .replace(/\bfor more information\b/gi, '')
+      .replace(/\(\s*\)/g, '')           // empty parens
+      .replace(/,\s*,/g, ',')            // double commas
       .replace(/\s{2,}/g, ' ')
       .trim();
   }
 
-  // Shorten a single sentence to ≤90 chars while keeping meaning
-  function shorten(s) {
-    s = s.replace(/\([^)]{40,}\)/g, '').trim(); // drop long parentheticals
-    s = s.replace(/\b(approximately|particularly|specifically|generally|typically|usually)\b/gi, '');
-    s = s.replace(/\s{2,}/g, ' ').trim().replace(/\.$/, '');
-    if (s.length <= 90) return s;
-    // Hard truncate at last space before 90
-    return s.substring(0, 88).replace(/\s\S+$/, '') + '…';
+  // 2. Polish a single bullet: capitalize first letter, ensure it ends with a period, no trailing junk
+  function polish(s) {
+    if (!s) return '';
+    s = s
+      .replace(/\s{2,}/g, ' ')
+      .replace(/[,;:\-]+$/, '')          // trailing punctuation
+      .replace(/\.{2,}$/g, '')           // trailing dots (no ellipsis)
+      .replace(/…+$/, '')               // trailing ellipsis character
+      .trim();
+    if (!s) return '';
+    // Capitalize first letter
+    s = s.charAt(0).toUpperCase() + s.slice(1);
+    // End with period if not already punctuated
+    if (!/[.!?]$/.test(s)) s += '.';
+    return s;
   }
 
-  // Split text into discrete fact bullets, max `cap` items
+  // 3. Split text into clean bullet items, capped at `cap`
   function toItems(text, cap = 5) {
     if (!text) return [];
-    const t = strip(text);
-    // Split on: semicolons | " and " before capitals | numbered lists | sentence ends before capitals
+    const t = clean(text);
+    // Split boundaries: semicolons, numbered lists, sentence ends before a capital letter
     let parts = t
-      .replace(/(\d+\.\s+)/g, '|||')
+      .replace(/\d+\.\s+/g, '|||')
       .replace(/;\s*/g, '|||')
       .replace(/\.\s+(?=[A-Z])/g, '|||')
       .split('|||')
-      .map(s => s.trim())
-      .filter(s => s.length > 6 && !/^(note|see|refer)/i.test(s));
+      .map(s => s.replace(/\.$/, '').trim())
+      .filter(s => s.length > 8 && !/^(note|see|refer|off-label)/i.test(s));
 
-    // Deduplicate by first 40 chars
+    // Deduplicate by first 35 chars
     const seen = new Set();
-    parts = parts.filter(p => { const k = p.slice(0,40); if (seen.has(k)) return false; seen.add(k); return true; });
+    parts = parts.filter(p => {
+      const k = p.slice(0, 35).toLowerCase();
+      if (seen.has(k)) return false;
+      seen.add(k);
+      return true;
+    });
 
-    return parts.slice(0, cap).map(shorten);
+    return parts.slice(0, cap).map(polish).filter(Boolean);
   }
 
-  // Render bullet <li> list into an element
-  function render(items, elId, fallback = 'Not available') {
+  // 4. Render <li> list
+  function render(items, elId, fallback = 'Not available.') {
     const el = document.getElementById(elId);
     const list = items.length ? items : [fallback];
     el.innerHTML = list.map(s => `<li>${s}</li>`).join('');
   }
 
   // ── OVERVIEW TAB ──
-  // Uses: extract distinct indications only (drop "Treatment of", "Management of")
-  const usesItems = toItems(
-    (drug.uses || '').replace(/\bTreatment of\b/gi, '').replace(/\bManagement of\b/gi, '').replace(/\bOFF-LABEL:.*$/i, ''),
-    4
-  );
-  render(usesItems, 'm-uses', 'See prescribing information');
 
-  // Precautions: Contraindications first, then cautions — max 5 bullets
+  // Uses: drop verbose lead phrases, keep condition names only
+  const usesRaw = (drug.uses || '')
+    .replace(/\bTreatment of\b/gi, '')
+    .replace(/\bManagement of\b/gi, '')
+    .replace(/\bAdjunctive therapy (to|for)\b/gi, 'Adjunct for')
+    .replace(/\bOFF-LABEL:.*$/i, '')
+    .replace(/\bProphylaxis of\b/gi, 'Prophylaxis:')
+    .replace(/\bReduction of\b/gi, 'Reduces')
+    .replace(/\bTemporary relief of\b/gi, '')
+    .replace(/\bTemporary reduction of\b/gi, '')
+    .replace(/\bRelief of\b/gi, '');
+  // After splitting, drop any bullet where the label and content are the same word (e.g. "Fever: fever")
+  const usesItems = toItems(usesRaw, 5).filter(b => {
+    const m = b.match(/^(\w+):\s*(\w+)\./i);
+    return !(m && m[1].toLowerCase() === m[2].toLowerCase());
+  });
+  render(usesItems, 'm-uses', 'See prescribing information.');
+
+  // Precautions: split CI and Cautions cleanly
   const precText = drug.precautions || '';
-  const ciMatch = precText.match(/Contraindications?:\s*([^.]+\.)/i);
-  const cautMatch = precText.match(/Cautions?:\s*([^.]+\.)/i);
+  const ciRaw  = (precText.match(/Contraindications?:\s*([^.C]+\.?)/i) || [])[1] || '';
+  const cauRaw = (precText.match(/Cautions?:\s*([\s\S]+?)(?=\.|$)/i) || [])[1] || precText;
   const precItems = [];
-  if (ciMatch) precItems.push('CI: ' + shorten(strip(ciMatch[1])));
-  const cautRaw = cautMatch ? cautMatch[1] : precText.replace(/Contraindications?:[^.]+\./i,'');
-  toItems(cautRaw, 3).forEach(c => precItems.push(c));
-  render(precItems.length ? precItems : toItems(precText, 4), 'm-precautions', 'Follow standard precautions');
+  if (ciRaw) {
+    // CI is one bullet
+    const ciClean = clean(ciRaw).replace(/hypersensitivity to \w+/gi, s => s).replace(/,\s*$/, '');
+    precItems.push(polish('Contraindicated: ' + ciClean));
+  }
+  toItems(cauRaw, 3).forEach(c => precItems.push(c));
+  render(precItems.length ? precItems : toItems(precText, 4), 'm-precautions', 'Follow standard precautions.');
 
   // ── MECHANISM TAB ──
-  const actionRaw = strip(drug.action || '');
-  const effectMatch = actionRaw.match(/Therapeutic Effect[:\s]+([^.]+\.?)/i);
-  const actionClean = actionRaw.replace(/Therapeutic Effect[:\s]+[^.]+\.?/i, '').trim();
-  document.getElementById('m-action').textContent = actionClean || actionRaw;
+  const actionRaw = clean(drug.action || '');
+  const effectM   = actionRaw.match(/Therapeutic Effect[:\s]+([^.]+\.?)/i);
+  const actionBody = actionRaw.replace(/Therapeutic Effect[:\s]+[^.]+\.?/i, '').trim();
+  document.getElementById('m-action').textContent = actionBody || actionRaw;
   const effectBox = document.getElementById('m-effect');
-  if (effectMatch) {
-    effectBox.textContent = '✓ Result: ' + shorten(strip(effectMatch[1]));
+  if (effectM) {
+    effectBox.textContent = '✓ Result: ' + polish(clean(effectM[1]));
     effectBox.style.display = 'block';
-  } else { effectBox.style.display = 'none'; }
+  } else {
+    effectBox.style.display = 'none';
+  }
 
   // ── SAFETY TAB ──
-  // Side effects: strip percentage data, keep symptom names
-  const sideClean = (drug.sideEffects || '')
-    .replace(/\(\d+[^)]*\)/g, '')          // remove (18%–6%)
-    .replace(/\b(Frequent|Occasional|Rare)\s*:/gi, '');
-  render(toItems(sideClean, 5), 'm-side', 'No common side effects listed');
 
-  // Adverse: lead with most critical reactions
-  render(toItems(drug.adverseEffects, 4), 'm-adverse', 'Monitor for unexpected reactions');
+  // Side effects: remove frequency labels and percentages, split by comma-groups
+  const sideRaw = (drug.sideEffects || '')
+    .replace(/\(\d+[%–\-\d\s]*\)/g, '')
+    .replace(/\b(Frequent|Occasional|Rare)\s*(\(\d[^)]*\))?\s*:/gi, '');
+  render(toItems(sideRaw, 5), 'm-side', 'No common side effects listed.');
 
-  // PNLE Tip: one crisp action-oriented line per concern
-  const tipParts = [];
-  if (drug.adverseEffects) tipParts.push('Monitor: ' + shorten(strip(drug.adverseEffects.split(/[.;]/)[0])));
-  if (drug.precautions) {
-    const ci = (drug.precautions.match(/Contraindications?:\s*([^.]+)/i) || [])[1];
-    if (ci) tipParts.push('Contraindicated: ' + shorten(strip(ci)));
+  // Adverse effects
+  render(toItems(drug.adverseEffects, 4), 'm-adverse', 'Monitor for unexpected reactions.');
+
+  // PNLE Tip: 3 concise action lines, no ellipsis, properly capitalized
+  const tipLines = [];
+  if (drug.adverseEffects) {
+    const adverseFirst = clean(drug.adverseEffects).split(/[.;]/)[0].trim();
+    if (adverseFirst.length > 8) tipLines.push('Monitor: ' + polish(adverseFirst));
   }
-  if (drug.sideEffects) tipParts.push('Common SE: ' + shorten(strip(drug.sideEffects.replace(/\([^)]+\)/g,'').split(/[.;]/)[0])));
-  document.getElementById('m-pnle-content').innerHTML = tipParts.length
-    ? tipParts.map(t => `<div style="margin-bottom:5px">▸ ${t}</div>`).join('')
-    : `▸ Assess before giving. Monitor response. Teach patient about expected effects.`;
+  if (drug.precautions) {
+    const ciSnip = (drug.precautions.match(/Contraindications?:\s*([^.]+)/i) || [])[1];
+    if (ciSnip) tipLines.push('Avoid if: ' + polish(clean(ciSnip)));
+  }
+  if (drug.sideEffects) {
+    const seFirst = clean(drug.sideEffects).replace(/\([^)]+\)/g, '').replace(/\b(Frequent|Occasional|Rare)\s*:/gi,'').split(/[.;]/)[0].trim();
+    if (seFirst.length > 8) tipLines.push('Common side effects: ' + polish(seFirst));
+  }
+  document.getElementById('m-pnle-content').innerHTML = tipLines.length
+    ? tipLines.map(t => `<div style="margin-bottom:6px">▸ ${t}</div>`).join('')
+    : '▸ Assess patient before giving. Monitor therapeutic response. Educate on proper use.';
 
   // ── NURSING TAB ──
   const nc = drug.nursingConsiderations || '';
+
   function ncSection(text, ...keys) {
     for (const k of keys) {
       const m = text.match(new RegExp(k + '[:\\s#]+(.*?)(?=####|BASELINE|INTERVENTION|PATIENT|$)', 'is'));
@@ -2019,31 +2071,34 @@ function openDrug(name) {
     }
     return '';
   }
-  const assessRaw  = ncSection(nc, 'BASELINE ASSESSMENT', 'BASELINE');
-  const interRaw   = ncSection(nc, 'INTERVENTION/EVALUATION', 'INTERVENTION');
-  const teachRaw   = ncSection(nc, 'PATIENT/FAMILY TEACHING', 'TEACHING');
 
-  // Condense each section: action verbs only, strip "be alert to", "in addition to" padding
   function condenseNC(text, cap) {
-    const clean = strip(text)
-      .replace(/\bBe alert (for|to)\b/gi, 'Watch for')
-      .replace(/\bIn addition to\b/gi, 'Also')
-      .replace(/\bMonitor (for )?the following\b/gi, 'Monitor')
-      .replace(/\bReport (to physician|to provider|promptly)?\b/gi, 'Report');
-    return toItems(clean, cap);
+    return toItems(
+      clean(text)
+        .replace(/\bBe alert (for|to)\b/gi, 'Watch for')
+        .replace(/\bIn addition to\b/gi, 'Also')
+        .replace(/\bMonitor (for )?the following\b/gi, 'Monitor')
+        .replace(/\bReport (to physician|to provider|promptly)?\b/gi, 'Report')
+        .replace(/\bPrior to (initiating|starting|beginning)\b/gi, 'Before starting')
+        .replace(/\bObtain (a )?(baseline )?\b/gi, 'Obtain '),
+      cap
+    );
   }
 
+  const assessRaw = ncSection(nc, 'BASELINE ASSESSMENT', 'BASELINE');
+  const interRaw  = ncSection(nc, 'INTERVENTION/EVALUATION', 'INTERVENTION');
+  const teachRaw  = ncSection(nc, 'PATIENT/FAMILY TEACHING', 'TEACHING');
+
   if (assessRaw) {
-    render(condenseNC(assessRaw, 4), 'm-nursing-assess', 'Obtain baseline data before therapy');
-    render(condenseNC(interRaw || 'Monitor vital signs and therapeutic response', 4), 'm-nursing-intervene', 'Monitor patient response');
-    render(condenseNC(teachRaw || 'Take as prescribed. Report side effects.', 4), 'm-nursing-teach', 'Follow medication instructions');
+    render(condenseNC(assessRaw, 4), 'm-nursing-assess', 'Obtain baseline data before therapy.');
+    render(condenseNC(interRaw || 'Monitor vital signs and therapeutic response.', 4), 'm-nursing-intervene', 'Monitor patient response.');
+    render(condenseNC(teachRaw || 'Take as prescribed. Report side effects to provider.', 4), 'm-nursing-teach', 'Follow medication instructions.');
   } else {
-    // Fallback: split full text by sentences
-    const sents = strip(nc).split(/\.\s+/).filter(s => s.length > 10);
+    const sents = clean(nc).split(/\.\s+/).filter(s => s.length > 10);
     const n = Math.ceil(sents.length / 3);
-    render(sents.slice(0, n).slice(0, 4).map(shorten), 'm-nursing-assess', 'Obtain baseline data');
-    render(sents.slice(n, n*2).slice(0, 4).map(shorten), 'm-nursing-intervene', 'Monitor patient response');
-    render(sents.slice(n*2).slice(0, 4).map(shorten), 'm-nursing-teach', 'Teach patient about medication');
+    render(sents.slice(0, n).slice(0, 4).map(s => polish(s)), 'm-nursing-assess', 'Obtain baseline data.');
+    render(sents.slice(n, n * 2).slice(0, 4).map(s => polish(s)), 'm-nursing-intervene', 'Monitor patient response.');
+    render(sents.slice(n * 2).slice(0, 4).map(s => polish(s)), 'm-nursing-teach', 'Teach patient about medication.');
   }
 
   // Bookmark btn
