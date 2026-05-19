@@ -1,0 +1,2497 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HCT PharmaMaster — Drug Reference & Learning Hub</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #1a2e4a;
+    --navy-dark: #0f1e33;
+    --navy-mid: #243554;
+    --teal: #3dbdc4;
+    --teal-light: #5dd0d7;
+    --teal-pale: #e8f9fa;
+    --teal-dim: rgba(61,189,196,0.15);
+    --white: #ffffff;
+    --off-white: #f4f7f9;
+    --gray-100: #eef1f4;
+    --gray-200: #d8dfe8;
+    --gray-400: #8a9ab0;
+    --gray-600: #5a6a80;
+    --text: #1a2e4a;
+    --radius: 16px;
+    --radius-sm: 10px;
+    --shadow: 0 4px 24px rgba(26,46,74,0.10);
+    --shadow-lg: 0 12px 48px rgba(26,46,74,0.18);
+    --transition: 0.22s cubic-bezier(0.4,0,0.2,1);
+    --font-display: 'Syne', sans-serif;
+    --font-body: 'DM Sans', sans-serif;
+    --font-mono: 'DM Mono', monospace;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: var(--font-body);
+    background: var(--navy-dark);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ──────────── SIDEBAR ──────────── */
+  .app-shell {
+    display: flex;
+    min-height: 100vh;
+  }
+
+  .sidebar {
+    width: 240px;
+    background: var(--navy);
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    top: 0; left: 0; bottom: 0;
+    z-index: 100;
+    border-right: 1px solid rgba(255,255,255,0.06);
+  }
+
+  .sidebar-logo {
+    padding: 28px 24px 20px;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .sidebar-logo img {
+    width: 42px; height: 42px;
+    border-radius: 50%;
+  }
+
+  .sidebar-logo-text h1 {
+    font-family: var(--font-display);
+    font-size: 15px;
+    font-weight: 800;
+    color: var(--white);
+    line-height: 1.2;
+    letter-spacing: -0.01em;
+  }
+
+  .sidebar-logo-text span {
+    font-size: 11px;
+    color: var(--teal);
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  .sidebar-nav {
+    flex: 1;
+    padding: 16px 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    overflow-y: auto;
+  }
+
+  .nav-label {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--gray-400);
+    padding: 12px 12px 6px;
+  }
+
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 14px;
+    border-radius: 10px;
+    cursor: pointer;
+    color: rgba(255,255,255,0.55);
+    font-size: 14px;
+    font-weight: 500;
+    transition: var(--transition);
+    user-select: none;
+  }
+
+  .nav-item:hover { background: rgba(255,255,255,0.07); color: var(--white); }
+
+  .nav-item.active {
+    background: var(--teal-dim);
+    color: var(--teal-light);
+    border: 1px solid rgba(61,189,196,0.2);
+  }
+
+  .nav-item .nav-icon { font-size: 18px; width: 22px; text-align: center; }
+
+  .sidebar-footer {
+    padding: 16px 20px;
+    border-top: 1px solid rgba(255,255,255,0.08);
+  }
+
+  .xp-bar-wrap { }
+  .xp-bar-label {
+    display: flex;
+    justify-content: space-between;
+    font-size: 11px;
+    color: rgba(255,255,255,0.5);
+    margin-bottom: 6px;
+  }
+  .xp-bar-label strong { color: var(--teal); }
+
+  .xp-bar {
+    height: 6px;
+    background: rgba(255,255,255,0.1);
+    border-radius: 99px;
+    overflow: hidden;
+  }
+  .xp-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--teal), var(--teal-light));
+    border-radius: 99px;
+    transition: width 0.5s ease;
+  }
+
+  .level-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--teal-dim);
+    border: 1px solid rgba(61,189,196,0.25);
+    border-radius: 99px;
+    padding: 4px 10px;
+    font-size: 12px;
+    color: var(--teal-light);
+    font-weight: 600;
+    margin-bottom: 10px;
+  }
+
+  /* ──────────── MAIN CONTENT ──────────── */
+  .main {
+    margin-left: 240px;
+    flex: 1;
+    background: var(--off-white);
+    min-height: 100vh;
+  }
+
+  .topbar {
+    background: var(--white);
+    border-bottom: 1px solid var(--gray-200);
+    padding: 0 32px;
+    height: 64px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 50;
+  }
+
+  .topbar-title {
+    font-family: var(--font-display);
+    font-size: 20px;
+    font-weight: 800;
+    color: var(--navy);
+  }
+
+  .topbar-right {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .streak-badge {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: #fff7ed;
+    border: 1px solid #fed7aa;
+    border-radius: 99px;
+    padding: 6px 14px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #c2410c;
+  }
+
+  .score-badge {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--teal-pale);
+    border: 1px solid rgba(61,189,196,0.3);
+    border-radius: 99px;
+    padding: 6px 14px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--navy);
+  }
+
+  /* ──────────── PAGE SECTIONS ──────────── */
+  .page { display: none; padding: 28px 32px; }
+  .page.active { display: block; }
+
+  /* ──────────── HERO (HOME) ──────────── */
+  .hero {
+    background: linear-gradient(135deg, var(--navy) 0%, var(--navy-mid) 60%, #1e4060 100%);
+    border-radius: var(--radius);
+    padding: 40px 40px;
+    margin-bottom: 28px;
+    position: relative;
+    overflow: hidden;
+    color: var(--white);
+  }
+
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: -60px; right: -60px;
+    width: 320px; height: 320px;
+    background: radial-gradient(circle, rgba(61,189,196,0.18) 0%, transparent 70%);
+    border-radius: 50%;
+  }
+
+  .hero-content { position: relative; z-index: 1; max-width: 580px; }
+  .hero h2 {
+    font-family: var(--font-display);
+    font-size: 32px;
+    font-weight: 800;
+    line-height: 1.15;
+    margin-bottom: 12px;
+  }
+  .hero h2 span { color: var(--teal); }
+  .hero p { font-size: 15px; color: rgba(255,255,255,0.7); line-height: 1.6; margin-bottom: 24px; }
+
+  .hero-actions { display: flex; gap: 12px; flex-wrap: wrap; }
+
+  /* ──────────── BUTTONS ──────────── */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 11px 22px;
+    border-radius: var(--radius-sm);
+    font-family: var(--font-body);
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    transition: var(--transition);
+    user-select: none;
+    white-space: nowrap;
+  }
+  .btn-primary { background: var(--teal); color: var(--navy-dark); }
+  .btn-primary:hover { background: var(--teal-light); transform: translateY(-1px); box-shadow: 0 4px 14px rgba(61,189,196,0.35); }
+  .btn-outline { background: transparent; color: var(--white); border: 1.5px solid rgba(255,255,255,0.3); }
+  .btn-outline:hover { background: rgba(255,255,255,0.08); }
+  .btn-navy { background: var(--navy); color: var(--white); }
+  .btn-navy:hover { background: var(--navy-mid); }
+  .btn-sm { padding: 7px 14px; font-size: 13px; }
+
+  /* ──────────── STAT CARDS ──────────── */
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin-bottom: 28px;
+  }
+
+  .stat-card {
+    background: var(--white);
+    border-radius: var(--radius);
+    padding: 20px 24px;
+    box-shadow: var(--shadow);
+    border: 1px solid var(--gray-200);
+  }
+
+  .stat-icon {
+    width: 42px; height: 42px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    margin-bottom: 12px;
+  }
+  .stat-icon.teal { background: var(--teal-dim); }
+  .stat-icon.orange { background: #fff7ed; }
+  .stat-icon.purple { background: #f3f0ff; }
+  .stat-icon.green { background: #f0fdf4; }
+
+  .stat-value {
+    font-family: var(--font-display);
+    font-size: 28px;
+    font-weight: 800;
+    color: var(--navy);
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+  .stat-label { font-size: 13px; color: var(--gray-600); }
+
+  /* ──────────── CARDS GRID ──────────── */
+  .section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+  }
+  .section-title {
+    font-family: var(--font-display);
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--navy);
+  }
+
+  .game-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-bottom: 28px;
+  }
+
+  .game-card {
+    background: var(--white);
+    border-radius: var(--radius);
+    padding: 24px;
+    box-shadow: var(--shadow);
+    border: 1px solid var(--gray-200);
+    cursor: pointer;
+    transition: var(--transition);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .game-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 4px;
+    background: var(--teal);
+  }
+
+  .game-card:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-lg);
+    border-color: var(--teal);
+  }
+
+  .game-card-icon { font-size: 32px; margin-bottom: 12px; }
+  .game-card h3 {
+    font-family: var(--font-display);
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--navy);
+    margin-bottom: 6px;
+  }
+  .game-card p { font-size: 13px; color: var(--gray-600); line-height: 1.5; }
+  .game-card-badge {
+    display: inline-flex;
+    margin-top: 12px;
+    padding: 3px 10px;
+    border-radius: 99px;
+    font-size: 11px;
+    font-weight: 600;
+  }
+  .badge-teal { background: var(--teal-dim); color: var(--teal); border: 1px solid rgba(61,189,196,0.2); }
+  .badge-orange { background: #fff7ed; color: #c2410c; border: 1px solid #fed7aa; }
+  .badge-purple { background: #f3f0ff; color: #7c3aed; border: 1px solid #ddd6fe; }
+
+  /* ──────────── SEARCH PAGE ──────────── */
+  .search-bar {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: var(--white);
+    border: 2px solid var(--gray-200);
+    border-radius: var(--radius);
+    padding: 12px 18px;
+    margin-bottom: 20px;
+    transition: var(--transition);
+  }
+  .search-bar:focus-within {
+    border-color: var(--teal);
+    box-shadow: 0 0 0 4px rgba(61,189,196,0.12);
+  }
+  .search-bar input {
+    flex: 1;
+    border: none;
+    outline: none;
+    font-family: var(--font-body);
+    font-size: 16px;
+    color: var(--navy);
+    background: transparent;
+  }
+  .search-bar input::placeholder { color: var(--gray-400); }
+  .search-icon { font-size: 20px; color: var(--gray-400); }
+
+  .filter-row {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+    align-items: center;
+  }
+  .filter-label { font-size: 13px; font-weight: 600; color: var(--gray-600); }
+  .filter-chip {
+    padding: 6px 14px;
+    border-radius: 99px;
+    font-size: 13px;
+    cursor: pointer;
+    border: 1.5px solid var(--gray-200);
+    background: var(--white);
+    color: var(--gray-600);
+    font-family: var(--font-body);
+    transition: var(--transition);
+    font-weight: 500;
+  }
+  .filter-chip:hover, .filter-chip.active {
+    background: var(--navy);
+    color: var(--white);
+    border-color: var(--navy);
+  }
+
+  .drug-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+  }
+
+  .drug-card {
+    background: var(--white);
+    border-radius: var(--radius);
+    padding: 18px 20px;
+    border: 1.5px solid var(--gray-200);
+    cursor: pointer;
+    transition: var(--transition);
+    box-shadow: 0 2px 8px rgba(26,46,74,0.05);
+  }
+  .drug-card:hover {
+    border-color: var(--teal);
+    box-shadow: var(--shadow);
+    transform: translateY(-2px);
+  }
+  .drug-name {
+    font-family: var(--font-display);
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--navy);
+    margin-bottom: 4px;
+    text-transform: capitalize;
+  }
+  .drug-brand {
+    font-size: 12px;
+    color: var(--teal);
+    font-weight: 500;
+    margin-bottom: 8px;
+  }
+  .drug-class-pill {
+    display: inline-block;
+    background: var(--gray-100);
+    color: var(--gray-600);
+    font-size: 11px;
+    font-weight: 500;
+    padding: 3px 8px;
+    border-radius: 6px;
+  }
+
+  /* ──────────── DRUG DETAIL MODAL ──────────── */
+  .modal-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(15,30,51,0.75);
+    z-index: 200;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    backdrop-filter: blur(4px);
+  }
+  .modal-backdrop.open { display: flex; }
+
+  .modal {
+    background: var(--white);
+    border-radius: 20px;
+    width: 100%;
+    max-width: 780px;
+    max-height: 88vh;
+    overflow-y: auto;
+    box-shadow: 0 24px 80px rgba(15,30,51,0.35);
+    animation: modalIn 0.25s cubic-bezier(0.34,1.56,0.64,1);
+  }
+
+  @keyframes modalIn {
+    from { opacity: 0; transform: scale(0.94) translateY(10px); }
+    to { opacity: 1; transform: scale(1) translateY(0); }
+  }
+
+  .modal-header {
+    background: linear-gradient(135deg, var(--navy) 0%, var(--navy-mid) 100%);
+    color: var(--white);
+    padding: 28px 32px;
+    border-radius: 20px 20px 0 0;
+    position: relative;
+  }
+
+  .modal-close {
+    position: absolute;
+    top: 20px; right: 20px;
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.1);
+    border: none;
+    color: var(--white);
+    font-size: 18px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: var(--transition);
+  }
+  .modal-close:hover { background: rgba(255,255,255,0.2); }
+
+  .modal-drug-name {
+    font-family: var(--font-display);
+    font-size: 24px;
+    font-weight: 800;
+    margin-bottom: 4px;
+    text-transform: capitalize;
+  }
+  .modal-drug-brand { font-size: 14px; color: var(--teal-light); font-weight: 500; margin-bottom: 10px; }
+  .modal-class-pill {
+    display: inline-block;
+    background: rgba(61,189,196,0.2);
+    color: var(--teal-light);
+    font-size: 12px;
+    font-weight: 600;
+    padding: 4px 12px;
+    border-radius: 99px;
+    border: 1px solid rgba(61,189,196,0.3);
+  }
+
+  .modal-tabs {
+    display: flex;
+    border-bottom: 2px solid var(--gray-200);
+    padding: 0 32px;
+    background: var(--white);
+  }
+  .modal-tab {
+    padding: 14px 18px;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--gray-400);
+    cursor: pointer;
+    border-bottom: 2.5px solid transparent;
+    margin-bottom: -2px;
+    transition: var(--transition);
+    white-space: nowrap;
+  }
+  .modal-tab:hover { color: var(--navy); }
+  .modal-tab.active { color: var(--teal); border-bottom-color: var(--teal); }
+
+  .modal-body {
+    padding: 28px 32px;
+  }
+
+  .modal-tab-content { display: none; }
+  .modal-tab-content.active { display: block; }
+
+  .info-section { margin-bottom: 24px; }
+  .info-label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--teal);
+    margin-bottom: 8px;
+  }
+  .info-text {
+    font-size: 14px;
+    color: var(--text);
+    line-height: 1.7;
+  }
+
+  .warn-box {
+    background: #fff7ed;
+    border: 1.5px solid #fed7aa;
+    border-radius: var(--radius-sm);
+    padding: 14px 18px;
+    font-size: 13px;
+    color: #7c2d12;
+    line-height: 1.6;
+    margin-bottom: 16px;
+  }
+  .warn-box strong { display: block; margin-bottom: 4px; font-size: 12px; letter-spacing: 0.04em; }
+
+  .alert-box {
+    background: #fef2f2;
+    border: 1.5px solid #fca5a5;
+    border-radius: var(--radius-sm);
+    padding: 14px 18px;
+    font-size: 13px;
+    color: #7f1d1d;
+    line-height: 1.6;
+    margin-bottom: 16px;
+  }
+  .alert-box strong { display: block; margin-bottom: 4px; }
+
+  .nursing-box {
+    background: var(--teal-pale);
+    border: 1.5px solid rgba(61,189,196,0.3);
+    border-radius: var(--radius-sm);
+    padding: 14px 18px;
+    font-size: 13px;
+    color: var(--navy);
+    line-height: 1.7;
+  }
+
+  /* ──────────── FLASHCARDS ──────────── */
+  .flashcard-controls {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 28px;
+    flex-wrap: wrap;
+  }
+
+  .flashcard-scene {
+    perspective: 1200px;
+    width: 100%;
+    max-width: 600px;
+    height: 340px;
+    margin: 0 auto 28px;
+    cursor: pointer;
+  }
+
+  .flashcard-inner {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    transform-style: preserve-3d;
+    transition: transform 0.55s cubic-bezier(0.4,0,0.2,1);
+  }
+
+  .flashcard-scene.flipped .flashcard-inner { transform: rotateY(180deg); }
+
+  .flashcard-front, .flashcard-back {
+    position: absolute;
+    inset: 0;
+    border-radius: 20px;
+    backface-visibility: hidden;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 36px;
+    text-align: center;
+  }
+
+  .flashcard-front {
+    background: linear-gradient(135deg, var(--navy) 0%, var(--navy-mid) 100%);
+    color: var(--white);
+    border: 2px solid rgba(61,189,196,0.2);
+  }
+
+  .flashcard-back {
+    background: var(--white);
+    color: var(--navy);
+    transform: rotateY(180deg);
+    border: 2px solid var(--teal);
+    box-shadow: var(--shadow-lg);
+  }
+
+  .flashcard-front .fc-label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--teal);
+    margin-bottom: 16px;
+  }
+
+  .flashcard-front .fc-drug {
+    font-family: var(--font-display);
+    font-size: 26px;
+    font-weight: 800;
+    margin-bottom: 10px;
+    text-transform: capitalize;
+  }
+
+  .flashcard-front .fc-hint {
+    font-size: 13px;
+    color: rgba(255,255,255,0.5);
+  }
+
+  .flashcard-back .fc-question {
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--teal);
+    margin-bottom: 14px;
+  }
+
+  .flashcard-back .fc-answer {
+    font-size: 15px;
+    line-height: 1.65;
+    color: var(--navy);
+  }
+
+  .fc-progress {
+    text-align: center;
+    font-size: 14px;
+    color: var(--gray-400);
+    margin-bottom: 16px;
+    font-family: var(--font-mono);
+  }
+
+  .fc-nav {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+  }
+
+  .fc-modes {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+  }
+
+  .fc-mode-btn {
+    padding: 8px 16px;
+    border-radius: 99px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    border: 1.5px solid var(--gray-200);
+    background: var(--white);
+    color: var(--gray-600);
+    transition: var(--transition);
+  }
+  .fc-mode-btn.active {
+    background: var(--teal);
+    color: var(--navy-dark);
+    border-color: var(--teal);
+  }
+
+  /* ──────────── QUIZ GAME ──────────── */
+  .quiz-container {
+    max-width: 680px;
+    margin: 0 auto;
+  }
+
+  .quiz-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 24px;
+  }
+
+  .quiz-progress-bar {
+    flex: 1;
+    height: 8px;
+    background: var(--gray-200);
+    border-radius: 99px;
+    overflow: hidden;
+    margin: 0 16px;
+  }
+  .quiz-progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--teal), var(--teal-light));
+    border-radius: 99px;
+    transition: width 0.4s ease;
+  }
+
+  .quiz-q-count {
+    font-family: var(--font-mono);
+    font-size: 13px;
+    color: var(--gray-400);
+    white-space: nowrap;
+  }
+
+  .quiz-timer {
+    font-family: var(--font-display);
+    font-size: 20px;
+    font-weight: 800;
+    color: var(--navy);
+    min-width: 48px;
+    text-align: center;
+  }
+  .quiz-timer.urgent { color: #dc2626; animation: pulse 0.8s infinite; }
+
+  @keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+  }
+
+  .quiz-card {
+    background: var(--white);
+    border-radius: 20px;
+    padding: 32px;
+    box-shadow: var(--shadow);
+    margin-bottom: 24px;
+  }
+
+  .quiz-category {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--teal);
+    margin-bottom: 14px;
+  }
+
+  .quiz-question {
+    font-family: var(--font-display);
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--navy);
+    line-height: 1.5;
+    margin-bottom: 24px;
+  }
+
+  .quiz-options {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .quiz-option {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    padding: 14px 18px;
+    border-radius: var(--radius-sm);
+    border: 2px solid var(--gray-200);
+    cursor: pointer;
+    transition: var(--transition);
+    background: var(--white);
+    text-align: left;
+    font-family: var(--font-body);
+    font-size: 14px;
+    color: var(--text);
+    line-height: 1.5;
+  }
+  .quiz-option:hover:not(.disabled) {
+    border-color: var(--teal);
+    background: var(--teal-pale);
+  }
+  .quiz-option.correct { border-color: #16a34a; background: #f0fdf4; color: #14532d; }
+  .quiz-option.wrong { border-color: #dc2626; background: #fef2f2; color: #7f1d1d; }
+  .quiz-option.disabled { cursor: not-allowed; }
+
+  .option-letter {
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    background: var(--gray-100);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--gray-600);
+    flex-shrink: 0;
+    transition: var(--transition);
+  }
+  .quiz-option.correct .option-letter { background: #16a34a; color: white; }
+  .quiz-option.wrong .option-letter { background: #dc2626; color: white; }
+  .quiz-option:hover:not(.disabled) .option-letter { background: var(--teal); color: var(--navy-dark); }
+
+  .quiz-feedback {
+    margin-top: 16px;
+    padding: 14px 18px;
+    border-radius: var(--radius-sm);
+    font-size: 14px;
+    line-height: 1.6;
+    display: none;
+  }
+  .quiz-feedback.correct { background: #f0fdf4; color: #14532d; border: 1.5px solid #86efac; display: block; }
+  .quiz-feedback.wrong { background: #fef2f2; color: #7f1d1d; border: 1.5px solid #fca5a5; display: block; }
+
+  .quiz-results {
+    background: var(--white);
+    border-radius: 20px;
+    padding: 40px;
+    text-align: center;
+    box-shadow: var(--shadow-lg);
+    display: none;
+  }
+  .quiz-results.show { display: block; }
+  .result-emoji { font-size: 56px; margin-bottom: 16px; }
+  .result-score {
+    font-family: var(--font-display);
+    font-size: 48px;
+    font-weight: 800;
+    color: var(--navy);
+    margin-bottom: 8px;
+  }
+  .result-label { font-size: 16px; color: var(--gray-600); margin-bottom: 24px; }
+
+  /* ──────────── MATCHING GAME ──────────── */
+  .match-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+    margin-bottom: 24px;
+  }
+  .match-card {
+    height: 80px;
+    border-radius: var(--radius-sm);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px;
+    text-align: center;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition);
+    border: 2px solid var(--gray-200);
+    background: var(--white);
+    color: var(--navy);
+    line-height: 1.4;
+  }
+  .match-card.drug { background: var(--navy); color: var(--white); border-color: var(--navy-mid); font-family: var(--font-display); font-size: 13px; text-transform: capitalize; }
+  .match-card.selected { border-color: var(--teal); box-shadow: 0 0 0 3px rgba(61,189,196,0.3); }
+  .match-card.matched { background: #f0fdf4; border-color: #16a34a; color: #14532d; pointer-events: none; }
+  .match-card.wrong-flash { background: #fef2f2; border-color: #dc2626; }
+
+  /* ──────────── WORD SCRAMBLE ──────────── */
+  .scramble-display {
+    background: var(--navy);
+    color: var(--white);
+    border-radius: var(--radius);
+    padding: 32px;
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  .scramble-letters {
+    font-family: var(--font-display);
+    font-size: 32px;
+    font-weight: 800;
+    color: var(--teal);
+    letter-spacing: 0.12em;
+    margin-bottom: 8px;
+  }
+  .scramble-hint { font-size: 13px; color: rgba(255,255,255,0.6); }
+  .scramble-clue {
+    font-size: 14px;
+    color: rgba(255,255,255,0.8);
+    margin-top: 12px;
+    line-height: 1.5;
+  }
+
+  .scramble-input-row {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 16px;
+  }
+  .scramble-input {
+    flex: 1;
+    padding: 12px 18px;
+    border-radius: var(--radius-sm);
+    border: 2px solid var(--gray-200);
+    font-family: var(--font-body);
+    font-size: 16px;
+    color: var(--navy);
+    outline: none;
+    transition: var(--transition);
+  }
+  .scramble-input:focus { border-color: var(--teal); box-shadow: 0 0 0 3px rgba(61,189,196,0.15); }
+
+  /* ──────────── BOOKMARKS ──────────── */
+  .empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--gray-400);
+  }
+  .empty-state-icon { font-size: 48px; margin-bottom: 12px; }
+  .empty-state-text { font-size: 15px; }
+
+  /* ──────────── MISC ──────────── */
+  .results-count {
+    font-size: 13px;
+    color: var(--gray-400);
+    margin-bottom: 16px;
+    font-family: var(--font-mono);
+  }
+
+  .bookmark-btn {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    font-size: 20px;
+    padding: 4px;
+    transition: var(--transition);
+    line-height: 1;
+  }
+  .bookmark-btn:hover { transform: scale(1.2); }
+
+  .modal-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 20px;
+    padding-top: 16px;
+    border-top: 1px solid var(--gray-200);
+  }
+
+  .toast {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    background: var(--navy);
+    color: var(--white);
+    padding: 12px 20px;
+    border-radius: var(--radius-sm);
+    font-size: 14px;
+    font-weight: 500;
+    z-index: 999;
+    box-shadow: var(--shadow-lg);
+    transform: translateY(60px);
+    opacity: 0;
+    transition: all 0.35s cubic-bezier(0.34,1.56,0.64,1);
+  }
+  .toast.show { transform: translateY(0); opacity: 1; }
+  .toast.success { background: #16a34a; }
+  .toast.error { background: #dc2626; }
+
+  .alphabet-nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 20px;
+  }
+  .alpha-btn {
+    width: 32px; height: 32px;
+    border-radius: 8px;
+    border: 1.5px solid var(--gray-200);
+    background: var(--white);
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: var(--transition);
+    color: var(--gray-600);
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--font-display);
+  }
+  .alpha-btn:hover, .alpha-btn.active {
+    background: var(--navy);
+    color: var(--white);
+    border-color: var(--navy);
+  }
+
+  .xp-notification {
+    position: fixed;
+    top: 80px; right: 24px;
+    background: var(--teal);
+    color: var(--navy-dark);
+    padding: 8px 16px;
+    border-radius: 99px;
+    font-weight: 700;
+    font-size: 14px;
+    z-index: 999;
+    box-shadow: var(--shadow);
+    transform: translateY(-10px);
+    opacity: 0;
+    transition: all 0.4s cubic-bezier(0.34,1.56,0.64,1);
+    pointer-events: none;
+  }
+  .xp-notification.show { transform: translateY(0); opacity: 1; }
+
+  /* Responsive tweaks */
+  @media (max-width: 1024px) {
+    .stats-grid { grid-template-columns: repeat(2, 1fr); }
+    .game-grid { grid-template-columns: repeat(2, 1fr); }
+    .drug-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+  @media (max-width: 768px) {
+    .sidebar { width: 200px; }
+    .main { margin-left: 200px; }
+    .page { padding: 20px; }
+    .hero { padding: 28px; }
+    .drug-grid { grid-template-columns: 1fr; }
+  }
+
+  /* Loading state */
+  .loading {
+    text-align: center;
+    padding: 40px;
+    color: var(--gray-400);
+  }
+  .spin {
+    display: inline-block;
+    width: 32px; height: 32px;
+    border: 3px solid var(--gray-200);
+    border-top-color: var(--teal);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    margin-bottom: 12px;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .match-score-row {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    margin-bottom: 16px;
+    background: var(--white);
+    padding: 12px 20px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--gray-200);
+  }
+  .match-score-item { font-size: 14px; color: var(--gray-600); }
+  .match-score-item strong { color: var(--navy); font-family: var(--font-display); font-size: 18px; }
+
+</style>
+</head>
+<body>
+
+<div class="app-shell">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <img id="hct-logo" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='48' fill='%231a2e4a'/%3E%3C/svg%3E" alt="HCT Logo">
+      <div class="sidebar-logo-text">
+        <h1>PharmaMaster</h1>
+        <span>HCT Academy</span>
+      </div>
+    </div>
+
+    <nav class="sidebar-nav">
+      <div class="nav-label">Main</div>
+      <div class="nav-item active" data-page="home">
+        <span class="nav-icon">🏠</span> Home
+      </div>
+      <div class="nav-item" data-page="drugs">
+        <span class="nav-icon">💊</span> Drug Reference
+      </div>
+      <div class="nav-item" data-page="bookmarks">
+        <span class="nav-icon">🔖</span> Bookmarks
+      </div>
+
+      <div class="nav-label">Learn</div>
+      <div class="nav-item" data-page="flashcards">
+        <span class="nav-icon">🃏</span> Flashcards
+      </div>
+      <div class="nav-item" data-page="quiz">
+        <span class="nav-icon">📝</span> Quiz Mode
+      </div>
+      <div class="nav-item" data-page="matching">
+        <span class="nav-icon">🔗</span> Matching Game
+      </div>
+      <div class="nav-item" data-page="scramble">
+        <span class="nav-icon">🔀</span> Word Scramble
+      </div>
+      <div class="nav-item" data-page="leaderboard">
+        <span class="nav-icon">🏆</span> Leaderboard
+      </div>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="level-badge">⚡ Level <span id="user-level">1</span></div>
+      <div class="xp-bar-wrap">
+        <div class="xp-bar-label">
+          <span>XP</span>
+          <strong id="xp-display">0 / 500</strong>
+        </div>
+        <div class="xp-bar">
+          <div class="xp-fill" id="xp-fill" style="width:0%"></div>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="main">
+
+    <!-- TOP BAR -->
+    <div class="topbar">
+      <div class="topbar-title" id="page-title">🏠 Home</div>
+      <div class="topbar-right">
+        <div class="streak-badge">🔥 <span id="streak-count">0</span> day streak</div>
+        <div class="score-badge">⭐ <span id="total-score">0</span> pts</div>
+      </div>
+    </div>
+
+    <!-- HOME PAGE -->
+    <div class="page active" id="page-home">
+      <div class="hero">
+        <div class="hero-content">
+          <h2>Master <span>475+</span> Drugs with<br>Interactive Learning</h2>
+          <p>Your complete nursing pharmacology companion. Study smarter with flashcards, quizzes, and gamified challenges — powered by the Saunders Nursing Drug Handbook 2025.</p>
+          <div class="hero-actions">
+            <button class="btn btn-primary" onclick="navigateTo('drugs')">💊 Browse Drugs</button>
+            <button class="btn btn-outline" onclick="navigateTo('quiz')">📝 Quick Quiz</button>
+            <button class="btn btn-outline" onclick="navigateTo('flashcards')">🃏 Flashcards</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-icon teal">💊</div>
+          <div class="stat-value">475</div>
+          <div class="stat-label">Drugs in Database</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon orange">📚</div>
+          <div class="stat-value" id="stat-studied">0</div>
+          <div class="stat-label">Drugs Studied</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon purple">✅</div>
+          <div class="stat-value" id="stat-correct">0</div>
+          <div class="stat-label">Correct Answers</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon green">🔖</div>
+          <div class="stat-value" id="stat-bookmarks">0</div>
+          <div class="stat-label">Bookmarked</div>
+        </div>
+      </div>
+
+      <div class="section-header">
+        <div class="section-title">🎮 Learning Modes</div>
+      </div>
+      <div class="game-grid">
+        <div class="game-card" onclick="navigateTo('flashcards')">
+          <div class="game-card-icon">🃏</div>
+          <h3>Flashcards</h3>
+          <p>Study drug actions, uses, and nursing considerations with interactive flip cards.</p>
+          <span class="game-card-badge badge-teal">Study Mode</span>
+        </div>
+        <div class="game-card" onclick="navigateTo('quiz')">
+          <div class="game-card-icon">📝</div>
+          <h3>Quiz Challenge</h3>
+          <p>PNLE-style multiple choice questions. Test your pharmacology knowledge under timed conditions.</p>
+          <span class="game-card-badge badge-orange">Timed ⏱</span>
+        </div>
+        <div class="game-card" onclick="navigateTo('matching')">
+          <div class="game-card-icon">🔗</div>
+          <h3>Matching Game</h3>
+          <p>Match drug names to their classification, uses, or mechanism of action. Fast-paced fun!</p>
+          <span class="game-card-badge badge-purple">Speed Game</span>
+        </div>
+        <div class="game-card" onclick="navigateTo('scramble')">
+          <div class="game-card-icon">🔀</div>
+          <h3>Word Scramble</h3>
+          <p>Unscramble drug names from contextual clues. Great for memorizing generic names.</p>
+          <span class="game-card-badge badge-teal">Brain Teaser</span>
+        </div>
+        <div class="game-card" onclick="navigateTo('drugs')">
+          <div class="game-card-icon">🔍</div>
+          <h3>Drug Reference</h3>
+          <p>Full searchable database with classification, mechanism, nursing considerations, and more.</p>
+          <span class="game-card-badge badge-teal">Reference</span>
+        </div>
+        <div class="game-card" onclick="navigateTo('leaderboard')">
+          <div class="game-card-icon">🏆</div>
+          <h3>Leaderboard</h3>
+          <p>Track your progress and see how your scores stack up across all game modes.</p>
+          <span class="game-card-badge badge-orange">Compete</span>
+        </div>
+      </div>
+
+      <div class="section-header">
+        <div class="section-title">🔥 Recently Viewed</div>
+      </div>
+      <div class="drug-grid" id="recent-drugs">
+        <div class="empty-state" style="grid-column:1/-1;padding:30px">
+          <div class="empty-state-icon">👀</div>
+          <div class="empty-state-text">No drugs viewed yet. Start exploring!</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- DRUG REFERENCE PAGE -->
+    <div class="page" id="page-drugs">
+      <div class="search-bar">
+        <span class="search-icon">🔍</span>
+        <input type="text" id="drug-search" placeholder="Search by generic name, brand name, or classification..." oninput="filterDrugs()">
+        <button class="btn btn-sm btn-navy" onclick="clearSearch()">Clear</button>
+      </div>
+
+      <div class="alphabet-nav" id="alpha-nav"></div>
+
+      <div class="filter-row">
+        <span class="filter-label">Filter by class:</span>
+        <div id="class-filters"></div>
+      </div>
+
+      <div class="results-count" id="results-count"></div>
+      <div class="drug-grid" id="drug-list">
+        <div class="loading"><div class="spin"></div><br>Loading drug database...</div>
+      </div>
+    </div>
+
+    <!-- BOOKMARKS PAGE -->
+    <div class="page" id="page-bookmarks">
+      <div class="section-header">
+        <div class="section-title">🔖 Bookmarked Drugs</div>
+        <button class="btn btn-sm btn-navy" onclick="clearBookmarks()">Clear All</button>
+      </div>
+      <div class="drug-grid" id="bookmark-list"></div>
+    </div>
+
+    <!-- FLASHCARDS PAGE -->
+    <div class="page" id="page-flashcards">
+      <div class="section-header">
+        <div class="section-title">🃏 Flashcard Study</div>
+      </div>
+
+      <div class="fc-modes">
+        <button class="fc-mode-btn active" data-mode="action" onclick="setFCMode('action',this)">Mechanism of Action</button>
+        <button class="fc-mode-btn" data-mode="uses" onclick="setFCMode('uses',this)">Clinical Uses</button>
+        <button class="fc-mode-btn" data-mode="sideEffects" onclick="setFCMode('sideEffects',this)">Side Effects</button>
+        <button class="fc-mode-btn" data-mode="nursing" onclick="setFCMode('nursing',this)">Nursing Care</button>
+        <button class="fc-mode-btn" data-mode="precautions" onclick="setFCMode('precautions',this)">Precautions</button>
+      </div>
+
+      <div class="flashcard-controls">
+        <button class="btn btn-sm btn-navy" onclick="shuffleFlashcards()">🔀 Shuffle</button>
+        <button class="btn btn-sm btn-navy" onclick="resetFlashcards()">↩ Reset</button>
+        <span style="font-size:13px; color:var(--gray-400)">Click card to flip</span>
+      </div>
+
+      <div class="fc-progress" id="fc-progress">Card 1 of 475</div>
+
+      <div class="flashcard-scene" id="flashcard" onclick="flipCard()">
+        <div class="flashcard-inner">
+          <div class="flashcard-front">
+            <div class="fc-label">Drug Name</div>
+            <div class="fc-drug" id="fc-drug-name">Loading...</div>
+            <div class="fc-hint">Click to reveal</div>
+          </div>
+          <div class="flashcard-back">
+            <div class="fc-question" id="fc-question-label">Mechanism of Action</div>
+            <div class="fc-answer" id="fc-answer"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="fc-nav">
+        <button class="btn btn-navy" onclick="prevCard()">← Previous</button>
+        <div style="display:flex; gap:10px">
+          <button class="btn btn-outline btn-navy" onclick="markKnown()" style="background:var(--white); color:#16a34a; border:2px solid #16a34a">✓ Got it</button>
+          <button class="btn btn-outline btn-navy" onclick="markReview()" style="background:var(--white); color:#dc2626; border:2px solid #dc2626">✗ Review</button>
+        </div>
+        <button class="btn btn-navy" onclick="nextCard()">Next →</button>
+      </div>
+    </div>
+
+    <!-- QUIZ PAGE -->
+    <div class="page" id="page-quiz">
+      <div id="quiz-start-screen">
+        <div class="hero" style="max-width:640px; margin:0 auto 28px">
+          <div class="hero-content">
+            <h2>📝 <span>Quiz</span> Challenge</h2>
+            <p>PNLE-style pharmacology questions. Test your knowledge with timed multiple choice questions. Earn XP for correct answers!</p>
+          </div>
+        </div>
+        <div style="max-width:640px; margin:0 auto; display:grid; grid-template-columns:1fr 1fr; gap:16px">
+          <div class="game-card" onclick="startQuiz(10,'mixed')" style="cursor:pointer">
+            <div class="game-card-icon">⚡</div>
+            <h3>Quick Round</h3>
+            <p>10 questions · Mixed topics</p>
+            <span class="game-card-badge badge-teal">~5 min</span>
+          </div>
+          <div class="game-card" onclick="startQuiz(20,'action')" style="cursor:pointer">
+            <div class="game-card-icon">🧬</div>
+            <h3>Mechanism Focus</h3>
+            <p>20 questions · Drug actions</p>
+            <span class="game-card-badge badge-purple">~10 min</span>
+          </div>
+          <div class="game-card" onclick="startQuiz(20,'nursing')" style="cursor:pointer">
+            <div class="game-card-icon">💉</div>
+            <h3>Nursing Focus</h3>
+            <p>20 questions · Nursing care</p>
+            <span class="game-card-badge badge-orange">~10 min</span>
+          </div>
+          <div class="game-card" onclick="startQuiz(30,'mixed')" style="cursor:pointer">
+            <div class="game-card-icon">🏆</div>
+            <h3>Full Challenge</h3>
+            <p>30 questions · All topics</p>
+            <span class="game-card-badge badge-orange">~15 min</span>
+          </div>
+        </div>
+      </div>
+
+      <div id="quiz-main" style="display:none">
+        <div class="quiz-container">
+          <div class="quiz-header">
+            <div class="quiz-timer" id="quiz-timer">30</div>
+            <div class="quiz-progress-bar">
+              <div class="quiz-progress-fill" id="quiz-prog-fill"></div>
+            </div>
+            <div class="quiz-q-count" id="quiz-q-count">1 / 10</div>
+          </div>
+
+          <div class="quiz-card" id="quiz-card">
+            <div class="quiz-category" id="quiz-category"></div>
+            <div class="quiz-question" id="quiz-question"></div>
+            <div class="quiz-options" id="quiz-options"></div>
+            <div class="quiz-feedback" id="quiz-feedback"></div>
+          </div>
+
+          <div style="text-align:center">
+            <button class="btn btn-navy" id="next-q-btn" onclick="nextQuestion()" style="display:none">Next Question →</button>
+          </div>
+
+          <div class="quiz-results" id="quiz-results">
+            <div class="result-emoji" id="result-emoji">🎉</div>
+            <div class="result-score" id="result-score-display"></div>
+            <div class="result-label" id="result-label"></div>
+            <div style="display:flex; gap:12px; justify-content:center; flex-wrap:wrap; margin-top:20px">
+              <button class="btn btn-primary" onclick="restartQuiz()">Try Again</button>
+              <button class="btn btn-navy" onclick="showQuizStart()">Change Mode</button>
+              <button class="btn btn-navy" onclick="navigateTo('flashcards')">Study Flashcards</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MATCHING GAME PAGE -->
+    <div class="page" id="page-matching">
+      <div class="section-header">
+        <div class="section-title">🔗 Drug Matching Game</div>
+        <div style="display:flex;gap:10px">
+          <select id="match-mode" style="padding:8px 14px;border-radius:8px;border:1.5px solid var(--gray-200);font-family:var(--font-body);font-size:13px">
+            <option value="action">Name → Action</option>
+            <option value="uses">Name → Uses</option>
+            <option value="class">Name → Classification</option>
+          </select>
+          <button class="btn btn-sm btn-primary" onclick="startMatching()">New Game</button>
+        </div>
+      </div>
+
+      <div class="match-score-row">
+        <div class="match-score-item">Score: <strong id="match-score">0</strong></div>
+        <div class="match-score-item">Matched: <strong id="match-matched">0</strong>/4</div>
+        <div class="match-score-item">Attempts: <strong id="match-attempts">0</strong></div>
+        <div class="match-score-item">Time: <strong id="match-time">0s</strong></div>
+      </div>
+
+      <p style="font-size:14px; color:var(--gray-600); margin-bottom:16px">Match each drug name (dark cards) to its correct description (light cards).</p>
+
+      <div class="match-grid" id="match-grid"></div>
+
+      <div id="match-success" style="display:none;text-align:center;padding:30px;background:var(--white);border-radius:var(--radius);border:2px solid #16a34a">
+        <div style="font-size:48px;margin-bottom:12px">🎉</div>
+        <div style="font-family:var(--font-display);font-size:22px;font-weight:800;color:var(--navy);margin-bottom:8px">All Matched!</div>
+        <div style="font-size:15px;color:var(--gray-600);margin-bottom:20px" id="match-result-text"></div>
+        <button class="btn btn-primary" onclick="startMatching()">Play Again</button>
+      </div>
+    </div>
+
+    <!-- WORD SCRAMBLE PAGE -->
+    <div class="page" id="page-scramble">
+      <div class="section-header">
+        <div class="section-title">🔀 Drug Name Scramble</div>
+        <div style="display:flex;gap:10px;align-items:center">
+          <span id="scramble-score-display" style="font-family:var(--font-display);font-weight:700;font-size:18px;color:var(--navy)">Score: 0</span>
+          <button class="btn btn-sm btn-primary" onclick="newScramble()">New Word</button>
+        </div>
+      </div>
+
+      <div class="scramble-display">
+        <div style="font-size:11px;letter-spacing:0.1em;text-transform:uppercase;color:var(--teal);margin-bottom:12px;font-weight:700">Unscramble the Drug Name</div>
+        <div class="scramble-letters" id="scramble-letters">_ _ _ _ _ _</div>
+        <div class="scramble-clue" id="scramble-clue">Loading clue...</div>
+        <div class="scramble-hint" style="margin-top:10px">
+          Category: <span id="scramble-category" style="color:var(--teal-light)">—</span>
+        </div>
+      </div>
+
+      <div class="scramble-input-row">
+        <input class="scramble-input" type="text" id="scramble-input" placeholder="Type your answer here..." onkeydown="if(event.key==='Enter')checkScramble()">
+        <button class="btn btn-primary" onclick="checkScramble()">Submit</button>
+        <button class="btn btn-navy" onclick="revealScramble()">💡 Hint</button>
+      </div>
+
+      <div id="scramble-feedback" style="padding:14px 18px;border-radius:var(--radius-sm);margin-bottom:16px;display:none;font-size:14px;font-weight:500"></div>
+
+      <div style="background:var(--white);border-radius:var(--radius);padding:20px;border:1px solid var(--gray-200)">
+        <div style="font-family:var(--font-display);font-weight:700;font-size:14px;color:var(--navy);margin-bottom:12px">🏅 Session Stats</div>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px">
+          <div style="text-align:center">
+            <div style="font-family:var(--font-display);font-size:24px;font-weight:800;color:var(--teal)" id="sc-correct">0</div>
+            <div style="font-size:12px;color:var(--gray-400)">Correct</div>
+          </div>
+          <div style="text-align:center">
+            <div style="font-family:var(--font-display);font-size:24px;font-weight:800;color:var(--navy)" id="sc-total">0</div>
+            <div style="font-size:12px;color:var(--gray-400)">Attempted</div>
+          </div>
+          <div style="text-align:center">
+            <div style="font-family:var(--font-display);font-size:24px;font-weight:800;color:#7c3aed" id="sc-streak">0</div>
+            <div style="font-size:12px;color:var(--gray-400)">Streak</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- LEADERBOARD PAGE -->
+    <div class="page" id="page-leaderboard">
+      <div class="section-header">
+        <div class="section-title">🏆 Your Progress & Leaderboard</div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:24px">
+        <div style="background:linear-gradient(135deg,var(--navy),var(--navy-mid));border-radius:var(--radius);padding:28px;color:var(--white)">
+          <div style="font-family:var(--font-display);font-size:13px;font-weight:700;letter-spacing:0.06em;color:var(--teal);margin-bottom:8px">YOUR STATS</div>
+          <div style="font-family:var(--font-display);font-size:40px;font-weight:800;margin-bottom:4px" id="lb-total-pts">0</div>
+          <div style="font-size:14px;color:rgba(255,255,255,0.6);margin-bottom:20px">Total Points Earned</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+            <div>
+              <div style="font-size:22px;font-weight:800;font-family:var(--font-display)" id="lb-level">1</div>
+              <div style="font-size:12px;color:rgba(255,255,255,0.5)">Current Level</div>
+            </div>
+            <div>
+              <div style="font-size:22px;font-weight:800;font-family:var(--font-display)" id="lb-streak">0</div>
+              <div style="font-size:12px;color:rgba(255,255,255,0.5)">Day Streak</div>
+            </div>
+            <div>
+              <div style="font-size:22px;font-weight:800;font-family:var(--font-display)" id="lb-quizzes">0</div>
+              <div style="font-size:12px;color:rgba(255,255,255,0.5)">Quizzes Done</div>
+            </div>
+            <div>
+              <div style="font-size:22px;font-weight:800;font-family:var(--font-display)" id="lb-accuracy">—</div>
+              <div style="font-size:12px;color:rgba(255,255,255,0.5)">Accuracy</div>
+            </div>
+          </div>
+        </div>
+
+        <div style="background:var(--white);border-radius:var(--radius);padding:28px;border:1px solid var(--gray-200)">
+          <div style="font-family:var(--font-display);font-size:13px;font-weight:700;letter-spacing:0.06em;color:var(--teal);margin-bottom:16px">ACHIEVEMENTS</div>
+          <div id="achievements-list" style="display:flex;flex-direction:column;gap:10px"></div>
+        </div>
+      </div>
+
+      <div style="background:var(--white);border-radius:var(--radius);padding:24px;border:1px solid var(--gray-200)">
+        <div style="font-family:var(--font-display);font-size:16px;font-weight:700;color:var(--navy);margin-bottom:16px">📊 Score History</div>
+        <div id="score-history" style="display:flex;flex-direction:column;gap:8px">
+          <div class="empty-state" style="padding:30px">
+            <div class="empty-state-icon">📊</div>
+            <div class="empty-state-text">Complete quizzes and games to see your history!</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<!-- DRUG DETAIL MODAL -->
+<div class="modal-backdrop" id="drug-modal">
+  <div class="modal">
+    <div class="modal-header">
+      <button class="modal-close" onclick="closeModal()">✕</button>
+      <div class="modal-drug-name" id="modal-drug-name"></div>
+      <div class="modal-drug-brand" id="modal-drug-brand"></div>
+      <div>
+        <span class="modal-class-pill" id="modal-class-pill"></span>
+      </div>
+    </div>
+    <div class="modal-tabs">
+      <div class="modal-tab active" onclick="switchModalTab('overview',this)">Overview</div>
+      <div class="modal-tab" onclick="switchModalTab('mechanism',this)">Mechanism</div>
+      <div class="modal-tab" onclick="switchModalTab('nursing',this)">Nursing</div>
+      <div class="modal-tab" onclick="switchModalTab('safety',this)">Safety</div>
+    </div>
+    <div class="modal-body">
+      <div class="modal-tab-content active" id="mtab-overview">
+        <div class="info-section">
+          <div class="info-label">Classification</div>
+          <div class="info-text" id="m-classification"></div>
+        </div>
+        <div class="info-section">
+          <div class="info-label">Clinical Uses / Indications</div>
+          <div class="info-text" id="m-uses"></div>
+        </div>
+        <div class="info-section">
+          <div class="info-label">Precautions & Contraindications</div>
+          <div class="info-text" id="m-precautions"></div>
+        </div>
+      </div>
+
+      <div class="modal-tab-content" id="mtab-mechanism">
+        <div class="info-section">
+          <div class="info-label">Mechanism of Action</div>
+          <div class="info-text" id="m-action"></div>
+        </div>
+        <div class="info-section">
+          <div class="info-label">Pharmacotherapeutic Class</div>
+          <div class="info-text" id="m-pharmacoclass"></div>
+        </div>
+      </div>
+
+      <div class="modal-tab-content" id="mtab-nursing">
+        <div class="nursing-box" id="m-nursing"></div>
+      </div>
+
+      <div class="modal-tab-content" id="mtab-safety">
+        <div class="info-section">
+          <div class="info-label">Side Effects</div>
+          <div class="warn-box"><div class="info-text" id="m-side"></div></div>
+        </div>
+        <div class="info-section">
+          <div class="info-label">Adverse Effects / Toxic Reactions</div>
+          <div class="alert-box"><div class="info-text" id="m-adverse"></div></div>
+        </div>
+      </div>
+
+      <div class="modal-actions">
+        <button class="btn btn-primary" id="modal-bookmark-btn" onclick="toggleBookmarkFromModal()">🔖 Bookmark</button>
+        <button class="btn btn-navy" onclick="addToFlashcards()">🃏 Add to Study Queue</button>
+        <button class="btn btn-navy" onclick="closeModal()">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<!-- XP NOTIFICATION -->
+<div class="xp-notification" id="xp-note"></div>
+
+<script>
+// ═══════════════════════════════════════════════
+// DATA LAYER
+// ═══════════════════════════════════════════════
+let DRUGS = [];
+let filteredDrugs = [];
+let currentAlpha = 'ALL';
+let currentClassFilter = 'All';
+let activeModalDrug = null;
+
+// User state
+let state = JSON.parse(localStorage.getItem('hct-pharma-state') || '{}');
+if (!state.xp) state = {
+  xp: 0, level: 1, totalScore: 0, streak: 0, lastDate: '',
+  studiedDrugs: [], correctAnswers: 0, totalAnswers: 0,
+  bookmarks: [], quizzesDone: 0, scoreHistory: [],
+  scrambleScore: 0, matchScore: 0
+};
+
+// Check streak
+const today = new Date().toDateString();
+if (state.lastDate !== today) {
+  const yesterday = new Date(); yesterday.setDate(yesterday.getDate()-1);
+  if (state.lastDate === yesterday.toDateString()) state.streak++;
+  else state.streak = 1;
+  state.lastDate = today;
+  saveState();
+}
+
+function saveState() { localStorage.setItem('hct-pharma-state', JSON.stringify(state)); }
+
+// ═══════════════════════════════════════════════
+// LOAD DRUGS
+// ═══════════════════════════════════════════════
+async function loadDrugs() {
+  try {
+    const res = await fetch('./drugs.json');
+    DRUGS = await res.json();
+    filteredDrugs = [...DRUGS];
+    updateStats();
+    buildAlphabet();
+    buildClassFilters();
+    renderDrugGrid();
+    initFlashcards();
+    updateLeaderboard();
+    renderRecentDrugs();
+  } catch(e) {
+    document.getElementById('drug-list').innerHTML = '<div class="empty-state"><div class="empty-state-icon">⚠️</div><div>Could not load drug database. Make sure drugs.json is in the same folder as index.html.</div></div>';
+  }
+}
+
+// ═══════════════════════════════════════════════
+// NAVIGATION
+// ═══════════════════════════════════════════════
+const pageTitles = {
+  home: '🏠 Home', drugs: '💊 Drug Reference', bookmarks: '🔖 Bookmarks',
+  flashcards: '🃏 Flashcards', quiz: '📝 Quiz Mode', matching: '🔗 Matching Game',
+  scramble: '🔀 Word Scramble', leaderboard: '🏆 Leaderboard'
+};
+
+function navigateTo(page) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('page-'+page).classList.add('active');
+  document.querySelector(`[data-page="${page}"]`).classList.add('active');
+  document.getElementById('page-title').textContent = pageTitles[page];
+
+  if (page === 'bookmarks') renderBookmarks();
+  if (page === 'matching') startMatching();
+  if (page === 'scramble') newScramble();
+  if (page === 'leaderboard') updateLeaderboard();
+  if (page === 'flashcards') updateFCDisplay();
+}
+
+document.querySelectorAll('.nav-item').forEach(item => {
+  item.addEventListener('click', () => navigateTo(item.dataset.page));
+});
+
+// ═══════════════════════════════════════════════
+// DRUG REFERENCE
+// ═══════════════════════════════════════════════
+function buildAlphabet() {
+  const nav = document.getElementById('alpha-nav');
+  const letters = ['ALL', ...'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('')];
+  nav.innerHTML = letters.map(l =>
+    `<button class="alpha-btn ${l==='ALL'?'active':''}" onclick="filterAlpha('${l}',this)">${l}</button>`
+  ).join('');
+}
+
+function buildClassFilters() {
+  const container = document.getElementById('class-filters');
+  const classes = ['All', ...new Set(DRUGS.map(d=>d.clinicalClass).filter(Boolean))].slice(0, 20);
+  container.innerHTML = classes.map((c,i) =>
+    `<button class="filter-chip ${i===0?'active':''}" onclick="filterClass('${c}',this)">${c}</button>`
+  ).join('');
+}
+
+function filterAlpha(letter, btn) {
+  currentAlpha = letter;
+  document.querySelectorAll('.alpha-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  applyFilters();
+}
+
+function filterClass(cls, btn) {
+  currentClassFilter = cls;
+  document.querySelectorAll('.filter-chip').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  applyFilters();
+}
+
+function filterDrugs() { applyFilters(); }
+
+function clearSearch() {
+  document.getElementById('drug-search').value = '';
+  applyFilters();
+}
+
+function applyFilters() {
+  const query = document.getElementById('drug-search').value.toLowerCase();
+  filteredDrugs = DRUGS.filter(d => {
+    const matchSearch = !query || d.name.includes(query) || (d.brand||'').toLowerCase().includes(query) || (d.clinicalClass||'').toLowerCase().includes(query);
+    const matchAlpha = currentAlpha === 'ALL' || d.name.toUpperCase().startsWith(currentAlpha);
+    const matchClass = currentClassFilter === 'All' || d.clinicalClass === currentClassFilter;
+    return matchSearch && matchAlpha && matchClass;
+  });
+  renderDrugGrid();
+}
+
+function renderDrugGrid() {
+  const container = document.getElementById('drug-list');
+  document.getElementById('results-count').textContent = `${filteredDrugs.length} drug${filteredDrugs.length!==1?'s':''} found`;
+  if (!filteredDrugs.length) {
+    container.innerHTML = '<div class="empty-state" style="grid-column:1/-1"><div class="empty-state-icon">🔍</div><div>No drugs match your search.</div></div>';
+    return;
+  }
+  container.innerHTML = filteredDrugs.slice(0, 120).map(d =>
+    `<div class="drug-card" onclick="openDrug('${d.name.replace(/'/g,"\\'")}')">
+      <div class="drug-name">${d.name}</div>
+      ${d.brand ? `<div class="drug-brand">${d.brand.split(',')[0].trim()}</div>` : ''}
+      ${d.clinicalClass ? `<span class="drug-class-pill">${d.clinicalClass}</span>` : ''}
+    </div>`
+  ).join('');
+  if (filteredDrugs.length > 120) {
+    container.innerHTML += `<div style="grid-column:1/-1;text-align:center;padding:20px;color:var(--gray-400);font-size:13px">Showing 120 of ${filteredDrugs.length}. Use search or filters to narrow results.</div>`;
+  }
+}
+
+function openDrug(name) {
+  const drug = DRUGS.find(d => d.name === name);
+  if (!drug) return;
+  activeModalDrug = drug;
+
+  // Track studied
+  if (!state.studiedDrugs.includes(name)) {
+    state.studiedDrugs.push(name);
+    document.getElementById('stat-studied').textContent = state.studiedDrugs.length;
+    addXP(5);
+  }
+
+  // Recent
+  let recent = JSON.parse(localStorage.getItem('hct-recent') || '[]');
+  recent = [name, ...recent.filter(n=>n!==name)].slice(0, 6);
+  localStorage.setItem('hct-recent', JSON.stringify(recent));
+
+  // Populate modal
+  document.getElementById('modal-drug-name').textContent = drug.displayName || drug.name;
+  document.getElementById('modal-drug-brand').textContent = drug.brand ? `Brand: ${drug.brand}` : '';
+  document.getElementById('modal-class-pill').textContent = drug.clinicalClass || drug.pharmacoClass || 'Unknown Class';
+  document.getElementById('m-classification').textContent = drug.pharmacoClass ? `${drug.pharmacoClass}. ${drug.clinicalClass || ''}` : (drug.clinicalClass || 'Not specified');
+  document.getElementById('m-uses').textContent = drug.uses || 'Not available';
+  document.getElementById('m-precautions').textContent = drug.precautions || 'Not available';
+  document.getElementById('m-action').textContent = drug.action || 'Not available';
+  document.getElementById('m-pharmacoclass').textContent = drug.pharmacoClass || 'Not available';
+  document.getElementById('m-nursing').textContent = drug.nursingConsiderations || 'Not available';
+  document.getElementById('m-side').textContent = drug.sideEffects || 'Not available';
+  document.getElementById('m-adverse').textContent = drug.adverseEffects || 'Not available';
+
+  // Bookmark btn
+  const bookmarked = state.bookmarks.includes(name);
+  document.getElementById('modal-bookmark-btn').textContent = bookmarked ? '✅ Bookmarked' : '🔖 Bookmark';
+
+  // Reset tabs
+  document.querySelectorAll('.modal-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.modal-tab-content').forEach(c => c.classList.remove('active'));
+  document.querySelector('.modal-tab').classList.add('active');
+  document.getElementById('mtab-overview').classList.add('active');
+
+  document.getElementById('drug-modal').classList.add('open');
+}
+
+function closeModal() {
+  document.getElementById('drug-modal').classList.remove('open');
+  activeModalDrug = null;
+}
+
+function switchModalTab(tab, el) {
+  document.querySelectorAll('.modal-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.modal-tab-content').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('mtab-'+tab).classList.add('active');
+}
+
+document.getElementById('drug-modal').addEventListener('click', function(e) {
+  if (e.target === this) closeModal();
+});
+
+// ═══════════════════════════════════════════════
+// BOOKMARKS
+// ═══════════════════════════════════════════════
+function toggleBookmarkFromModal() {
+  if (!activeModalDrug) return;
+  toggleBookmark(activeModalDrug.name);
+  const bookmarked = state.bookmarks.includes(activeModalDrug.name);
+  document.getElementById('modal-bookmark-btn').textContent = bookmarked ? '✅ Bookmarked' : '🔖 Bookmark';
+}
+
+function toggleBookmark(name) {
+  const idx = state.bookmarks.indexOf(name);
+  if (idx === -1) {
+    state.bookmarks.push(name);
+    showToast('Bookmarked!', 'success');
+    addXP(3);
+  } else {
+    state.bookmarks.splice(idx, 1);
+    showToast('Removed bookmark');
+  }
+  document.getElementById('stat-bookmarks').textContent = state.bookmarks.length;
+  saveState();
+}
+
+function clearBookmarks() {
+  if (!confirm('Clear all bookmarks?')) return;
+  state.bookmarks = [];
+  saveState();
+  renderBookmarks();
+}
+
+function renderBookmarks() {
+  const container = document.getElementById('bookmark-list');
+  const bookmarked = DRUGS.filter(d => state.bookmarks.includes(d.name));
+  if (!bookmarked.length) {
+    container.innerHTML = '<div class="empty-state" style="grid-column:1/-1"><div class="empty-state-icon">🔖</div><div class="empty-state-text">No bookmarks yet. Click the bookmark button when viewing a drug.</div></div>';
+    return;
+  }
+  container.innerHTML = bookmarked.map(d =>
+    `<div class="drug-card" onclick="openDrug('${d.name.replace(/'/g,"\\'")}')">
+      <div class="drug-name">${d.name}</div>
+      ${d.brand ? `<div class="drug-brand">${d.brand.split(',')[0].trim()}</div>` : ''}
+      ${d.clinicalClass ? `<span class="drug-class-pill">${d.clinicalClass}</span>` : ''}
+    </div>`
+  ).join('');
+}
+
+function renderRecentDrugs() {
+  const recent = JSON.parse(localStorage.getItem('hct-recent') || '[]');
+  const container = document.getElementById('recent-drugs');
+  if (!recent.length || !DRUGS.length) return;
+  const recentDrugs = recent.map(name => DRUGS.find(d => d.name === name)).filter(Boolean);
+  if (!recentDrugs.length) return;
+  container.innerHTML = recentDrugs.map(d =>
+    `<div class="drug-card" onclick="openDrug('${d.name.replace(/'/g,"\\'")}')">
+      <div class="drug-name">${d.name}</div>
+      ${d.brand ? `<div class="drug-brand">${d.brand.split(',')[0].trim()}</div>` : ''}
+      ${d.clinicalClass ? `<span class="drug-class-pill">${d.clinicalClass}</span>` : ''}
+    </div>`
+  ).join('');
+}
+
+// ═══════════════════════════════════════════════
+// FLASHCARDS
+// ═══════════════════════════════════════════════
+let fcDrugs = [];
+let fcIndex = 0;
+let fcMode = 'action';
+let fcFlipped = false;
+let studyQueue = [];
+
+function initFlashcards() {
+  fcDrugs = [...DRUGS].filter(d => d[fcMode]);
+  shuffleArray(fcDrugs);
+  fcIndex = 0;
+  updateFCDisplay();
+}
+
+function setFCMode(mode, btn) {
+  fcMode = mode;
+  document.querySelectorAll('.fc-mode-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  fcDrugs = [...(studyQueue.length ? studyQueue : DRUGS)].filter(d => d[mode]);
+  shuffleArray(fcDrugs);
+  fcIndex = 0;
+  resetCardFlip();
+  updateFCDisplay();
+}
+
+const fcLabels = {
+  action: 'Mechanism of Action',
+  uses: 'Clinical Uses',
+  sideEffects: 'Side Effects',
+  nursing: 'Nursing Considerations',
+  precautions: 'Precautions'
+};
+
+function updateFCDisplay() {
+  if (!fcDrugs.length) return;
+  const drug = fcDrugs[fcIndex];
+  document.getElementById('fc-drug-name').textContent = drug.displayName || drug.name;
+  document.getElementById('fc-question-label').textContent = fcLabels[fcMode];
+  document.getElementById('fc-answer').textContent = drug[fcMode] || 'Not available';
+  document.getElementById('fc-progress').textContent = `Card ${fcIndex+1} of ${fcDrugs.length}`;
+  resetCardFlip();
+}
+
+function flipCard() {
+  fcFlipped = !fcFlipped;
+  document.getElementById('flashcard').classList.toggle('flipped', fcFlipped);
+  if (fcFlipped) addXP(2);
+}
+
+function resetCardFlip() {
+  fcFlipped = false;
+  document.getElementById('flashcard').classList.remove('flipped');
+}
+
+function nextCard() { fcIndex = (fcIndex+1) % fcDrugs.length; updateFCDisplay(); }
+function prevCard() { fcIndex = (fcIndex - 1 + fcDrugs.length) % fcDrugs.length; updateFCDisplay(); }
+
+function shuffleFlashcards() {
+  shuffleArray(fcDrugs);
+  fcIndex = 0;
+  updateFCDisplay();
+  showToast('Deck shuffled!');
+}
+
+function resetFlashcards() { fcIndex = 0; updateFCDisplay(); }
+
+function markKnown() {
+  fcDrugs.splice(fcIndex, 1);
+  if (fcDrugs.length === 0) { showToast('🎉 You reviewed all cards!'); initFlashcards(); return; }
+  if (fcIndex >= fcDrugs.length) fcIndex = 0;
+  addXP(5);
+  updateFCDisplay();
+  showToast('✓ Marked as known', 'success');
+}
+
+function markReview() {
+  const card = fcDrugs.splice(fcIndex, 1)[0];
+  fcDrugs.push(card);
+  if (fcIndex >= fcDrugs.length) fcIndex = 0;
+  updateFCDisplay();
+}
+
+function addToFlashcards() {
+  if (!activeModalDrug) return;
+  if (!studyQueue.find(d => d.name === activeModalDrug.name)) {
+    studyQueue.push(activeModalDrug);
+    showToast('Added to study queue!', 'success');
+  } else {
+    showToast('Already in queue');
+  }
+}
+
+// ═══════════════════════════════════════════════
+// QUIZ
+// ═══════════════════════════════════════════════
+let quizState = {};
+let quizTimer;
+
+const quizTemplates = {
+  action: (drug) => ({
+    q: `What is the mechanism of action of ${drug.displayName || drug.name}?`,
+    a: drug.action,
+    cat: 'Mechanism of Action'
+  }),
+  uses: (drug) => ({
+    q: `Which of the following is a primary indication for ${drug.displayName || drug.name}?`,
+    a: drug.uses,
+    cat: 'Clinical Uses'
+  }),
+  nursing: (drug) => ({
+    q: `Which nursing consideration is most important when administering ${drug.displayName || drug.name}?`,
+    a: drug.nursingConsiderations,
+    cat: 'Nursing Considerations'
+  }),
+  sideEffects: (drug) => ({
+    q: `Which side effect is most commonly associated with ${drug.displayName || drug.name}?`,
+    a: drug.sideEffects,
+    cat: 'Side Effects'
+  }),
+  adverse: (drug) => ({
+    q: `What is the most serious adverse effect that must be monitored with ${drug.displayName || drug.name}?`,
+    a: drug.adverseEffects,
+    cat: 'Adverse Effects'
+  })
+};
+
+function startQuiz(count, mode) {
+  document.getElementById('quiz-start-screen').style.display = 'none';
+  document.getElementById('quiz-main').style.display = 'block';
+  document.getElementById('quiz-results').classList.remove('show');
+
+  const types = mode === 'mixed'
+    ? ['action','uses','nursing','sideEffects']
+    : [mode === 'nursing' ? 'nursing' : 'action'];
+
+  const eligible = DRUGS.filter(d => d.action && d.uses && d.nursingConsiderations);
+  const picked = shufflePick(eligible, count);
+
+  quizState = {
+    questions: picked.map(drug => {
+      const type = types[Math.floor(Math.random() * types.length)];
+      const tmpl = quizTemplates[type](drug);
+      if (!tmpl.a || tmpl.a.length < 20) return null;
+      // Generate 3 distractors
+      const wrongDrugs = eligible.filter(d => d.name !== drug.name);
+      const distractors = shufflePick(wrongDrugs, 3).map(d => {
+        const t = quizTemplates[type](d);
+        return t.a ? truncate(t.a, 140) : null;
+      }).filter(Boolean);
+      if (distractors.length < 3) return null;
+      const correctText = truncate(tmpl.a, 140);
+      const options = shuffleArray([correctText, ...distractors.slice(0,3)]);
+      return { q: tmpl.q, options, correct: correctText, cat: tmpl.cat, drug: drug.name };
+    }).filter(Boolean).slice(0, count),
+    current: 0, score: 0, total: 0, answered: false, mode
+  };
+
+  if (!quizState.questions.length) { showToast('Not enough data for quiz. Try again!', 'error'); showQuizStart(); return; }
+  quizState.total = quizState.questions.length;
+  renderQuestion();
+}
+
+function renderQuestion() {
+  const q = quizState.questions[quizState.current];
+  const pct = (quizState.current / quizState.total) * 100;
+  document.getElementById('quiz-prog-fill').style.width = pct + '%';
+  document.getElementById('quiz-q-count').textContent = `${quizState.current+1} / ${quizState.total}`;
+  document.getElementById('quiz-category').textContent = q.cat;
+  document.getElementById('quiz-question').textContent = q.q;
+  document.getElementById('quiz-feedback').className = 'quiz-feedback';
+  document.getElementById('next-q-btn').style.display = 'none';
+  quizState.answered = false;
+
+  const letters = ['A','B','C','D'];
+  document.getElementById('quiz-options').innerHTML = q.options.map((opt, i) =>
+    `<button class="quiz-option" onclick="selectAnswer(${i})">
+      <span class="option-letter">${letters[i]}</span>
+      <span>${opt}</span>
+    </button>`
+  ).join('');
+
+  // Timer
+  clearInterval(quizTimer);
+  let t = 30;
+  const timerEl = document.getElementById('quiz-timer');
+  timerEl.textContent = t;
+  timerEl.className = 'quiz-timer';
+  quizTimer = setInterval(() => {
+    t--;
+    timerEl.textContent = t;
+    if (t <= 8) timerEl.className = 'quiz-timer urgent';
+    if (t <= 0) { clearInterval(quizTimer); timeOut(); }
+  }, 1000);
+}
+
+function timeOut() {
+  if (quizState.answered) return;
+  quizState.answered = true;
+  const q = quizState.questions[quizState.current];
+  document.querySelectorAll('.quiz-option').forEach((btn, i) => {
+    btn.classList.add('disabled');
+    if (q.options[i] === q.correct) btn.classList.add('correct');
+  });
+  const fb = document.getElementById('quiz-feedback');
+  fb.textContent = '⏰ Time\'s up! The correct answer has been highlighted.';
+  fb.className = 'quiz-feedback wrong';
+  state.totalAnswers++;
+  saveState();
+  document.getElementById('next-q-btn').style.display = 'block';
+}
+
+function selectAnswer(idx) {
+  if (quizState.answered) return;
+  clearInterval(quizTimer);
+  quizState.answered = true;
+  const q = quizState.questions[quizState.current];
+  const selected = q.options[idx];
+  const correct = selected === q.correct;
+
+  document.querySelectorAll('.quiz-option').forEach((btn, i) => {
+    btn.classList.add('disabled');
+    if (q.options[i] === q.correct) btn.classList.add('correct');
+    else if (i === idx && !correct) btn.classList.add('wrong');
+  });
+
+  const fb = document.getElementById('quiz-feedback');
+  if (correct) {
+    quizState.score++;
+    state.correctAnswers++;
+    addXP(20);
+    fb.textContent = '✓ Correct! Well done.';
+    fb.className = 'quiz-feedback correct';
+  } else {
+    fb.textContent = `✗ Incorrect. The correct answer is: "${q.correct.substring(0,100)}..."`;
+    fb.className = 'quiz-feedback wrong';
+  }
+  state.totalAnswers++;
+  document.getElementById('stat-correct').textContent = state.correctAnswers;
+  saveState();
+  document.getElementById('next-q-btn').style.display = 'block';
+}
+
+function nextQuestion() {
+  quizState.current++;
+  if (quizState.current >= quizState.questions.length) {
+    finishQuiz();
+  } else {
+    renderQuestion();
+  }
+}
+
+function finishQuiz() {
+  clearInterval(quizTimer);
+  document.getElementById('next-q-btn').style.display = 'none';
+  const pct = Math.round((quizState.score / quizState.total) * 100);
+  const emoji = pct >= 90 ? '🏆' : pct >= 70 ? '🎉' : pct >= 50 ? '📚' : '💪';
+  const label = pct >= 90 ? 'Excellent! You\'re a Pharmacology Master!' : pct >= 70 ? 'Great job! Keep it up!' : pct >= 50 ? 'Good effort! Review and try again.' : 'Keep practicing! You\'ll get better!';
+
+  document.getElementById('result-emoji').textContent = emoji;
+  document.getElementById('result-score-display').textContent = `${quizState.score} / ${quizState.total}`;
+  document.getElementById('result-label').textContent = label + ` (${pct}%)`;
+  document.getElementById('quiz-results').classList.add('show');
+
+  const pts = quizState.score * 10;
+  state.totalScore += pts;
+  state.quizzesDone++;
+  state.scoreHistory.unshift({ type: 'Quiz', score: quizState.score, total: quizState.total, pts, date: new Date().toLocaleDateString() });
+  state.scoreHistory = state.scoreHistory.slice(0, 20);
+  document.getElementById('total-score').textContent = state.totalScore;
+  saveState();
+  updateStats();
+  addXP(pts);
+}
+
+function restartQuiz() {
+  const mode = quizState.mode;
+  const count = quizState.total;
+  document.getElementById('quiz-results').classList.remove('show');
+  startQuiz(count, mode);
+}
+
+function showQuizStart() {
+  clearInterval(quizTimer);
+  document.getElementById('quiz-start-screen').style.display = 'block';
+  document.getElementById('quiz-main').style.display = 'none';
+}
+
+// ═══════════════════════════════════════════════
+// MATCHING GAME
+// ═══════════════════════════════════════════════
+let matchState = {};
+let matchTimerInt;
+
+function startMatching() {
+  document.getElementById('match-success').style.display = 'none';
+  clearInterval(matchTimerInt);
+  const mode = document.getElementById('match-mode').value;
+  const eligible = DRUGS.filter(d => d[mode] && d[mode].length > 20);
+  const drugs = shufflePick(eligible, 4);
+
+  matchState = {
+    drugs, mode,
+    selected: null, matched: 0, attempts: 0, score: 0,
+    startTime: Date.now(), done: false
+  };
+
+  updateMatchUI();
+
+  matchTimerInt = setInterval(() => {
+    if (matchState.done) return;
+    const elapsed = Math.round((Date.now() - matchState.startTime) / 1000);
+    document.getElementById('match-time').textContent = elapsed + 's';
+  }, 1000);
+
+  renderMatchGrid();
+}
+
+function renderMatchGrid() {
+  const { drugs, mode } = matchState;
+  const drugCards = drugs.map((d, i) => ({ type: 'drug', text: d.displayName || d.name, id: i }));
+  const defCards = drugs.map((d, i) => ({ type: 'def', text: truncate(d[mode], 90), id: i }));
+  const allCards = shuffleArray([...drugCards, ...defCards]);
+
+  document.getElementById('match-grid').innerHTML = allCards.map(card =>
+    `<div class="match-card ${card.type}" data-id="${card.id}" data-type="${card.type}" onclick="selectMatchCard(this)">
+      ${card.text}
+    </div>`
+  ).join('');
+}
+
+function selectMatchCard(el) {
+  if (el.classList.contains('matched') || matchState.done) return;
+
+  if (!matchState.selected) {
+    el.classList.add('selected');
+    matchState.selected = el;
+  } else {
+    const prev = matchState.selected;
+    if (prev === el) { prev.classList.remove('selected'); matchState.selected = null; return; }
+
+    const id1 = parseInt(prev.dataset.id);
+    const id2 = parseInt(el.dataset.id);
+    const type1 = prev.dataset.type;
+    const type2 = el.dataset.type;
+    matchState.attempts++;
+
+    if (id1 === id2 && type1 !== type2) {
+      // Match!
+      prev.classList.remove('selected');
+      prev.classList.add('matched');
+      el.classList.add('matched');
+      matchState.selected = null;
+      matchState.matched++;
+      matchState.score += Math.max(10, 50 - matchState.attempts * 3);
+      addXP(15);
+      updateMatchUI();
+
+      if (matchState.matched === 4) {
+        matchState.done = true;
+        clearInterval(matchTimerInt);
+        const elapsed = Math.round((Date.now() - matchState.startTime) / 1000);
+        state.totalScore += matchState.score;
+        state.matchScore = (state.matchScore || 0) + matchState.score;
+        state.scoreHistory.unshift({ type: 'Matching', score: matchState.matched, total: 4, pts: matchState.score, date: new Date().toLocaleDateString() });
+        saveState();
+        document.getElementById('match-result-text').textContent = `Completed in ${elapsed}s with ${matchState.attempts} attempts! +${matchState.score} points`;
+        document.getElementById('match-success').style.display = 'block';
+        document.getElementById('total-score').textContent = state.totalScore;
+      }
+    } else {
+      // Wrong
+      el.classList.add('wrong-flash');
+      prev.classList.add('wrong-flash');
+      setTimeout(() => {
+        el.classList.remove('wrong-flash','selected');
+        prev.classList.remove('wrong-flash','selected');
+      }, 700);
+      matchState.selected = null;
+    }
+
+    document.getElementById('match-attempts').textContent = matchState.attempts;
+  }
+}
+
+function updateMatchUI() {
+  document.getElementById('match-score').textContent = matchState.score;
+  document.getElementById('match-matched').textContent = matchState.matched;
+}
+
+// ═══════════════════════════════════════════════
+// WORD SCRAMBLE
+// ═══════════════════════════════════════════════
+let scrambleState = {};
+
+function newScramble() {
+  const drug = DRUGS[Math.floor(Math.random() * DRUGS.length)];
+  const name = drug.name.toUpperCase();
+  const scrambled = name.split('').sort(() => Math.random()-0.5).join('');
+  scrambleState = { drug, name, scrambled, hintUsed: false };
+
+  document.getElementById('scramble-letters').textContent = scrambled;
+  document.getElementById('scramble-clue').textContent = `Clue: ${truncate(drug.uses || drug.action || '', 100)}`;
+  document.getElementById('scramble-category').textContent = drug.clinicalClass || drug.pharmacoClass || '—';
+  document.getElementById('scramble-input').value = '';
+  document.getElementById('scramble-feedback').style.display = 'none';
+}
+
+function checkScramble() {
+  const answer = document.getElementById('scramble-input').value.trim().toUpperCase();
+  const fb = document.getElementById('scramble-feedback');
+  fb.style.display = 'block';
+
+  if (answer === scrambleState.name) {
+    const pts = scrambleState.hintUsed ? 5 : 10;
+    scrambleState.drug; // used
+    state.scrambleScore = (state.scrambleScore || 0) + pts;
+    state.totalScore += pts;
+    state.scoreHistory.unshift({ type: 'Scramble', score: 1, total: 1, pts, date: new Date().toLocaleDateString() });
+    saveState();
+    document.getElementById('scramble-score-display').textContent = 'Score: ' + state.scrambleScore;
+    document.getElementById('total-score').textContent = state.totalScore;
+    fb.textContent = `✓ Correct! "${scrambleState.drug.displayName || scrambleState.drug.name}" — +${pts} pts`;
+    fb.style.background = '#f0fdf4'; fb.style.color = '#14532d'; fb.style.border = '1.5px solid #86efac';
+    addXP(pts);
+
+    const sc = document.getElementById('sc-correct');
+    const st = document.getElementById('sc-total');
+    const ss = document.getElementById('sc-streak');
+    sc.textContent = parseInt(sc.textContent) + 1;
+    st.textContent = parseInt(st.textContent) + 1;
+    ss.textContent = parseInt(ss.textContent) + 1;
+
+    setTimeout(() => newScramble(), 1800);
+  } else {
+    fb.textContent = `✗ Not quite. Try again!`;
+    fb.style.background = '#fef2f2'; fb.style.color = '#7f1d1d'; fb.style.border = '1.5px solid #fca5a5';
+    const st = document.getElementById('sc-total');
+    const ss = document.getElementById('sc-streak');
+    st.textContent = parseInt(st.textContent) + 1;
+    ss.textContent = 0;
+  }
+}
+
+function revealScramble() {
+  scrambleState.hintUsed = true;
+  const hint = scrambleState.name.substring(0, Math.ceil(scrambleState.name.length/2)) + '...';
+  showToast(`Hint: starts with "${hint.substring(0,3).toLowerCase()}"...`);
+}
+
+// ═══════════════════════════════════════════════
+// LEADERBOARD & ACHIEVEMENTS
+// ═══════════════════════════════════════════════
+const achievements = [
+  { id: 'first_drug', name: 'First Look', icon: '👁', desc: 'View your first drug', check: s => s.studiedDrugs.length >= 1 },
+  { id: 'ten_drugs', name: 'Explorer', icon: '🗺', desc: 'View 10 drugs', check: s => s.studiedDrugs.length >= 10 },
+  { id: 'fifty_drugs', name: 'Pharmacist', icon: '💊', desc: 'View 50 drugs', check: s => s.studiedDrugs.length >= 50 },
+  { id: 'first_quiz', name: 'Quiz Debut', icon: '📝', desc: 'Complete first quiz', check: s => s.quizzesDone >= 1 },
+  { id: 'five_quizzes', name: 'Quiz Master', icon: '🏅', desc: 'Complete 5 quizzes', check: s => s.quizzesDone >= 5 },
+  { id: 'bookmark_5', name: 'Collector', icon: '🔖', desc: 'Bookmark 5 drugs', check: s => s.bookmarks.length >= 5 },
+  { id: 'streak_3', name: '3-Day Streak', icon: '🔥', desc: '3-day study streak', check: s => s.streak >= 3 },
+  { id: 'score_100', name: 'Point Scorer', icon: '⭐', desc: 'Earn 100 points', check: s => s.totalScore >= 100 },
+  { id: 'score_500', name: 'High Scorer', icon: '💫', desc: 'Earn 500 points', check: s => s.totalScore >= 500 },
+  { id: 'accuracy_80', name: 'Sharp Mind', icon: '🎯', desc: '80%+ quiz accuracy', check: s => s.totalAnswers >= 10 && (s.correctAnswers/s.totalAnswers) >= 0.8 },
+];
+
+function updateLeaderboard() {
+  document.getElementById('lb-total-pts').textContent = state.totalScore;
+  document.getElementById('lb-level').textContent = state.level;
+  document.getElementById('lb-streak').textContent = state.streak;
+  document.getElementById('lb-quizzes').textContent = state.quizzesDone;
+  const acc = state.totalAnswers > 0 ? Math.round((state.correctAnswers/state.totalAnswers)*100)+'%' : '—';
+  document.getElementById('lb-accuracy').textContent = acc;
+
+  // Achievements
+  const list = document.getElementById('achievements-list');
+  list.innerHTML = achievements.map(a => {
+    const unlocked = a.check(state);
+    return `<div style="display:flex;align-items:center;gap:10px;opacity:${unlocked?1:0.35}">
+      <div style="font-size:24px">${a.icon}</div>
+      <div>
+        <div style="font-size:13px;font-weight:700;color:var(--navy)">${a.name}</div>
+        <div style="font-size:12px;color:var(--gray-400)">${a.desc}</div>
+      </div>
+      ${unlocked ? '<span style="margin-left:auto;font-size:11px;background:var(--teal-dim);color:var(--teal);padding:2px 8px;border-radius:99px;font-weight:700">UNLOCKED</span>' : ''}
+    </div>`;
+  }).join('');
+
+  // Score history
+  const hist = document.getElementById('score-history');
+  if (state.scoreHistory.length) {
+    hist.innerHTML = state.scoreHistory.map(h =>
+      `<div style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:var(--gray-100);border-radius:8px;font-size:13px">
+        <span style="font-weight:600;color:var(--navy)">${h.type}</span>
+        <span style="color:var(--gray-600)">${h.score}/${h.total} correct</span>
+        <span style="font-weight:700;color:var(--teal)">+${h.pts} pts</span>
+        <span style="color:var(--gray-400);font-size:11px">${h.date}</span>
+      </div>`
+    ).join('');
+  }
+}
+
+// ═══════════════════════════════════════════════
+// XP & STATS
+// ═══════════════════════════════════════════════
+function addXP(amount) {
+  state.xp += amount;
+  const xpPerLevel = 500;
+  while (state.xp >= xpPerLevel) { state.xp -= xpPerLevel; state.level++; showToast(`🎉 Level up! You're now Level ${state.level}`, 'success'); }
+  document.getElementById('xp-fill').style.width = (state.xp / xpPerLevel * 100) + '%';
+  document.getElementById('xp-display').textContent = `${state.xp} / ${xpPerLevel}`;
+  document.getElementById('user-level').textContent = state.level;
+
+  const note = document.getElementById('xp-note');
+  note.textContent = `+${amount} XP`;
+  note.classList.add('show');
+  setTimeout(() => note.classList.remove('show'), 1800);
+  saveState();
+}
+
+function updateStats() {
+  document.getElementById('stat-studied').textContent = state.studiedDrugs.length;
+  document.getElementById('stat-correct').textContent = state.correctAnswers;
+  document.getElementById('stat-bookmarks').textContent = state.bookmarks.length;
+  document.getElementById('streak-count').textContent = state.streak;
+  document.getElementById('total-score').textContent = state.totalScore;
+  document.getElementById('xp-fill').style.width = (state.xp / 500 * 100) + '%';
+  document.getElementById('xp-display').textContent = `${state.xp} / 500`;
+  document.getElementById('user-level').textContent = state.level;
+}
+
+// ═══════════════════════════════════════════════
+// UTILITIES
+// ═══════════════════════════════════════════════
+function shuffleArray(arr) { for (let i=arr.length-1;i>0;i--) { const j=Math.floor(Math.random()*(i+1));[arr[i],arr[j]]=[arr[j],arr[i]]; } return arr; }
+function shufflePick(arr, n) { return shuffleArray([...arr]).slice(0, n); }
+function truncate(str, n) { if (!str) return ''; return str.length > n ? str.substring(0, n) + '...' : str; }
+
+function showToast(msg, type='') {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast' + (type ? ' '+type : '');
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+// HCT Logo — load both and pick navy for sidebar
+const logoImg = document.getElementById('hct-logo');
+logoImg.src = './hctlogonavy.png';
+logoImg.onerror = () => {
+  // Fallback SVG circle
+  logoImg.style.display = 'none';
+};
+
+// ═══════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════
+loadDrugs();
+</script>
+</body>
+</html>
