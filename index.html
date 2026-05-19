@@ -651,6 +651,53 @@
     line-height: 1.7;
   }
 
+  /* ── STUDENT-FRIENDLY MODAL REDESIGN ── */
+  .drug-summary-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 18px; }
+  .summary-chip { background: var(--gray-100); border-radius: var(--radius-sm); padding: 10px 14px; display: flex; flex-direction: column; gap: 3px; border: 1px solid var(--gray-200); }
+  .sc-icon { font-size: 16px; }
+  .sc-label { font-size: 10px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--gray-400); }
+  .sc-val { font-size: 13px; font-weight: 600; color: var(--navy); line-height: 1.4; }
+
+  .bullet-card { border-radius: var(--radius-sm); padding: 16px 18px; margin-bottom: 14px; border: 1.5px solid transparent; }
+  .teal-card { background: var(--teal-pale); border-color: rgba(61,189,196,0.3); }
+  .orange-card { background: #fff7ed; border-color: #fed7aa; }
+
+  .bc-header { font-size: 12px; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase; margin-bottom: 10px; color: var(--navy); }
+  .teal-card .bc-header { color: #0d7680; }
+  .orange-card .bc-header { color: #92400e; }
+
+  .bc-list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 7px; }
+  .bc-list li { display: flex; align-items: flex-start; gap: 8px; font-size: 13.5px; color: var(--navy); line-height: 1.55; }
+  .bc-list li::before { content: '▸'; color: var(--teal); font-size: 12px; flex-shrink: 0; margin-top: 2px; font-weight: 700; }
+  .orange-card .bc-list li::before { color: #d97706; }
+  .danger-list li::before { content: '⚠' !important; color: #dc2626 !important; font-size: 11px; }
+
+  .mechanism-banner { display: flex; align-items: center; gap: 16px; background: linear-gradient(135deg, var(--navy), var(--navy-mid)); border-radius: var(--radius-sm); padding: 18px 20px; margin-bottom: 16px; color: var(--white); }
+  .mech-icon { font-size: 32px; }
+  .mech-title { font-family: var(--font-display); font-size: 14px; font-weight: 700; color: var(--teal-light); margin-bottom: 3px; letter-spacing: 0.04em; }
+  .mech-class { font-size: 13px; color: rgba(255,255,255,0.7); }
+  .mech-body { font-size: 14px; color: var(--navy); line-height: 1.75; background: var(--gray-100); border-radius: var(--radius-sm); padding: 16px 18px; margin-bottom: 12px; border-left: 4px solid var(--teal); }
+  .mech-effect-box { font-size: 13px; font-weight: 600; color: #0d7680; background: var(--teal-pale); border: 1.5px solid rgba(61,189,196,0.3); border-radius: var(--radius-sm); padding: 12px 16px; }
+
+  .nursing-columns { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .nc-col { background: var(--gray-100); border-radius: var(--radius-sm); padding: 14px 16px; border: 1.5px solid var(--gray-200); }
+  .nc-col-header { font-size: 11px; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase; margin-bottom: 10px; padding-bottom: 8px; border-bottom: 2px solid transparent; }
+  .assess-header { color: #1d4ed8; border-color: #93c5fd; }
+  .intervene-header { color: #6d28d9; border-color: #c4b5fd; }
+  .teach-header { color: #065f46; border-color: #6ee7b7; }
+
+  .safety-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 14px; }
+  .safety-col { border-radius: var(--radius-sm); padding: 14px 16px; border: 1.5px solid transparent; }
+  .warn-col { background: #fffbeb; border-color: #fde68a; }
+  .danger-col { background: #fef2f2; border-color: #fca5a5; }
+  .warn-header { color: #92400e; margin-bottom: 10px; font-size: 12px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; }
+  .danger-header { color: #991b1b; margin-bottom: 10px; font-size: 12px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; }
+  .warn-col .bc-list li::before { content: '▸'; color: #d97706; }
+
+  .pnle-tip-box { background: linear-gradient(135deg, #1a2e4a 0%, #243554 100%); border-radius: var(--radius-sm); padding: 16px 20px; color: var(--white); }
+  .pnle-label { font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--teal); margin-bottom: 8px; }
+  .pnle-tip-box div:last-child { font-size: 13.5px; line-height: 1.65; color: rgba(255,255,255,0.88); }
+
   /* ──────────── FLASHCARDS ──────────── */
   .flashcard-controls {
     display: flex;
@@ -1602,56 +1649,81 @@
       </div>
     </div>
     <div class="modal-tabs">
-      <div class="modal-tab active" onclick="switchModalTab('overview',this)">Overview</div>
-      <div class="modal-tab" onclick="switchModalTab('mechanism',this)">Mechanism</div>
-      <div class="modal-tab" onclick="switchModalTab('nursing',this)">Nursing</div>
-      <div class="modal-tab" onclick="switchModalTab('safety',this)">Safety</div>
+      <div class="modal-tab active" onclick="switchModalTab('overview',this)">📋 Overview</div>
+      <div class="modal-tab" onclick="switchModalTab('mechanism',this)">⚙️ How It Works</div>
+      <div class="modal-tab" onclick="switchModalTab('nursing',this)">💉 Nursing Care</div>
+      <div class="modal-tab" onclick="switchModalTab('safety',this)">⚠️ Safety</div>
     </div>
     <div class="modal-body">
+
+      <!-- TAB 1: OVERVIEW -->
       <div class="modal-tab-content active" id="mtab-overview">
-        <div class="info-section">
-          <div class="info-label">Classification</div>
-          <div class="info-text" id="m-classification"></div>
+        <div class="drug-summary-grid">
+          <div class="summary-chip"><span class="sc-icon">🏷️</span><span class="sc-label">Drug Class</span><span class="sc-val" id="m-classification"></span></div>
+          <div class="summary-chip"><span class="sc-icon">💊</span><span class="sc-label">Category</span><span class="sc-val" id="m-pharmacoclass-chip"></span></div>
         </div>
-        <div class="info-section">
-          <div class="info-label">Clinical Uses / Indications</div>
-          <div class="info-text" id="m-uses"></div>
+        <div class="bullet-card teal-card">
+          <div class="bc-header">🎯 What is it used for?</div>
+          <ul class="bc-list" id="m-uses"></ul>
         </div>
-        <div class="info-section">
-          <div class="info-label">Precautions & Contraindications</div>
-          <div class="info-text" id="m-precautions"></div>
+        <div class="bullet-card orange-card">
+          <div class="bc-header">🚫 Precautions &amp; Contraindications</div>
+          <ul class="bc-list" id="m-precautions"></ul>
         </div>
       </div>
 
+      <!-- TAB 2: MECHANISM -->
       <div class="modal-tab-content" id="mtab-mechanism">
-        <div class="info-section">
-          <div class="info-label">Mechanism of Action</div>
-          <div class="info-text" id="m-action"></div>
+        <div class="mechanism-banner">
+          <div class="mech-icon">⚙️</div>
+          <div>
+            <div class="mech-title">Mechanism of Action</div>
+            <div class="mech-class" id="m-pharmacoclass"></div>
+          </div>
         </div>
-        <div class="info-section">
-          <div class="info-label">Pharmacotherapeutic Class</div>
-          <div class="info-text" id="m-pharmacoclass"></div>
-        </div>
+        <div class="mech-body" id="m-action"></div>
+        <div class="mech-effect-box" id="m-effect"></div>
       </div>
 
+      <!-- TAB 3: NURSING CARE -->
       <div class="modal-tab-content" id="mtab-nursing">
-        <div class="nursing-box" id="m-nursing"></div>
+        <div class="nursing-columns" id="m-nursing-wrap">
+          <div class="nc-col">
+            <div class="nc-col-header assess-header">📋 Baseline Assessment</div>
+            <ul class="bc-list" id="m-nursing-assess"></ul>
+          </div>
+          <div class="nc-col">
+            <div class="nc-col-header intervene-header">🔍 Intervention / Monitoring</div>
+            <ul class="bc-list" id="m-nursing-intervene"></ul>
+          </div>
+          <div class="nc-col" style="grid-column:1/-1">
+            <div class="nc-col-header teach-header">📢 Patient &amp; Family Teaching</div>
+            <ul class="bc-list" id="m-nursing-teach"></ul>
+          </div>
+        </div>
       </div>
 
+      <!-- TAB 4: SAFETY -->
       <div class="modal-tab-content" id="mtab-safety">
-        <div class="info-section">
-          <div class="info-label">Side Effects</div>
-          <div class="warn-box"><div class="info-text" id="m-side"></div></div>
+        <div class="safety-row">
+          <div class="safety-col warn-col">
+            <div class="bc-header warn-header">⚠️ Common Side Effects</div>
+            <ul class="bc-list" id="m-side"></ul>
+          </div>
+          <div class="safety-col danger-col">
+            <div class="bc-header danger-header">🚨 Adverse &amp; Toxic Reactions</div>
+            <ul class="bc-list danger-list" id="m-adverse"></ul>
+          </div>
         </div>
-        <div class="info-section">
-          <div class="info-label">Adverse Effects / Toxic Reactions</div>
-          <div class="alert-box"><div class="info-text" id="m-adverse"></div></div>
+        <div class="pnle-tip-box" id="m-pnle-tip">
+          <div class="pnle-label">📌 PNLE NURSING TIP</div>
+          <div id="m-pnle-content"></div>
         </div>
       </div>
 
       <div class="modal-actions">
         <button class="btn btn-primary" id="modal-bookmark-btn" onclick="toggleBookmarkFromModal()">🔖 Bookmark</button>
-        <button class="btn btn-navy" onclick="addToFlashcards()">🃏 Add to Study Queue</button>
+        <button class="btn btn-navy" onclick="addToFlashcards()">🃏 Study Queue</button>
         <button class="btn btn-navy" onclick="closeModal()">Close</button>
       </div>
     </div>
@@ -1829,18 +1901,87 @@ function openDrug(name) {
   recent = [name, ...recent.filter(n=>n!==name)].slice(0, 6);
   localStorage.setItem('hct-recent', JSON.stringify(recent));
 
-  // Populate modal
+  // ── Populate modal with student-friendly bullet format ──
   document.getElementById('modal-drug-name').textContent = drug.displayName || drug.name;
   document.getElementById('modal-drug-brand').textContent = drug.brand ? `Brand: ${drug.brand}` : '';
   document.getElementById('modal-class-pill').textContent = drug.clinicalClass || drug.pharmacoClass || 'Unknown Class';
-  document.getElementById('m-classification').textContent = drug.pharmacoClass ? `${drug.pharmacoClass}. ${drug.clinicalClass || ''}` : (drug.clinicalClass || 'Not specified');
-  document.getElementById('m-uses').textContent = drug.uses || 'Not available';
-  document.getElementById('m-precautions').textContent = drug.precautions || 'Not available';
-  document.getElementById('m-action').textContent = drug.action || 'Not available';
-  document.getElementById('m-pharmacoclass').textContent = drug.pharmacoClass || 'Not available';
-  document.getElementById('m-nursing').textContent = drug.nursingConsiderations || 'Not available';
-  document.getElementById('m-side').textContent = drug.sideEffects || 'Not available';
-  document.getElementById('m-adverse').textContent = drug.adverseEffects || 'Not available';
+
+  // Summary chips
+  document.getElementById('m-classification').textContent = drug.clinicalClass || drug.pharmacoClass || 'Not specified';
+  document.getElementById('m-pharmacoclass-chip').textContent = drug.pharmacoClass || 'Not specified';
+
+  // Mechanism tab
+  document.getElementById('m-pharmacoclass').textContent = drug.pharmacoClass || '';
+  const actionText = drug.action || '';
+  const effectMatch = actionText.match(/Therapeutic Effect[:\s]+([^.]+\.)/i);
+  const actionMain = actionText.replace(/Therapeutic Effect[:\s]+[^.]+\./i, '').trim();
+  document.getElementById('m-action').textContent = actionMain || actionText;
+  const effectBox = document.getElementById('m-effect');
+  if (effectMatch) {
+    effectBox.textContent = '✓ Therapeutic Effect: ' + effectMatch[1].trim();
+    effectBox.style.display = 'block';
+  } else { effectBox.style.display = 'none'; }
+
+  // Render bullet list helper
+  function toBullets(text, elId) {
+    const el = document.getElementById(elId);
+    if (!text || text.length < 5) { el.innerHTML = '<li>Not available</li>'; return; }
+    // Split on sentence boundaries, semicolons, or numbered items
+    const raw = text
+      .replace(/\d+\.\s+/g, '|')
+      .split(/[|;]/)
+      .map(s => s.trim())
+      .filter(s => s.length > 8);
+    // If only 1 chunk, try splitting by comma groups
+    const items = raw.length >= 2 ? raw : text.split(/,\s+(?=[A-Z])/).filter(s => s.length > 5);
+    el.innerHTML = (items.length > 1 ? items : [text]).map(s =>
+      `<li>${s.replace(/\.$/, '').trim()}</li>`
+    ).join('');
+  }
+
+  toBullets(drug.uses, 'm-uses');
+  toBullets(drug.precautions, 'm-precautions');
+  toBullets(drug.sideEffects, 'm-side');
+  toBullets(drug.adverseEffects, 'm-adverse');
+
+  // Nursing considerations — split into 3 sections
+  const nc = drug.nursingConsiderations || '';
+  function extractNCSection(text, ...keywords) {
+    for (const kw of keywords) {
+      const re = new RegExp(kw + '[:\\s]*(.*?)(?=BASELINE|INTERVENTION|PATIENT|$)', 'is');
+      const m = text.match(re);
+      if (m && m[1].trim().length > 10) return m[1].trim();
+    }
+    return '';
+  }
+  const assess = extractNCSection(nc, 'BASELINE ASSESSMENT', 'BASELINE');
+  const intervene = extractNCSection(nc, 'INTERVENTION/EVALUATION', 'INTERVENTION', 'EVALUATION');
+  const teach = extractNCSection(nc, 'PATIENT/FAMILY TEACHING', 'PATIENT TEACHING', 'TEACHING');
+
+  // Fallback: if sections not parsed, show full text split
+  if (assess) {
+    toBullets(assess, 'm-nursing-assess');
+    toBullets(intervene || 'Monitor patient response and vital signs. Report adverse effects promptly.', 'm-nursing-intervene');
+    toBullets(teach || 'Follow prescribed dosage. Do not stop medication abruptly. Report side effects to provider.', 'm-nursing-teach');
+  } else {
+    // Split full NC evenly among the 3 sections
+    const sentences = nc.split(/\.\s+/).filter(s => s.length > 10);
+    const third = Math.ceil(sentences.length / 3);
+    const s1 = sentences.slice(0, third).join('. ');
+    const s2 = sentences.slice(third, third*2).join('. ');
+    const s3 = sentences.slice(third*2).join('. ');
+    toBullets(s1 || 'Obtain baseline assessment before initiating therapy.', 'm-nursing-assess');
+    toBullets(s2 || 'Monitor patient response and vital signs throughout therapy.', 'm-nursing-intervene');
+    toBullets(s3 || 'Instruct patient on proper use and expected effects of medication.', 'm-nursing-teach');
+  }
+
+  // PNLE Tip — generate from adverse effects and nursing notes
+  const pnleTips = [
+    drug.adverseEffects ? `Watch for: ${drug.adverseEffects.split('.')[0]}.` : '',
+    drug.precautions ? `Key precaution: ${drug.precautions.split('.')[0]}.` : '',
+    drug.sideEffects ? `Most common side effects include: ${drug.sideEffects.split('.')[0]}.` : ''
+  ].filter(Boolean).join(' ');
+  document.getElementById('m-pnle-content').textContent = pnleTips || `Always assess the patient before administering ${drug.displayName || drug.name}. Monitor for therapeutic and adverse effects. Educate patient on proper use.`;
 
   // Bookmark btn
   const bookmarked = state.bookmarks.includes(name);
