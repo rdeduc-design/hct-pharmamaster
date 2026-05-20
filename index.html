@@ -2,2754 +2,909 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>HCT PharmaMaster — Drug Reference & Learning Hub</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --navy: #1a2e4a;
-    --navy-dark: #0f1e33;
-    --navy-mid: #243554;
-    --teal: #3dbdc4;
-    --teal-light: #5dd0d7;
-    --teal-pale: #e8f9fa;
-    --teal-dim: rgba(61,189,196,0.15);
-    --white: #ffffff;
-    --off-white: #f4f7f9;
-    --gray-100: #eef1f4;
-    --gray-200: #d8dfe8;
-    --gray-400: #8a9ab0;
-    --gray-600: #5a6a80;
-    --text: #1a2e4a;
-    --radius: 16px;
-    --radius-sm: 10px;
-    --shadow: 0 4px 24px rgba(26,46,74,0.10);
-    --shadow-lg: 0 12px 48px rgba(26,46,74,0.18);
-    --transition: 0.22s cubic-bezier(0.4,0,0.2,1);
-    --font-display: 'Syne', sans-serif;
-    --font-body: 'DM Sans', sans-serif;
-    --font-mono: 'DM Mono', monospace;
-  }
-
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-  body {
-    font-family: var(--font-body);
-    background: var(--navy-dark);
-    color: var(--text);
-    min-height: 100vh;
-    overflow-x: hidden;
-  }
-
-  /* ──────────── SIDEBAR ──────────── */
-  .app-shell {
-    display: flex;
-    min-height: 100vh;
-  }
-
-  .sidebar {
-    width: 240px;
-    background: var(--navy);
-    display: flex;
-    flex-direction: column;
-    position: fixed;
-    top: 0; left: 0; bottom: 0;
-    z-index: 100;
-    border-right: 1px solid rgba(255,255,255,0.06);
-  }
-
-  .sidebar-logo {
-    padding: 28px 24px 20px;
-    border-bottom: 1px solid rgba(255,255,255,0.08);
-    display: flex;
-    align-items: center;
-    gap: 12px;
-  }
-
-  .sidebar-logo img {
-    width: 42px; height: 42px;
-    border-radius: 50%;
-  }
-
-  .sidebar-logo-text h1 {
-    font-family: var(--font-display);
-    font-size: 15px;
-    font-weight: 800;
-    color: var(--white);
-    line-height: 1.2;
-    letter-spacing: -0.01em;
-  }
-
-  .sidebar-logo-text span {
-    font-size: 11px;
-    color: var(--teal);
-    font-weight: 500;
-    letter-spacing: 0.04em;
-    text-transform: uppercase;
-  }
-
-  .sidebar-nav {
-    flex: 1;
-    padding: 16px 12px;
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-    overflow-y: auto;
-  }
-
-  .nav-label {
-    font-size: 10px;
-    font-weight: 600;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: var(--gray-400);
-    padding: 12px 12px 6px;
-  }
-
-  .nav-item {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 10px 14px;
-    border-radius: 10px;
-    cursor: pointer;
-    color: rgba(255,255,255,0.55);
-    font-size: 14px;
-    font-weight: 500;
-    transition: var(--transition);
-    user-select: none;
-  }
-
-  .nav-item:hover { background: rgba(255,255,255,0.07); color: var(--white); }
-
-  .nav-item.active {
-    background: var(--teal-dim);
-    color: var(--teal-light);
-    border: 1px solid rgba(61,189,196,0.2);
-  }
-
-  .nav-item .nav-icon { font-size: 18px; width: 22px; text-align: center; }
-
-  .sidebar-footer {
-    padding: 16px 20px;
-    border-top: 1px solid rgba(255,255,255,0.08);
-  }
-
-  .xp-bar-wrap { }
-  .xp-bar-label {
-    display: flex;
-    justify-content: space-between;
-    font-size: 11px;
-    color: rgba(255,255,255,0.5);
-    margin-bottom: 6px;
-  }
-  .xp-bar-label strong { color: var(--teal); }
-
-  .xp-bar {
-    height: 6px;
-    background: rgba(255,255,255,0.1);
-    border-radius: 99px;
-    overflow: hidden;
-  }
-  .xp-fill {
-    height: 100%;
-    background: linear-gradient(90deg, var(--teal), var(--teal-light));
-    border-radius: 99px;
-    transition: width 0.5s ease;
-  }
-
-  .level-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    background: var(--teal-dim);
-    border: 1px solid rgba(61,189,196,0.25);
-    border-radius: 99px;
-    padding: 4px 10px;
-    font-size: 12px;
-    color: var(--teal-light);
-    font-weight: 600;
-    margin-bottom: 10px;
-  }
-
-  /* ──────────── MAIN CONTENT ──────────── */
-  .main {
-    margin-left: 240px;
-    flex: 1;
-    background: var(--off-white);
-    min-height: 100vh;
-  }
-
-  .topbar {
-    background: var(--white);
-    border-bottom: 1px solid var(--gray-200);
-    padding: 0 32px;
-    height: 64px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    position: sticky;
-    top: 0;
-    z-index: 50;
-  }
-
-  .topbar-title {
-    font-family: var(--font-display);
-    font-size: 20px;
-    font-weight: 800;
-    color: var(--navy);
-  }
-
-  .topbar-right {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-  }
-
-  .streak-badge {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    background: #fff7ed;
-    border: 1px solid #fed7aa;
-    border-radius: 99px;
-    padding: 6px 14px;
-    font-size: 13px;
-    font-weight: 600;
-    color: #c2410c;
-  }
-
-  .score-badge {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    background: var(--teal-pale);
-    border: 1px solid rgba(61,189,196,0.3);
-    border-radius: 99px;
-    padding: 6px 14px;
-    font-size: 13px;
-    font-weight: 600;
-    color: var(--navy);
-  }
-
-  /* ──────────── PAGE SECTIONS ──────────── */
-  .page { display: none; padding: 28px 32px; }
-  .page.active { display: block; }
-
-  /* ──────────── HERO (HOME) ──────────── */
-  .hero {
-    background: linear-gradient(135deg, var(--navy) 0%, var(--navy-mid) 60%, #1e4060 100%);
-    border-radius: var(--radius);
-    padding: 40px 40px;
-    margin-bottom: 28px;
-    position: relative;
-    overflow: hidden;
-    color: var(--white);
-  }
-
-  .hero::before {
-    content: '';
-    position: absolute;
-    top: -60px; right: -60px;
-    width: 320px; height: 320px;
-    background: radial-gradient(circle, rgba(61,189,196,0.18) 0%, transparent 70%);
-    border-radius: 50%;
-  }
-
-  .hero-content { position: relative; z-index: 1; max-width: 580px; }
-  .hero h2 {
-    font-family: var(--font-display);
-    font-size: 32px;
-    font-weight: 800;
-    line-height: 1.15;
-    margin-bottom: 12px;
-  }
-  .hero h2 span { color: var(--teal); }
-  .hero p { font-size: 15px; color: rgba(255,255,255,0.7); line-height: 1.6; margin-bottom: 24px; }
-
-  .hero-actions { display: flex; gap: 12px; flex-wrap: wrap; }
-
-  /* ──────────── BUTTONS ──────────── */
-  .btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    padding: 11px 22px;
-    border-radius: var(--radius-sm);
-    font-family: var(--font-body);
-    font-size: 14px;
-    font-weight: 600;
-    cursor: pointer;
-    border: none;
-    transition: var(--transition);
-    user-select: none;
-    white-space: nowrap;
-  }
-  .btn-primary { background: var(--teal); color: var(--navy-dark); }
-  .btn-primary:hover { background: var(--teal-light); transform: translateY(-1px); box-shadow: 0 4px 14px rgba(61,189,196,0.35); }
-  .btn-outline { background: transparent; color: var(--white); border: 1.5px solid rgba(255,255,255,0.3); }
-  .btn-outline:hover { background: rgba(255,255,255,0.08); }
-  .btn-navy { background: var(--navy); color: var(--white); }
-  .btn-navy:hover { background: var(--navy-mid); }
-  .btn-sm { padding: 7px 14px; font-size: 13px; }
-
-  /* ──────────── STAT CARDS ──────────── */
-  .stats-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 16px;
-    margin-bottom: 28px;
-  }
-
-  .stat-card {
-    background: var(--white);
-    border-radius: var(--radius);
-    padding: 20px 24px;
-    box-shadow: var(--shadow);
-    border: 1px solid var(--gray-200);
-  }
-
-  .stat-icon {
-    width: 42px; height: 42px;
-    border-radius: 10px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 20px;
-    margin-bottom: 12px;
-  }
-  .stat-icon.teal { background: var(--teal-dim); }
-  .stat-icon.orange { background: #fff7ed; }
-  .stat-icon.purple { background: #f3f0ff; }
-  .stat-icon.green { background: #f0fdf4; }
-
-  .stat-value {
-    font-family: var(--font-display);
-    font-size: 28px;
-    font-weight: 800;
-    color: var(--navy);
-    line-height: 1;
-    margin-bottom: 4px;
-  }
-  .stat-label { font-size: 13px; color: var(--gray-600); }
-
-  /* ──────────── CARDS GRID ──────────── */
-  .section-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 16px;
-  }
-  .section-title {
-    font-family: var(--font-display);
-    font-size: 18px;
-    font-weight: 700;
-    color: var(--navy);
-  }
-
-  .game-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 16px;
-    margin-bottom: 28px;
-  }
-
-  .game-card {
-    background: var(--white);
-    border-radius: var(--radius);
-    padding: 24px;
-    box-shadow: var(--shadow);
-    border: 1px solid var(--gray-200);
-    cursor: pointer;
-    transition: var(--transition);
-    position: relative;
-    overflow: hidden;
-  }
-
-  .game-card::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 4px;
-    background: var(--teal);
-  }
-
-  .game-card:hover {
-    transform: translateY(-3px);
-    box-shadow: var(--shadow-lg);
-    border-color: var(--teal);
-  }
-
-  .game-card-icon { font-size: 32px; margin-bottom: 12px; }
-  .game-card h3 {
-    font-family: var(--font-display);
-    font-size: 16px;
-    font-weight: 700;
-    color: var(--navy);
-    margin-bottom: 6px;
-  }
-  .game-card p { font-size: 13px; color: var(--gray-600); line-height: 1.5; }
-  .game-card-badge {
-    display: inline-flex;
-    margin-top: 12px;
-    padding: 3px 10px;
-    border-radius: 99px;
-    font-size: 11px;
-    font-weight: 600;
-  }
-  .badge-teal { background: var(--teal-dim); color: var(--teal); border: 1px solid rgba(61,189,196,0.2); }
-  .badge-orange { background: #fff7ed; color: #c2410c; border: 1px solid #fed7aa; }
-  .badge-purple { background: #f3f0ff; color: #7c3aed; border: 1px solid #ddd6fe; }
-
-  /* ──────────── SEARCH PAGE ──────────── */
-  .search-bar {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    background: var(--white);
-    border: 2px solid var(--gray-200);
-    border-radius: var(--radius);
-    padding: 12px 18px;
-    margin-bottom: 20px;
-    transition: var(--transition);
-  }
-  .search-bar:focus-within {
-    border-color: var(--teal);
-    box-shadow: 0 0 0 4px rgba(61,189,196,0.12);
-  }
-  .search-bar input {
-    flex: 1;
-    border: none;
-    outline: none;
-    font-family: var(--font-body);
-    font-size: 16px;
-    color: var(--navy);
-    background: transparent;
-  }
-  .search-bar input::placeholder { color: var(--gray-400); }
-  .search-icon { font-size: 20px; color: var(--gray-400); }
-
-  .filter-row {
-    display: flex;
-    gap: 10px;
-    flex-wrap: wrap;
-    margin-bottom: 20px;
-    align-items: center;
-  }
-  .filter-label { font-size: 13px; font-weight: 600; color: var(--gray-600); }
-  .filter-chip {
-    padding: 6px 14px;
-    border-radius: 99px;
-    font-size: 13px;
-    cursor: pointer;
-    border: 1.5px solid var(--gray-200);
-    background: var(--white);
-    color: var(--gray-600);
-    font-family: var(--font-body);
-    transition: var(--transition);
-    font-weight: 500;
-  }
-  .filter-chip:hover, .filter-chip.active {
-    background: var(--navy);
-    color: var(--white);
-    border-color: var(--navy);
-  }
-
-  .drug-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 14px;
-  }
-
-  .drug-card {
-    background: var(--white);
-    border-radius: var(--radius);
-    padding: 18px 20px;
-    border: 1.5px solid var(--gray-200);
-    cursor: pointer;
-    transition: var(--transition);
-    box-shadow: 0 2px 8px rgba(26,46,74,0.05);
-  }
-  .drug-card:hover {
-    border-color: var(--teal);
-    box-shadow: var(--shadow);
-    transform: translateY(-2px);
-  }
-  .drug-name {
-    font-family: var(--font-display);
-    font-size: 15px;
-    font-weight: 700;
-    color: var(--navy);
-    margin-bottom: 4px;
-    text-transform: capitalize;
-  }
-  .drug-brand {
-    font-size: 12px;
-    color: var(--teal);
-    font-weight: 500;
-    margin-bottom: 8px;
-  }
-  .drug-class-pill {
-    display: inline-block;
-    background: var(--gray-100);
-    color: var(--gray-600);
-    font-size: 11px;
-    font-weight: 500;
-    padding: 3px 8px;
-    border-radius: 6px;
-  }
-
-  /* ──────────── DRUG DETAIL MODAL ──────────── */
-  .modal-backdrop {
-    position: fixed;
-    inset: 0;
-    background: rgba(15,30,51,0.75);
-    z-index: 200;
-    display: none;
-    align-items: center;
-    justify-content: center;
-    padding: 24px;
-    backdrop-filter: blur(4px);
-  }
-  .modal-backdrop.open { display: flex; }
-
-  .modal {
-    background: var(--white);
-    border-radius: 20px;
-    width: 100%;
-    max-width: 780px;
-    max-height: 88vh;
-    overflow-y: auto;
-    box-shadow: 0 24px 80px rgba(15,30,51,0.35);
-    animation: modalIn 0.25s cubic-bezier(0.34,1.56,0.64,1);
-  }
-
-  @keyframes modalIn {
-    from { opacity: 0; transform: scale(0.94) translateY(10px); }
-    to { opacity: 1; transform: scale(1) translateY(0); }
-  }
-
-  .modal-header {
-    background: linear-gradient(135deg, var(--navy) 0%, var(--navy-mid) 100%);
-    color: var(--white);
-    padding: 28px 32px;
-    border-radius: 20px 20px 0 0;
-    position: relative;
-  }
-
-  .modal-close {
-    position: absolute;
-    top: 20px; right: 20px;
-    width: 36px; height: 36px;
-    border-radius: 50%;
-    background: rgba(255,255,255,0.1);
-    border: none;
-    color: var(--white);
-    font-size: 18px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: var(--transition);
-  }
-  .modal-close:hover { background: rgba(255,255,255,0.2); }
-
-  .modal-drug-name {
-    font-family: var(--font-display);
-    font-size: 24px;
-    font-weight: 800;
-    margin-bottom: 4px;
-    text-transform: capitalize;
-  }
-  .modal-drug-brand { font-size: 14px; color: var(--teal-light); font-weight: 500; margin-bottom: 10px; }
-  .modal-class-pill {
-    display: inline-block;
-    background: rgba(61,189,196,0.2);
-    color: var(--teal-light);
-    font-size: 12px;
-    font-weight: 600;
-    padding: 4px 12px;
-    border-radius: 99px;
-    border: 1px solid rgba(61,189,196,0.3);
-  }
-
-  .modal-tabs {
-    display: flex;
-    border-bottom: 2px solid var(--gray-200);
-    padding: 0 32px;
-    background: var(--white);
-  }
-  .modal-tab {
-    padding: 14px 18px;
-    font-size: 14px;
-    font-weight: 600;
-    color: var(--gray-400);
-    cursor: pointer;
-    border-bottom: 2.5px solid transparent;
-    margin-bottom: -2px;
-    transition: var(--transition);
-    white-space: nowrap;
-  }
-  .modal-tab:hover { color: var(--navy); }
-  .modal-tab.active { color: var(--teal); border-bottom-color: var(--teal); }
-
-  .modal-body {
-    padding: 28px 32px;
-  }
-
-  .modal-tab-content { display: none; }
-  .modal-tab-content.active { display: block; }
-
-  .info-section { margin-bottom: 24px; }
-  .info-label {
-    font-size: 11px;
-    font-weight: 700;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    color: var(--teal);
-    margin-bottom: 8px;
-  }
-  .info-text {
-    font-size: 14px;
-    color: var(--text);
-    line-height: 1.7;
-  }
-
-  .warn-box {
-    background: #fff7ed;
-    border: 1.5px solid #fed7aa;
-    border-radius: var(--radius-sm);
-    padding: 14px 18px;
-    font-size: 13px;
-    color: #7c2d12;
-    line-height: 1.6;
-    margin-bottom: 16px;
-  }
-  .warn-box strong { display: block; margin-bottom: 4px; font-size: 12px; letter-spacing: 0.04em; }
-
-  .alert-box {
-    background: #fef2f2;
-    border: 1.5px solid #fca5a5;
-    border-radius: var(--radius-sm);
-    padding: 14px 18px;
-    font-size: 13px;
-    color: #7f1d1d;
-    line-height: 1.6;
-    margin-bottom: 16px;
-  }
-  .alert-box strong { display: block; margin-bottom: 4px; }
-
-  .nursing-box {
-    background: var(--teal-pale);
-    border: 1.5px solid rgba(61,189,196,0.3);
-    border-radius: var(--radius-sm);
-    padding: 14px 18px;
-    font-size: 13px;
-    color: var(--navy);
-    line-height: 1.7;
-  }
-
-  /* ── STUDENT-FRIENDLY MODAL REDESIGN ── */
-  .drug-summary-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 18px; }
-  .summary-chip { background: var(--gray-100); border-radius: var(--radius-sm); padding: 10px 14px; display: flex; flex-direction: column; gap: 3px; border: 1px solid var(--gray-200); }
-  .sc-icon { font-size: 16px; }
-  .sc-label { font-size: 10px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--gray-400); }
-  .sc-val { font-size: 13px; font-weight: 600; color: var(--navy); line-height: 1.4; }
-
-  .bullet-card { border-radius: var(--radius-sm); padding: 16px 18px; margin-bottom: 14px; border: 1.5px solid transparent; }
-  .teal-card { background: var(--teal-pale); border-color: rgba(61,189,196,0.3); }
-  .orange-card { background: #fff7ed; border-color: #fed7aa; }
-
-  .bc-header { font-size: 12px; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase; margin-bottom: 10px; color: var(--navy); }
-  .teal-card .bc-header { color: #0d7680; }
-  .orange-card .bc-header { color: #92400e; }
-
-  .bc-list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 7px; }
-  .bc-list li { display: flex; align-items: flex-start; gap: 8px; font-size: 13.5px; color: var(--navy); line-height: 1.55; }
-  .bc-list li::before { content: '▸'; color: var(--teal); font-size: 12px; flex-shrink: 0; margin-top: 2px; font-weight: 700; }
-  .orange-card .bc-list li::before { color: #d97706; }
-  .danger-list li::before { content: '⚠' !important; color: #dc2626 !important; font-size: 11px; }
-
-  .mechanism-banner { display: flex; align-items: center; gap: 16px; background: linear-gradient(135deg, var(--navy), var(--navy-mid)); border-radius: var(--radius-sm); padding: 18px 20px; margin-bottom: 16px; color: var(--white); }
-  .mech-icon { font-size: 32px; }
-  .mech-title { font-family: var(--font-display); font-size: 14px; font-weight: 700; color: var(--teal-light); margin-bottom: 3px; letter-spacing: 0.04em; }
-  .mech-class { font-size: 13px; color: rgba(255,255,255,0.7); }
-  .mech-body { font-size: 14px; color: var(--navy); line-height: 1.75; background: var(--gray-100); border-radius: var(--radius-sm); padding: 16px 18px; margin-bottom: 12px; border-left: 4px solid var(--teal); }
-  .mech-effect-box { font-size: 13px; font-weight: 600; color: #0d7680; background: var(--teal-pale); border: 1.5px solid rgba(61,189,196,0.3); border-radius: var(--radius-sm); padding: 12px 16px; }
-
-  .nursing-columns { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-  .nc-col { background: var(--gray-100); border-radius: var(--radius-sm); padding: 14px 16px; border: 1.5px solid var(--gray-200); }
-  .nc-col-header { font-size: 11px; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase; margin-bottom: 10px; padding-bottom: 8px; border-bottom: 2px solid transparent; }
-  .assess-header { color: #1d4ed8; border-color: #93c5fd; }
-  .intervene-header { color: #6d28d9; border-color: #c4b5fd; }
-  .teach-header { color: #065f46; border-color: #6ee7b7; }
-
-  .safety-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 14px; }
-  .safety-col { border-radius: var(--radius-sm); padding: 14px 16px; border: 1.5px solid transparent; }
-  .warn-col { background: #fffbeb; border-color: #fde68a; }
-  .danger-col { background: #fef2f2; border-color: #fca5a5; }
-  .warn-header { color: #92400e; margin-bottom: 10px; font-size: 12px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; }
-  .danger-header { color: #991b1b; margin-bottom: 10px; font-size: 12px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; }
-  .warn-col .bc-list li::before { content: '▸'; color: #d97706; }
-
-  .pnle-tip-box { background: linear-gradient(135deg, #1a2e4a 0%, #243554 100%); border-radius: var(--radius-sm); padding: 16px 20px; color: var(--white); }
-  .pnle-label { font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--teal); margin-bottom: 8px; }
-  .pnle-tip-box div:last-child { font-size: 13.5px; line-height: 1.65; color: rgba(255,255,255,0.88); }
-
-  /* ──────────── FLASHCARDS ──────────── */
-  .flashcard-controls {
-    display: flex;
-    align-items: center;
-    gap: 14px;
-    margin-bottom: 28px;
-    flex-wrap: wrap;
-  }
-
-  .flashcard-scene {
-    perspective: 1200px;
-    width: 100%;
-    max-width: 600px;
-    height: 340px;
-    margin: 0 auto 28px;
-    cursor: pointer;
-  }
-
-  .flashcard-inner {
-    position: relative;
-    width: 100%;
-    height: 100%;
-    transform-style: preserve-3d;
-    transition: transform 0.55s cubic-bezier(0.4,0,0.2,1);
-  }
-
-  .flashcard-scene.flipped .flashcard-inner { transform: rotateY(180deg); }
-
-  .flashcard-front, .flashcard-back {
-    position: absolute;
-    inset: 0;
-    border-radius: 20px;
-    backface-visibility: hidden;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 36px;
-    text-align: center;
-  }
-
-  .flashcard-front {
-    background: linear-gradient(135deg, var(--navy) 0%, var(--navy-mid) 100%);
-    color: var(--white);
-    border: 2px solid rgba(61,189,196,0.2);
-  }
-
-  .flashcard-back {
-    background: var(--white);
-    color: var(--navy);
-    transform: rotateY(180deg);
-    border: 2px solid var(--teal);
-    box-shadow: var(--shadow-lg);
-  }
-
-  .flashcard-front .fc-label {
-    font-size: 11px;
-    font-weight: 700;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: var(--teal);
-    margin-bottom: 16px;
-  }
-
-  .flashcard-front .fc-drug {
-    font-family: var(--font-display);
-    font-size: 26px;
-    font-weight: 800;
-    margin-bottom: 10px;
-    text-transform: capitalize;
-  }
-
-  .flashcard-front .fc-hint {
-    font-size: 13px;
-    color: rgba(255,255,255,0.5);
-  }
-
-  .flashcard-back .fc-question {
-    font-size: 13px;
-    font-weight: 700;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    color: var(--teal);
-    margin-bottom: 14px;
-  }
-
-  .flashcard-back .fc-answer {
-    font-size: 15px;
-    line-height: 1.65;
-    color: var(--navy);
-  }
-
-  .fc-progress {
-    text-align: center;
-    font-size: 14px;
-    color: var(--gray-400);
-    margin-bottom: 16px;
-    font-family: var(--font-mono);
-  }
-
-  .fc-nav {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 12px;
-  }
-
-  .fc-modes {
-    display: flex;
-    gap: 8px;
-    flex-wrap: wrap;
-    margin-bottom: 20px;
-  }
-
-  .fc-mode-btn {
-    padding: 8px 16px;
-    border-radius: 99px;
-    font-size: 13px;
-    font-weight: 600;
-    cursor: pointer;
-    border: 1.5px solid var(--gray-200);
-    background: var(--white);
-    color: var(--gray-600);
-    transition: var(--transition);
-  }
-  .fc-mode-btn.active {
-    background: var(--teal);
-    color: var(--navy-dark);
-    border-color: var(--teal);
-  }
-
-  /* ──────────── QUIZ GAME ──────────── */
-  .quiz-container {
-    max-width: 680px;
-    margin: 0 auto;
-  }
-
-  .quiz-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 24px;
-  }
-
-  .quiz-progress-bar {
-    flex: 1;
-    height: 8px;
-    background: var(--gray-200);
-    border-radius: 99px;
-    overflow: hidden;
-    margin: 0 16px;
-  }
-  .quiz-progress-fill {
-    height: 100%;
-    background: linear-gradient(90deg, var(--teal), var(--teal-light));
-    border-radius: 99px;
-    transition: width 0.4s ease;
-  }
-
-  .quiz-q-count {
-    font-family: var(--font-mono);
-    font-size: 13px;
-    color: var(--gray-400);
-    white-space: nowrap;
-  }
-
-  .quiz-timer {
-    font-family: var(--font-display);
-    font-size: 20px;
-    font-weight: 800;
-    color: var(--navy);
-    min-width: 48px;
-    text-align: center;
-  }
-  .quiz-timer.urgent { color: #dc2626; animation: pulse 0.8s infinite; }
-
-  @keyframes pulse {
-    0%, 100% { transform: scale(1); }
-    50% { transform: scale(1.05); }
-  }
-
-  .quiz-card {
-    background: var(--white);
-    border-radius: 20px;
-    padding: 32px;
-    box-shadow: var(--shadow);
-    margin-bottom: 24px;
-  }
-
-  .quiz-category {
-    font-size: 11px;
-    font-weight: 700;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: var(--teal);
-    margin-bottom: 14px;
-  }
-
-  .quiz-question {
-    font-family: var(--font-display);
-    font-size: 18px;
-    font-weight: 700;
-    color: var(--navy);
-    line-height: 1.5;
-    margin-bottom: 24px;
-  }
-
-  .quiz-options {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-  }
-
-  .quiz-option {
-    display: flex;
-    align-items: flex-start;
-    gap: 14px;
-    padding: 14px 18px;
-    border-radius: var(--radius-sm);
-    border: 2px solid var(--gray-200);
-    cursor: pointer;
-    transition: var(--transition);
-    background: var(--white);
-    text-align: left;
-    font-family: var(--font-body);
-    font-size: 14px;
-    color: var(--text);
-    line-height: 1.5;
-  }
-  .quiz-option:hover:not(.disabled) {
-    border-color: var(--teal);
-    background: var(--teal-pale);
-  }
-  .quiz-option.correct { border-color: #16a34a; background: #f0fdf4; color: #14532d; }
-  .quiz-option.wrong { border-color: #dc2626; background: #fef2f2; color: #7f1d1d; }
-  .quiz-option.disabled { cursor: not-allowed; }
-
-  .option-letter {
-    width: 28px; height: 28px;
-    border-radius: 50%;
-    background: var(--gray-100);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 12px;
-    font-weight: 700;
-    color: var(--gray-600);
-    flex-shrink: 0;
-    transition: var(--transition);
-  }
-  .quiz-option.correct .option-letter { background: #16a34a; color: white; }
-  .quiz-option.wrong .option-letter { background: #dc2626; color: white; }
-  .quiz-option:hover:not(.disabled) .option-letter { background: var(--teal); color: var(--navy-dark); }
-
-  .quiz-feedback {
-    margin-top: 16px;
-    padding: 14px 18px;
-    border-radius: var(--radius-sm);
-    font-size: 14px;
-    line-height: 1.6;
-    display: none;
-  }
-  .quiz-feedback.correct { background: #f0fdf4; color: #14532d; border: 1.5px solid #86efac; display: block; }
-  .quiz-feedback.wrong { background: #fef2f2; color: #7f1d1d; border: 1.5px solid #fca5a5; display: block; }
-
-  .quiz-results {
-    background: var(--white);
-    border-radius: 20px;
-    padding: 40px;
-    text-align: center;
-    box-shadow: var(--shadow-lg);
-    display: none;
-  }
-  .quiz-results.show { display: block; }
-  .result-emoji { font-size: 56px; margin-bottom: 16px; }
-  .result-score {
-    font-family: var(--font-display);
-    font-size: 48px;
-    font-weight: 800;
-    color: var(--navy);
-    margin-bottom: 8px;
-  }
-  .result-label { font-size: 16px; color: var(--gray-600); margin-bottom: 24px; }
-
-  /* ──────────── MATCHING GAME ──────────── */
-  .match-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 10px;
-    margin-bottom: 24px;
-  }
-  .match-card {
-    height: 80px;
-    border-radius: var(--radius-sm);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 10px;
-    text-align: center;
-    font-size: 12px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: var(--transition);
-    border: 2px solid var(--gray-200);
-    background: var(--white);
-    color: var(--navy);
-    line-height: 1.4;
-  }
-  .match-card.drug { background: var(--navy); color: var(--white); border-color: var(--navy-mid); font-family: var(--font-display); font-size: 13px; text-transform: capitalize; }
-  .match-card.selected { border-color: var(--teal); box-shadow: 0 0 0 3px rgba(61,189,196,0.3); }
-  .match-card.matched { background: #f0fdf4; border-color: #16a34a; color: #14532d; pointer-events: none; }
-  .match-card.wrong-flash { background: #fef2f2; border-color: #dc2626; }
-
-  /* ──────────── WORD SCRAMBLE ──────────── */
-  .scramble-display {
-    background: var(--navy);
-    color: var(--white);
-    border-radius: var(--radius);
-    padding: 32px;
-    text-align: center;
-    margin-bottom: 20px;
-  }
-  .scramble-letters {
-    font-family: var(--font-display);
-    font-size: 32px;
-    font-weight: 800;
-    color: var(--teal);
-    letter-spacing: 0.12em;
-    margin-bottom: 8px;
-  }
-  .scramble-hint { font-size: 13px; color: rgba(255,255,255,0.6); }
-  .scramble-clue {
-    font-size: 14px;
-    color: rgba(255,255,255,0.8);
-    margin-top: 12px;
-    line-height: 1.5;
-  }
-
-  .scramble-input-row {
-    display: flex;
-    gap: 10px;
-    margin-bottom: 16px;
-  }
-  .scramble-input {
-    flex: 1;
-    padding: 12px 18px;
-    border-radius: var(--radius-sm);
-    border: 2px solid var(--gray-200);
-    font-family: var(--font-body);
-    font-size: 16px;
-    color: var(--navy);
-    outline: none;
-    transition: var(--transition);
-  }
-  .scramble-input:focus { border-color: var(--teal); box-shadow: 0 0 0 3px rgba(61,189,196,0.15); }
-
-  /* ──────────── BOOKMARKS ──────────── */
-  .empty-state {
-    text-align: center;
-    padding: 60px 20px;
-    color: var(--gray-400);
-  }
-  .empty-state-icon { font-size: 48px; margin-bottom: 12px; }
-  .empty-state-text { font-size: 15px; }
-
-  /* ──────────── MISC ──────────── */
-  .results-count {
-    font-size: 13px;
-    color: var(--gray-400);
-    margin-bottom: 16px;
-    font-family: var(--font-mono);
-  }
-
-  .bookmark-btn {
-    background: transparent;
-    border: none;
-    cursor: pointer;
-    font-size: 20px;
-    padding: 4px;
-    transition: var(--transition);
-    line-height: 1;
-  }
-  .bookmark-btn:hover { transform: scale(1.2); }
-
-  .modal-actions {
-    display: flex;
-    gap: 10px;
-    margin-top: 20px;
-    padding-top: 16px;
-    border-top: 1px solid var(--gray-200);
-  }
-
-  .toast {
-    position: fixed;
-    bottom: 24px;
-    right: 24px;
-    background: var(--navy);
-    color: var(--white);
-    padding: 12px 20px;
-    border-radius: var(--radius-sm);
-    font-size: 14px;
-    font-weight: 500;
-    z-index: 999;
-    box-shadow: var(--shadow-lg);
-    transform: translateY(60px);
-    opacity: 0;
-    transition: all 0.35s cubic-bezier(0.34,1.56,0.64,1);
-  }
-  .toast.show { transform: translateY(0); opacity: 1; }
-  .toast.success { background: #16a34a; }
-  .toast.error { background: #dc2626; }
-
-  .alphabet-nav {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 6px;
-    margin-bottom: 20px;
-  }
-  .alpha-btn {
-    width: 32px; height: 32px;
-    border-radius: 8px;
-    border: 1.5px solid var(--gray-200);
-    background: var(--white);
-    font-size: 12px;
-    font-weight: 700;
-    cursor: pointer;
-    transition: var(--transition);
-    color: var(--gray-600);
-    display: flex; align-items: center; justify-content: center;
-    font-family: var(--font-display);
-  }
-  .alpha-btn:hover, .alpha-btn.active {
-    background: var(--navy);
-    color: var(--white);
-    border-color: var(--navy);
-  }
-
-  .xp-notification {
-    position: fixed;
-    top: 80px; right: 24px;
-    background: var(--teal);
-    color: var(--navy-dark);
-    padding: 8px 16px;
-    border-radius: 99px;
-    font-weight: 700;
-    font-size: 14px;
-    z-index: 999;
-    box-shadow: var(--shadow);
-    transform: translateY(-10px);
-    opacity: 0;
-    transition: all 0.4s cubic-bezier(0.34,1.56,0.64,1);
-    pointer-events: none;
-  }
-  .xp-notification.show { transform: translateY(0); opacity: 1; }
-
-  /* Responsive tweaks */
-  @media (max-width: 1024px) {
-    .stats-grid { grid-template-columns: repeat(2, 1fr); }
-    .game-grid { grid-template-columns: repeat(2, 1fr); }
-    .drug-grid { grid-template-columns: repeat(2, 1fr); }
-  }
-  @media (max-width: 768px) {
-    .sidebar { width: 200px; }
-    .main { margin-left: 200px; }
-    .page { padding: 20px; }
-    .hero { padding: 28px; }
-    .drug-grid { grid-template-columns: 1fr; }
-  }
-
-  /* Loading state */
-  .loading {
-    text-align: center;
-    padding: 40px;
-    color: var(--gray-400);
-  }
-  .spin {
-    display: inline-block;
-    width: 32px; height: 32px;
-    border: 3px solid var(--gray-200);
-    border-top-color: var(--teal);
-    border-radius: 50%;
-    animation: spin 0.8s linear infinite;
-    margin-bottom: 12px;
-  }
-  @keyframes spin { to { transform: rotate(360deg); } }
-
-  .match-score-row {
-    display: flex;
-    align-items: center;
-    gap: 20px;
-    margin-bottom: 16px;
-    background: var(--white);
-    padding: 12px 20px;
-    border-radius: var(--radius-sm);
-    border: 1px solid var(--gray-200);
-  }
-  .match-score-item { font-size: 14px; color: var(--gray-600); }
-  .match-score-item strong { color: var(--navy); font-family: var(--font-display); font-size: 18px; }
-
+:root{
+  --navy:#1a2e4a;--navy-dark:#0f1e33;--navy-mid:#243554;
+  --teal:#3dbdc4;--teal-light:#5dd0d7;--teal-pale:#e8f9fa;--teal-dim:rgba(61,189,196,.15);
+  --white:#fff;--off:#f4f7f9;--g100:#eef1f4;--g200:#d8dfe8;--g400:#8a9ab0;--g600:#5a6a80;
+  --text:#1a2e4a;--r:16px;--rs:10px;
+  --sh:0 4px 24px rgba(26,46,74,.10);--shl:0 12px 48px rgba(26,46,74,.18);
+  --tr:.22s cubic-bezier(.4,0,.2,1);
+  --fd:'Syne',sans-serif;--fb:'DM Sans',sans-serif;--fm:'DM Mono',monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--fb);background:var(--navy-dark);color:var(--text);min-height:100vh;overflow-x:hidden}
+/* SHELL */
+.shell{display:flex;min-height:100vh}
+/* SIDEBAR */
+.sidebar{width:236px;background:var(--navy);display:flex;flex-direction:column;position:fixed;inset:0 auto 0 0;z-index:100;border-right:1px solid rgba(255,255,255,.06)}
+.sb-logo{padding:22px 20px 18px;border-bottom:1px solid rgba(255,255,255,.08);display:flex;align-items:center;gap:11px}
+.sb-logo img{width:40px;height:40px;border-radius:50%;object-fit:cover}
+.sb-logo-txt h1{font-family:var(--fd);font-size:14px;font-weight:800;color:#fff;line-height:1.2;letter-spacing:-.01em}
+.sb-logo-txt span{font-size:10.5px;color:var(--teal);font-weight:600;letter-spacing:.05em;text-transform:uppercase}
+.sb-nav{flex:1;padding:12px 10px;display:flex;flex-direction:column;gap:2px;overflow-y:auto}
+.nav-sec{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--g400);padding:10px 12px 4px}
+.nav-item{display:flex;align-items:center;gap:9px;padding:9px 13px;border-radius:9px;cursor:pointer;color:rgba(255,255,255,.55);font-size:13px;font-weight:500;transition:var(--tr);user-select:none}
+.nav-item:hover{background:rgba(255,255,255,.07);color:#fff}
+.nav-item.active{background:var(--teal-dim);color:var(--teal-light);border:1px solid rgba(61,189,196,.2)}
+.ni{font-size:15px;width:19px;text-align:center}
+.sb-foot{padding:14px 17px;border-top:1px solid rgba(255,255,255,.08)}
+.lvl-badge{display:inline-flex;align-items:center;gap:5px;background:var(--teal-dim);border:1px solid rgba(61,189,196,.25);border-radius:99px;padding:3px 9px;font-size:11.5px;color:var(--teal-light);font-weight:600;margin-bottom:8px}
+.xp-labels{display:flex;justify-content:space-between;font-size:10.5px;color:rgba(255,255,255,.5);margin-bottom:5px}
+.xp-labels strong{color:var(--teal)}
+.xp-track{height:5px;background:rgba(255,255,255,.1);border-radius:99px;overflow:hidden}
+.xp-fill{height:100%;background:linear-gradient(90deg,var(--teal),var(--teal-light));border-radius:99px;transition:width .5s ease}
+/* MAIN */
+.main{margin-left:236px;flex:1;background:var(--off);min-height:100vh}
+.topbar{background:#fff;border-bottom:1px solid var(--g200);padding:0 26px;height:58px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50}
+.topbar-title{font-family:var(--fd);font-size:17px;font-weight:800;color:var(--navy)}
+.topbar-right{display:flex;align-items:center;gap:10px}
+.tbadge{display:flex;align-items:center;gap:5px;border-radius:99px;padding:5px 12px;font-size:12.5px;font-weight:600}
+.t-streak{background:#fff7ed;border:1px solid #fed7aa;color:#c2410c}
+.t-score{background:var(--teal-pale);border:1px solid rgba(61,189,196,.3);color:var(--navy)}
+/* PAGES */
+.page{display:none;padding:22px 26px}
+.page.active{display:block}
+/* HERO */
+.hero{background:linear-gradient(135deg,var(--navy) 0%,var(--navy-mid) 60%,#1e4060 100%);border-radius:var(--r);padding:34px;margin-bottom:22px;position:relative;overflow:hidden;color:#fff}
+.hero::before{content:'';position:absolute;top:-50px;right:-50px;width:280px;height:280px;background:radial-gradient(circle,rgba(61,189,196,.18) 0%,transparent 70%);border-radius:50%}
+.hero-c{position:relative;z-index:1;max-width:540px}
+.hero h2{font-family:var(--fd);font-size:27px;font-weight:800;line-height:1.15;margin-bottom:9px}
+.hero h2 span{color:var(--teal)}
+.hero p{font-size:13.5px;color:rgba(255,255,255,.72);line-height:1.6;margin-bottom:18px}
+.hero-acts{display:flex;gap:9px;flex-wrap:wrap}
+/* BUTTONS */
+.btn{display:inline-flex;align-items:center;gap:6px;padding:9px 18px;border-radius:var(--rs);font-family:var(--fb);font-size:13px;font-weight:600;cursor:pointer;border:none;transition:var(--tr);user-select:none;white-space:nowrap}
+.btn-primary{background:var(--teal);color:var(--navy-dark)}
+.btn-primary:hover{background:var(--teal-light);transform:translateY(-1px);box-shadow:0 4px 14px rgba(61,189,196,.35)}
+.btn-outline{background:transparent;color:#fff;border:1.5px solid rgba(255,255,255,.3)}
+.btn-outline:hover{background:rgba(255,255,255,.08)}
+.btn-navy{background:var(--navy);color:#fff}
+.btn-navy:hover{background:var(--navy-mid)}
+.btn-sm{padding:6px 13px;font-size:12px}
+.btn-ghost{background:transparent;color:var(--g600);border:1.5px solid var(--g200)}
+.btn-ghost:hover{background:var(--g100);color:var(--navy)}
+/* STAT CARDS */
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:13px;margin-bottom:22px}
+.stat-card{background:#fff;border-radius:var(--r);padding:17px 19px;box-shadow:var(--sh);border:1px solid var(--g200)}
+.stat-icon{width:38px;height:38px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:18px;margin-bottom:9px}
+.si-teal{background:var(--teal-dim)}.si-orange{background:#fff7ed}.si-purple{background:#f3f0ff}.si-green{background:#f0fdf4}
+.stat-val{font-family:var(--fd);font-size:24px;font-weight:800;color:var(--navy);line-height:1;margin-bottom:3px}
+.stat-lbl{font-size:12px;color:var(--g600)}
+/* SECTION HEADER */
+.sec-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:13px}
+.sec-title{font-family:var(--fd);font-size:16px;font-weight:700;color:var(--navy)}
+/* GAME CARDS */
+.game-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:13px;margin-bottom:22px}
+.game-card{background:#fff;border-radius:var(--r);padding:20px;box-shadow:var(--sh);border:1px solid var(--g200);cursor:pointer;transition:var(--tr);position:relative;overflow:hidden}
+.game-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--teal)}
+.game-card:hover{transform:translateY(-3px);box-shadow:var(--shl);border-color:var(--teal)}
+.game-card-icon{font-size:28px;margin-bottom:9px}
+.game-card h3{font-family:var(--fd);font-size:14.5px;font-weight:700;color:var(--navy);margin-bottom:5px}
+.game-card p{font-size:12px;color:var(--g600);line-height:1.5}
+.gc-tag{display:inline-flex;margin-top:9px;padding:3px 9px;border-radius:99px;font-size:10.5px;font-weight:600}
+.gt-teal{background:var(--teal-dim);color:var(--teal);border:1px solid rgba(61,189,196,.2)}
+.gt-orange{background:#fff7ed;color:#c2410c;border:1px solid #fed7aa}
+.gt-purple{background:#f3f0ff;color:#7c3aed;border:1px solid #ddd6fe}
+.gt-green{background:#f0fdf4;color:#15803d;border:1px solid #bbf7d0}
+/* DRUG REFERENCE */
+.search-bar{display:flex;align-items:center;gap:9px;background:#fff;border:2px solid var(--g200);border-radius:var(--r);padding:10px 15px;margin-bottom:14px;transition:var(--tr)}
+.search-bar:focus-within{border-color:var(--teal);box-shadow:0 0 0 3px rgba(61,189,196,.12)}
+.search-bar input{flex:1;border:none;outline:none;font-family:var(--fb);font-size:14.5px;color:var(--navy);background:transparent}
+.search-bar input::placeholder{color:var(--g400)}
+.alpha-nav{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:14px}
+.alpha-btn{width:28px;height:28px;border-radius:6px;border:1.5px solid var(--g200);background:#fff;font-size:11.5px;font-weight:700;cursor:pointer;transition:var(--tr);color:var(--g600);display:flex;align-items:center;justify-content:center;font-family:var(--fd)}
+.alpha-btn:hover,.alpha-btn.active{background:var(--navy);color:#fff;border-color:var(--navy)}
+.filter-row{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:14px;align-items:center}
+.filter-lbl{font-size:12px;font-weight:600;color:var(--g600)}
+.filter-chip{padding:5px 12px;border-radius:99px;font-size:12px;cursor:pointer;border:1.5px solid var(--g200);background:#fff;color:var(--g600);font-family:var(--fb);transition:var(--tr);font-weight:500}
+.filter-chip:hover,.filter-chip.active{background:var(--navy);color:#fff;border-color:var(--navy)}
+.res-count{font-size:12px;color:var(--g400);margin-bottom:13px;font-family:var(--fm)}
+.drug-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:11px}
+.drug-card{background:#fff;border-radius:var(--r);padding:15px 17px;border:1.5px solid var(--g200);cursor:pointer;transition:var(--tr);box-shadow:0 2px 8px rgba(26,46,74,.05)}
+.drug-card:hover{border-color:var(--teal);box-shadow:var(--sh);transform:translateY(-2px)}
+.drug-name{font-family:var(--fd);font-size:14px;font-weight:700;color:var(--navy);margin-bottom:2px;text-transform:capitalize}
+.drug-brand{font-size:11px;color:var(--teal);font-weight:500;margin-bottom:6px}
+.drug-class-pill{display:inline-block;background:var(--g100);color:var(--g600);font-size:10.5px;font-weight:500;padding:2px 7px;border-radius:5px}
+/* MODAL */
+.modal-backdrop{position:fixed;inset:0;background:rgba(15,30,51,.75);z-index:200;display:none;align-items:center;justify-content:center;padding:18px;backdrop-filter:blur(4px)}
+.modal-backdrop.open{display:flex}
+.modal{background:#fff;border-radius:20px;width:100%;max-width:740px;max-height:88vh;overflow-y:auto;box-shadow:0 24px 80px rgba(15,30,51,.35);animation:mIn .25s cubic-bezier(.34,1.56,.64,1)}
+@keyframes mIn{from{opacity:0;transform:scale(.93) translateY(10px)}to{opacity:1;transform:scale(1) translateY(0)}}
+.m-hdr{background:linear-gradient(135deg,var(--navy),var(--navy-mid));color:#fff;padding:22px 26px;border-radius:20px 20px 0 0;position:relative}
+.m-close{position:absolute;top:16px;right:16px;width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,.1);border:none;color:#fff;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:var(--tr)}
+.m-close:hover{background:rgba(255,255,255,.2)}
+.m-drug-name{font-family:var(--fd);font-size:21px;font-weight:800;margin-bottom:3px;text-transform:capitalize}
+.m-drug-brand{font-size:12.5px;color:var(--teal-light);font-weight:500;margin-bottom:7px}
+.m-class-pill{display:inline-block;background:rgba(61,189,196,.2);color:var(--teal-light);font-size:11.5px;font-weight:600;padding:3px 10px;border-radius:99px;border:1px solid rgba(61,189,196,.3)}
+.m-tabs{display:flex;border-bottom:2px solid var(--g200);padding:0 26px;background:#fff}
+.m-tab{padding:11px 15px;font-size:13px;font-weight:600;color:var(--g400);cursor:pointer;border-bottom:2.5px solid transparent;margin-bottom:-2px;transition:var(--tr);white-space:nowrap}
+.m-tab:hover{color:var(--navy)}
+.m-tab.active{color:var(--teal);border-bottom-color:var(--teal)}
+.m-body{padding:22px 26px}
+.m-tab-content{display:none}
+.m-tab-content.active{display:block}
+/* Drug Detail Components */
+.drug-chips{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:14px}
+.chip{background:var(--g100);border-radius:var(--rs);padding:9px 12px;display:flex;flex-direction:column;gap:2px;border:1px solid var(--g200)}
+.chip-lbl{font-size:9.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--g400)}
+.chip-val{font-size:12.5px;font-weight:600;color:var(--navy);line-height:1.4}
+.bcard{border-radius:var(--rs);padding:13px 15px;margin-bottom:11px;border:1.5px solid transparent}
+.bc-teal{background:var(--teal-pale);border-color:rgba(61,189,196,.3)}
+.bc-orange{background:#fff7ed;border-color:#fed7aa}
+.bc-hdr{font-size:11px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;margin-bottom:8px}
+.bc-teal .bc-hdr{color:#0d7680}
+.bc-orange .bc-hdr{color:#92400e}
+.blist{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:6px}
+.blist li{display:flex;align-items:flex-start;gap:7px;font-size:13px;color:var(--navy);line-height:1.55}
+.blist li::before{content:'▸';color:var(--teal);font-size:11px;flex-shrink:0;margin-top:2px;font-weight:700}
+.bc-orange .blist li::before{color:#d97706}
+.danger-list li::before{content:'⚠' !important;color:#dc2626 !important;font-size:10px}
+.mech-banner{display:flex;align-items:center;gap:13px;background:linear-gradient(135deg,var(--navy),var(--navy-mid));border-radius:var(--rs);padding:14px 16px;margin-bottom:13px;color:#fff}
+.mech-ico{font-size:26px}
+.mech-title{font-family:var(--fd);font-size:13px;font-weight:700;color:var(--teal-light);margin-bottom:2px}
+.mech-cls{font-size:12px;color:rgba(255,255,255,.7)}
+.mech-body{font-size:13.5px;color:var(--navy);line-height:1.75;background:var(--g100);border-radius:var(--rs);padding:13px 15px;margin-bottom:9px;border-left:4px solid var(--teal)}
+.mech-eff{font-size:12.5px;font-weight:600;color:#0d7680;background:var(--teal-pale);border:1.5px solid rgba(61,189,196,.3);border-radius:var(--rs);padding:9px 13px}
+.nc-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.nc-col{background:var(--g100);border-radius:var(--rs);padding:11px 13px;border:1.5px solid var(--g200)}
+.nc-hdr{font-size:10px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;margin-bottom:8px;padding-bottom:6px;border-bottom:2px solid transparent}
+.nc-assess{color:#1d4ed8;border-color:#93c5fd}
+.nc-intervene{color:#6d28d9;border-color:#c4b5fd}
+.nc-teach{color:#065f46;border-color:#6ee7b7}
+.nc-col .blist li::before{color:#6d28d9}
+.nc-col:first-child .blist li::before{color:#1d4ed8}
+.nc-col.full-row{grid-column:1/-1}
+.nc-col.full-row .blist li::before{color:#065f46}
+.safety-row{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:11px}
+.s-col{border-radius:var(--rs);padding:11px 13px;border:1.5px solid transparent}
+.s-warn{background:#fffbeb;border-color:#fde68a}
+.s-danger{background:#fef2f2;border-color:#fca5a5}
+.s-warn .blist li::before{content:'▸';color:#d97706}
+.tip-box{background:linear-gradient(135deg,#1a2e4a,#243554);border-radius:var(--rs);padding:13px 16px;color:#fff}
+.tip-lbl{font-size:10.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--teal);margin-bottom:6px}
+.tip-body{font-size:13px;line-height:1.65;color:rgba(255,255,255,.88)}
+.m-acts{display:flex;gap:8px;margin-top:16px;padding-top:13px;border-top:1px solid var(--g200)}
+/* FLASHCARDS */
+.fc-modes{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px}
+.fc-btn{padding:6px 14px;border-radius:99px;font-size:12px;font-weight:600;cursor:pointer;border:1.5px solid var(--g200);background:#fff;color:var(--g600);transition:var(--tr)}
+.fc-btn.active{background:var(--teal);color:var(--navy-dark);border-color:var(--teal)}
+.fc-scene{perspective:1200px;width:100%;max-width:560px;height:310px;margin:0 auto 22px;cursor:pointer}
+.fc-inner{position:relative;width:100%;height:100%;transform-style:preserve-3d;transition:transform .5s cubic-bezier(.4,0,.2,1)}
+.fc-scene.flipped .fc-inner{transform:rotateY(180deg)}
+.fc-face{position:absolute;inset:0;border-radius:18px;backface-visibility:hidden;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:30px;text-align:center}
+.fc-front{background:linear-gradient(135deg,var(--navy),var(--navy-mid));color:#fff;border:2px solid rgba(61,189,196,.2)}
+.fc-back{background:#fff;color:var(--navy);transform:rotateY(180deg);border:2px solid var(--teal);box-shadow:var(--shl)}
+.fc-label{font-size:10.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--teal);margin-bottom:13px}
+.fc-drug{font-family:var(--fd);font-size:23px;font-weight:800;margin-bottom:8px;text-transform:capitalize}
+.fc-hint{font-size:12px;color:rgba(255,255,255,.5)}
+.fc-q{font-size:10.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--teal);margin-bottom:11px}
+.fc-ans{font-size:13.5px;line-height:1.65;color:var(--navy)}
+.fc-prog{text-align:center;font-size:12.5px;color:var(--g400);margin-bottom:13px;font-family:var(--fm)}
+.fc-nav{display:flex;align-items:center;justify-content:center;gap:9px}
+/* QUIZ */
+.qwrap{max-width:640px;margin:0 auto}
+.q-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}
+.q-pbar{flex:1;height:7px;background:var(--g200);border-radius:99px;overflow:hidden;margin:0 13px}
+.q-pfill{height:100%;background:linear-gradient(90deg,var(--teal),var(--teal-light));border-radius:99px;transition:width .4s}
+.q-cnt{font-family:var(--fm);font-size:12px;color:var(--g400)}
+.q-timer{font-family:var(--fd);font-size:19px;font-weight:800;color:var(--navy);min-width:42px;text-align:center}
+.q-timer.urgent{color:#dc2626;animation:pulse .8s infinite}
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.06)}}
+.q-card{background:#fff;border-radius:16px;padding:26px;box-shadow:var(--sh);margin-bottom:18px}
+.q-cat{font-size:10.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--teal);margin-bottom:10px}
+.q-question{font-family:var(--fd);font-size:16px;font-weight:700;color:var(--navy);line-height:1.5;margin-bottom:18px}
+.q-opts{display:flex;flex-direction:column;gap:8px}
+.q-opt{display:flex;align-items:flex-start;gap:11px;padding:12px 15px;border-radius:var(--rs);border:2px solid var(--g200);cursor:pointer;transition:var(--tr);background:#fff;text-align:left;font-family:var(--fb);font-size:13px;color:var(--text);line-height:1.5}
+.q-opt:hover:not(.disabled){border-color:var(--teal);background:var(--teal-pale)}
+.q-opt.correct{border-color:#16a34a;background:#f0fdf4;color:#14532d}
+.q-opt.wrong{border-color:#dc2626;background:#fef2f2;color:#7f1d1d}
+.q-opt.disabled{cursor:not-allowed}
+.opt-l{width:25px;height:25px;border-radius:50%;background:var(--g100);display:flex;align-items:center;justify-content:center;font-size:11.5px;font-weight:700;color:var(--g600);flex-shrink:0;transition:var(--tr)}
+.q-opt.correct .opt-l{background:#16a34a;color:#fff}
+.q-opt.wrong .opt-l{background:#dc2626;color:#fff}
+.q-opt:hover:not(.disabled) .opt-l{background:var(--teal);color:var(--navy-dark)}
+.q-fb{margin-top:13px;padding:11px 15px;border-radius:var(--rs);font-size:13px;line-height:1.6;display:none}
+.q-fb.correct{background:#f0fdf4;color:#14532d;border:1.5px solid #86efac;display:block}
+.q-fb.wrong{background:#fef2f2;color:#7f1d1d;border:1.5px solid #fca5a5;display:block}
+.q-results{background:#fff;border-radius:16px;padding:34px;text-align:center;box-shadow:var(--shl);display:none}
+.q-results.show{display:block}
+.r-emoji{font-size:50px;margin-bottom:12px}
+.r-score{font-family:var(--fd);font-size:42px;font-weight:800;color:var(--navy);margin-bottom:5px}
+.r-lbl{font-size:14px;color:var(--g600);margin-bottom:18px}
+/* CLASS IDENTIFIER */
+.cq-wrap{max-width:640px;margin:0 auto}
+.cq-drug{background:linear-gradient(135deg,var(--navy),var(--navy-mid));border-radius:16px;padding:26px;text-align:center;margin-bottom:18px;color:#fff}
+.cq-name{font-family:var(--fd);font-size:26px;font-weight:800;text-transform:capitalize;margin-bottom:7px}
+.cq-hint{font-size:13px;color:rgba(255,255,255,.7)}
+.cq-choices{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.cq-choice{padding:13px 15px;border-radius:var(--rs);border:2px solid var(--g200);background:#fff;font-size:13px;font-weight:600;cursor:pointer;transition:var(--tr);text-align:center;color:var(--navy);font-family:var(--fb)}
+.cq-choice:hover:not(.disabled){border-color:var(--teal);background:var(--teal-pale)}
+.cq-choice.correct{border-color:#16a34a;background:#f0fdf4;color:#14532d}
+.cq-choice.wrong{border-color:#dc2626;background:#fef2f2;color:#7f1d1d}
+.cq-choice.reveal{border-color:#16a34a;background:#f0fdf4;color:#14532d}
+.cq-choice.disabled{cursor:not-allowed}
+.cq-fb{padding:11px 15px;border-radius:var(--rs);font-size:13px;display:none;margin-top:13px}
+.cq-stats{background:#fff;border-radius:var(--r);padding:16px;border:1px solid var(--g200);margin-top:16px}
+.cq-stat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:13px;text-align:center;margin-top:11px}
+.cq-stat-val{font-family:var(--fd);font-size:22px;font-weight:800}
+.cq-stat-lbl{font-size:11.5px;color:var(--g400)}
+/* SIDE EFFECTS QUIZ */
+.se-wrap{max-width:640px;margin:0 auto}
+.se-drug{background:linear-gradient(135deg,#92400e,#b45309);border-radius:16px;padding:26px;text-align:center;margin-bottom:18px;color:#fff}
+.se-drug-name{font-family:var(--fd);font-size:26px;font-weight:800;text-transform:capitalize;margin-bottom:7px}
+.se-prompt{font-size:13px;color:rgba(255,255,255,.8)}
+/* MATCHING */
+.match-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:18px}
+.match-card{min-height:72px;border-radius:var(--rs);display:flex;align-items:center;justify-content:center;padding:8px;text-align:center;font-size:11.5px;font-weight:600;cursor:pointer;transition:var(--tr);border:2px solid var(--g200);background:#fff;color:var(--navy);line-height:1.4}
+.mc-drug{background:var(--navy);color:#fff;border-color:var(--navy-mid);font-family:var(--fd);font-size:12px;text-transform:capitalize}
+.mc-selected{border-color:var(--teal) !important;box-shadow:0 0 0 3px rgba(61,189,196,.3) !important}
+.mc-matched{background:#f0fdf4 !important;border-color:#16a34a !important;color:#14532d !important;pointer-events:none}
+.mc-wrong{background:#fef2f2 !important;border-color:#dc2626 !important}
+.match-info{display:flex;align-items:center;gap:16px;margin-bottom:13px;background:#fff;padding:9px 16px;border-radius:var(--rs);border:1px solid var(--g200)}
+.mi{font-size:13px;color:var(--g600)}
+.mi strong{color:var(--navy);font-family:var(--fd);font-size:16px}
+/* SCRAMBLE */
+.sc-display{background:var(--navy);color:#fff;border-radius:var(--r);padding:26px;text-align:center;margin-bottom:16px}
+.sc-letters{font-family:var(--fd);font-size:28px;font-weight:800;color:var(--teal);letter-spacing:.14em;margin-bottom:6px}
+.sc-clue{font-size:13px;color:rgba(255,255,255,.8);margin-top:9px;line-height:1.5}
+.sc-row{display:flex;gap:8px;margin-bottom:12px}
+.sc-input{flex:1;padding:10px 15px;border-radius:var(--rs);border:2px solid var(--g200);font-family:var(--fb);font-size:14.5px;color:var(--navy);outline:none;transition:var(--tr)}
+.sc-input:focus{border-color:var(--teal);box-shadow:0 0 0 3px rgba(61,189,196,.15)}
+.sc-fb{padding:11px 15px;border-radius:var(--rs);font-size:13.5px;font-weight:500;display:none;margin-bottom:12px}
+.sc-stats{background:#fff;border-radius:var(--r);padding:16px;border:1px solid var(--g200)}
+/* PROGRESS */
+.lb-hero{background:linear-gradient(135deg,var(--navy),var(--navy-mid));border-radius:var(--r);padding:22px;color:#fff}
+.lb-pts{font-family:var(--fd);font-size:36px;font-weight:800;margin-bottom:3px}
+.lb-pts-lbl{font-size:12.5px;color:rgba(255,255,255,.6);margin-bottom:16px}
+.lb-mini-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:11px}
+.lb-mini{text-align:center}
+.lb-mini-val{font-size:19px;font-weight:800;font-family:var(--fd)}
+.lb-mini-lbl{font-size:11px;color:rgba(255,255,255,.5)}
+/* MISC */
+.empty-s{text-align:center;padding:44px 20px;color:var(--g400)}
+.empty-s-icon{font-size:40px;margin-bottom:9px}
+.empty-s-txt{font-size:13.5px}
+.loading{text-align:center;padding:38px;color:var(--g400)}
+.spin{display:inline-block;width:28px;height:28px;border:3px solid var(--g200);border-top-color:var(--teal);border-radius:50%;animation:spin .8s linear infinite;margin-bottom:9px}
+@keyframes spin{to{transform:rotate(360deg)}}
+.toast{position:fixed;bottom:20px;right:20px;background:var(--navy);color:#fff;padding:10px 17px;border-radius:var(--rs);font-size:13px;font-weight:500;z-index:999;box-shadow:var(--shl);transform:translateY(60px);opacity:0;transition:all .35s cubic-bezier(.34,1.56,.64,1)}
+.toast.show{transform:translateY(0);opacity:1}
+.toast.success{background:#16a34a}
+.toast.error{background:#dc2626}
+.xp-note{position:fixed;top:72px;right:20px;background:var(--teal);color:var(--navy-dark);padding:6px 13px;border-radius:99px;font-weight:700;font-size:13px;z-index:999;box-shadow:var(--sh);transform:translateY(-10px);opacity:0;transition:all .4s cubic-bezier(.34,1.56,.64,1);pointer-events:none}
+.xp-note.show{transform:translateY(0);opacity:1}
+.ach-row{display:flex;align-items:center;gap:9px;padding:7px 0;border-bottom:1px solid var(--g100)}
+.ach-row:last-child{border-bottom:none}
+.ach-row.locked{opacity:.35}
+.ach-icon{font-size:20px}
+.ach-name{font-size:12.5px;font-weight:700;color:var(--navy)}
+.ach-desc{font-size:11.5px;color:var(--g400)}
+.hist-item{display:flex;align-items:center;justify-content:space-between;padding:8px 13px;background:var(--g100);border-radius:7px;font-size:13px;margin-bottom:6px}
+@media(max-width:1100px){.stats-grid{grid-template-columns:repeat(2,1fr)}.game-grid{grid-template-columns:repeat(2,1fr)}.drug-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:760px){.sidebar{width:196px}.main{margin-left:196px}.page{padding:16px}.drug-grid{grid-template-columns:1fr}.nc-grid{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
-
-<div class="app-shell">
-
-  <!-- SIDEBAR -->
-  <aside class="sidebar">
-    <div class="sidebar-logo">
-      <img id="hct-logo" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='48' fill='%231a2e4a'/%3E%3C/svg%3E" alt="HCT Logo">
-      <div class="sidebar-logo-text">
-        <h1>PharmaMaster</h1>
-        <span>HCT Academy</span>
-      </div>
+<div class="shell">
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="sb-logo">
+    <img id="hct-logo" src="hctlogonavy.png" alt="HCT" onerror="this.style.display='none'">
+    <div class="sb-logo-txt"><h1>PharmaMaster</h1><span>HCT Academy</span></div>
+  </div>
+  <nav class="sb-nav">
+    <div class="nav-sec">Main</div>
+    <div class="nav-item active" data-page="home"><span class="ni">🏠</span> Home</div>
+    <div class="nav-item" data-page="drugs"><span class="ni">💊</span> Drug Reference</div>
+    <div class="nav-item" data-page="bookmarks"><span class="ni">🔖</span> Bookmarks</div>
+    <div class="nav-sec">Study Games</div>
+    <div class="nav-item" data-page="flashcards"><span class="ni">🃏</span> Flashcards</div>
+    <div class="nav-item" data-page="quiz"><span class="ni">📝</span> PNLE Quiz</div>
+    <div class="nav-item" data-page="classquiz"><span class="ni">🏷️</span> Class Identifier</div>
+    <div class="nav-item" data-page="matching"><span class="ni">🔗</span> Drug Match</div>
+    <div class="nav-item" data-page="scramble"><span class="ni">🔀</span> Word Scramble</div>
+    <div class="nav-item" data-page="leaderboard"><span class="ni">🏆</span> My Progress</div>
+  </nav>
+  <div class="sb-foot">
+    <div class="lvl-badge">⚡ Level <span id="user-level">1</span></div>
+    <div class="xp-labels"><span>XP</span><strong id="xp-display">0 / 500</strong></div>
+    <div class="xp-track"><div class="xp-fill" id="xp-fill" style="width:0%"></div></div>
+  </div>
+</aside>
+<!-- MAIN -->
+<main class="main">
+  <div class="topbar">
+    <div class="topbar-title" id="page-title">🏠 Home</div>
+    <div class="topbar-right">
+      <div class="tbadge t-streak">🔥 <span id="streak-count">0</span> day streak</div>
+      <div class="tbadge t-score">⭐ <span id="total-score">0</span> pts</div>
     </div>
+  </div>
 
-    <nav class="sidebar-nav">
-      <div class="nav-label">Main</div>
-      <div class="nav-item active" data-page="home">
-        <span class="nav-icon">🏠</span> Home
-      </div>
-      <div class="nav-item" data-page="drugs">
-        <span class="nav-icon">💊</span> Drug Reference
-      </div>
-      <div class="nav-item" data-page="bookmarks">
-        <span class="nav-icon">🔖</span> Bookmarks
-      </div>
-
-      <div class="nav-label">Learn</div>
-      <div class="nav-item" data-page="flashcards">
-        <span class="nav-icon">🃏</span> Flashcards
-      </div>
-      <div class="nav-item" data-page="quiz">
-        <span class="nav-icon">📝</span> Quiz Mode
-      </div>
-      <div class="nav-item" data-page="matching">
-        <span class="nav-icon">🔗</span> Matching Game
-      </div>
-      <div class="nav-item" data-page="scramble">
-        <span class="nav-icon">🔀</span> Word Scramble
-      </div>
-      <div class="nav-item" data-page="leaderboard">
-        <span class="nav-icon">🏆</span> Leaderboard
-      </div>
-    </nav>
-
-    <div class="sidebar-footer">
-      <div class="level-badge">⚡ Level <span id="user-level">1</span></div>
-      <div class="xp-bar-wrap">
-        <div class="xp-bar-label">
-          <span>XP</span>
-          <strong id="xp-display">0 / 500</strong>
-        </div>
-        <div class="xp-bar">
-          <div class="xp-fill" id="xp-fill" style="width:0%"></div>
+  <!-- HOME -->
+  <div class="page active" id="page-home">
+    <div class="hero">
+      <div class="hero-c">
+        <h2>Master <span>522+</span> Drugs<br>with Interactive Learning</h2>
+        <p>Complete nursing pharmacology hub — Saunders Drug Handbook 2025 + official web references. Games, flashcards, and PNLE-focused quizzes in one place.</p>
+        <div class="hero-acts">
+          <button class="btn btn-primary" onclick="navigateTo('drugs')">💊 Drug Reference</button>
+          <button class="btn btn-outline" onclick="navigateTo('quiz')">📝 PNLE Quiz</button>
+          <button class="btn btn-outline" onclick="navigateTo('flashcards')">🃏 Flashcards</button>
         </div>
       </div>
     </div>
-  </aside>
+    <div class="stats-grid">
+      <div class="stat-card"><div class="stat-icon si-teal">💊</div><div class="stat-val">522</div><div class="stat-lbl">Drugs in Database</div></div>
+      <div class="stat-card"><div class="stat-icon si-orange">📚</div><div class="stat-val" id="stat-studied">0</div><div class="stat-lbl">Drugs Studied</div></div>
+      <div class="stat-card"><div class="stat-icon si-purple">✅</div><div class="stat-val" id="stat-correct">0</div><div class="stat-lbl">Correct Answers</div></div>
+      <div class="stat-card"><div class="stat-icon si-green">🔖</div><div class="stat-val" id="stat-bookmarks">0</div><div class="stat-lbl">Bookmarked</div></div>
+    </div>
+    <div class="sec-hdr"><div class="sec-title">🎮 Study Modes</div></div>
+    <div class="game-grid">
+      <div class="game-card" onclick="navigateTo('flashcards')"><div class="game-card-icon">🃏</div><h3>Flashcards</h3><p>Flip cards for action, uses, side effects, and nursing care. Mark known vs. review.</p><span class="gc-tag gt-teal">Study Tool</span></div>
+      <div class="game-card" onclick="navigateTo('quiz')"><div class="game-card-icon">📝</div><h3>PNLE Quiz</h3><p>Board-style multiple choice with rationales. Timed. Tracks your accuracy.</p><span class="gc-tag gt-orange">Timed ⏱</span></div>
+      <div class="game-card" onclick="navigateTo('classquiz')"><div class="game-card-icon">🏷️</div><h3>Class Identifier</h3><p>See a drug — pick its pharmacologic class. Fast recognition drill.</p><span class="gc-tag gt-purple">Recognition</span></div>
+      <div class="game-card" onclick="navigateTo('matching')"><div class="game-card-icon">🔗</div><h3>Drug Match</h3><p>Match drug names to their class, mechanism, or use. Speed card game.</p><span class="gc-tag gt-purple">Speed Game</span></div>
+      <div class="game-card" onclick="navigateTo('scramble')"><div class="game-card-icon">🔀</div><h3>Word Scramble</h3><p>Unscramble generic drug names from clinical clues. Builds name recall.</p><span class="gc-tag gt-teal">Brain Teaser</span></div>
+      <div class="game-card" onclick="navigateTo('drugs')"><div class="game-card-icon">🔍</div><h3>Drug Reference</h3><p>Full searchable database — class, mechanism, uses, nursing care, safety.</p><span class="gc-tag gt-green">Reference</span></div>
+    </div>
+    <div class="sec-hdr"><div class="sec-title">🔥 Recently Viewed</div></div>
+    <div class="drug-grid" id="recent-drugs"><div class="empty-s" style="grid-column:1/-1;padding:26px"><div class="empty-s-icon">👀</div><div class="empty-s-txt">No drugs viewed yet.</div></div></div>
+  </div>
 
-  <!-- MAIN CONTENT -->
-  <main class="main">
+  <!-- DRUG REFERENCE -->
+  <div class="page" id="page-drugs">
+    <div class="search-bar"><span style="font-size:18px;color:var(--g400)">🔍</span><input type="text" id="drug-search" placeholder="Search by name, brand, or class…" oninput="filterDrugs()"><button class="btn btn-sm btn-navy" onclick="clearSearch()">Clear</button></div>
+    <div class="alpha-nav" id="alpha-nav"></div>
+    <div class="filter-row"><span class="filter-lbl">Class:</span><div id="class-filters" style="display:flex;gap:6px;flex-wrap:wrap"></div></div>
+    <div class="res-count" id="results-count"></div>
+    <div class="drug-grid" id="drug-list"><div class="loading"><div class="spin"></div><br>Loading 522 drugs…</div></div>
+  </div>
 
-    <!-- TOP BAR -->
-    <div class="topbar">
-      <div class="topbar-title" id="page-title">🏠 Home</div>
-      <div class="topbar-right">
-        <div class="streak-badge">🔥 <span id="streak-count">0</span> day streak</div>
-        <div class="score-badge">⭐ <span id="total-score">0</span> pts</div>
+  <!-- BOOKMARKS -->
+  <div class="page" id="page-bookmarks">
+    <div class="sec-hdr"><div class="sec-title">🔖 Bookmarked Drugs</div><button class="btn btn-sm btn-navy" onclick="clearBookmarks()">Clear All</button></div>
+    <div class="drug-grid" id="bookmark-list"></div>
+  </div>
+
+  <!-- FLASHCARDS -->
+  <div class="page" id="page-flashcards">
+    <div class="sec-hdr"><div class="sec-title">🃏 Flashcard Study</div></div>
+    <div class="fc-modes">
+      <button class="fc-btn active" onclick="setFCMode('action',this)">Mechanism of Action</button>
+      <button class="fc-btn" onclick="setFCMode('uses',this)">Clinical Uses</button>
+      <button class="fc-btn" onclick="setFCMode('sideEffects',this)">Side Effects</button>
+      <button class="fc-btn" onclick="setFCMode('nursingConsiderations',this)">Nursing Care</button>
+      <button class="fc-btn" onclick="setFCMode('precautions',this)">Precautions</button>
+    </div>
+    <div style="display:flex;align-items:center;gap:11px;margin-bottom:16px;flex-wrap:wrap">
+      <button class="btn btn-sm btn-navy" onclick="shuffleFC()">🔀 Shuffle</button>
+      <button class="btn btn-sm btn-navy" onclick="resetFC()">↩ Reset</button>
+      <span style="font-size:12.5px;color:var(--g400)">Click card to reveal answer</span>
+    </div>
+    <div class="fc-prog" id="fc-prog">Card 1 of 522</div>
+    <div class="fc-scene" id="flashcard" onclick="flipCard()">
+      <div class="fc-inner">
+        <div class="fc-face fc-front"><div class="fc-label">Drug Name</div><div class="fc-drug" id="fc-drug-name">Loading…</div><div class="fc-hint">Click to reveal</div></div>
+        <div class="fc-face fc-back"><div class="fc-q" id="fc-q-label">Mechanism of Action</div><div class="fc-ans" id="fc-answer"></div></div>
       </div>
     </div>
+    <div class="fc-nav">
+      <button class="btn btn-navy" onclick="prevCard()">← Prev</button>
+      <div style="display:flex;gap:8px">
+        <button class="btn" style="background:#f0fdf4;color:#16a34a;border:2px solid #16a34a" onclick="markKnown()">✓ Got it</button>
+        <button class="btn" style="background:#fef2f2;color:#dc2626;border:2px solid #dc2626" onclick="markReview()">✗ Review</button>
+      </div>
+      <button class="btn btn-navy" onclick="nextCard()">Next →</button>
+    </div>
+  </div>
 
-    <!-- HOME PAGE -->
-    <div class="page active" id="page-home">
-      <div class="hero">
-        <div class="hero-content">
-          <h2>Master <span>475+</span> Drugs with<br>Interactive Learning</h2>
-          <p>Your complete nursing pharmacology companion. Study smarter with flashcards, quizzes, and gamified challenges — powered by the Saunders Nursing Drug Handbook 2025.</p>
-          <div class="hero-actions">
-            <button class="btn btn-primary" onclick="navigateTo('drugs')">💊 Browse Drugs</button>
-            <button class="btn btn-outline" onclick="navigateTo('quiz')">📝 Quick Quiz</button>
-            <button class="btn btn-outline" onclick="navigateTo('flashcards')">🃏 Flashcards</button>
-          </div>
-        </div>
-      </div>
-
-      <div class="stats-grid">
-        <div class="stat-card">
-          <div class="stat-icon teal">💊</div>
-          <div class="stat-value">475</div>
-          <div class="stat-label">Drugs in Database</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-icon orange">📚</div>
-          <div class="stat-value" id="stat-studied">0</div>
-          <div class="stat-label">Drugs Studied</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-icon purple">✅</div>
-          <div class="stat-value" id="stat-correct">0</div>
-          <div class="stat-label">Correct Answers</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-icon green">🔖</div>
-          <div class="stat-value" id="stat-bookmarks">0</div>
-          <div class="stat-label">Bookmarked</div>
-        </div>
-      </div>
-
-      <div class="section-header">
-        <div class="section-title">🎮 Learning Modes</div>
-      </div>
-      <div class="game-grid">
-        <div class="game-card" onclick="navigateTo('flashcards')">
-          <div class="game-card-icon">🃏</div>
-          <h3>Flashcards</h3>
-          <p>Study drug actions, uses, and nursing considerations with interactive flip cards.</p>
-          <span class="game-card-badge badge-teal">Study Mode</span>
-        </div>
-        <div class="game-card" onclick="navigateTo('quiz')">
-          <div class="game-card-icon">📝</div>
-          <h3>Quiz Challenge</h3>
-          <p>PNLE-style multiple choice questions. Test your pharmacology knowledge under timed conditions.</p>
-          <span class="game-card-badge badge-orange">Timed ⏱</span>
-        </div>
-        <div class="game-card" onclick="navigateTo('matching')">
-          <div class="game-card-icon">🔗</div>
-          <h3>Matching Game</h3>
-          <p>Match drug names to their classification, uses, or mechanism of action. Fast-paced fun!</p>
-          <span class="game-card-badge badge-purple">Speed Game</span>
-        </div>
-        <div class="game-card" onclick="navigateTo('scramble')">
-          <div class="game-card-icon">🔀</div>
-          <h3>Word Scramble</h3>
-          <p>Unscramble drug names from contextual clues. Great for memorizing generic names.</p>
-          <span class="game-card-badge badge-teal">Brain Teaser</span>
-        </div>
-        <div class="game-card" onclick="navigateTo('drugs')">
-          <div class="game-card-icon">🔍</div>
-          <h3>Drug Reference</h3>
-          <p>Full searchable database with classification, mechanism, nursing considerations, and more.</p>
-          <span class="game-card-badge badge-teal">Reference</span>
-        </div>
-        <div class="game-card" onclick="navigateTo('leaderboard')">
-          <div class="game-card-icon">🏆</div>
-          <h3>Leaderboard</h3>
-          <p>Track your progress and see how your scores stack up across all game modes.</p>
-          <span class="game-card-badge badge-orange">Compete</span>
-        </div>
-      </div>
-
-      <div class="section-header">
-        <div class="section-title">🔥 Recently Viewed</div>
-      </div>
-      <div class="drug-grid" id="recent-drugs">
-        <div class="empty-state" style="grid-column:1/-1;padding:30px">
-          <div class="empty-state-icon">👀</div>
-          <div class="empty-state-text">No drugs viewed yet. Start exploring!</div>
-        </div>
+  <!-- PNLE QUIZ -->
+  <div class="page" id="page-quiz">
+    <div id="quiz-start">
+      <div class="hero" style="max-width:620px;margin:0 auto 22px"><div class="hero-c"><h2>📝 PNLE <span>Quiz</span></h2><p>Board-style pharmacology questions with correct answers and rationales. Earn XP for every correct answer.</p></div></div>
+      <div style="max-width:620px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:13px">
+        <div class="game-card" onclick="startQuiz(10,'mixed')"><div class="game-card-icon">⚡</div><h3>Quick Round</h3><p>10 questions · Mixed topics</p><span class="gc-tag gt-teal">~5 min</span></div>
+        <div class="game-card" onclick="startQuiz(20,'action')"><div class="game-card-icon">🧬</div><h3>Mechanism Focus</h3><p>20 questions · Drug actions</p><span class="gc-tag gt-purple">~10 min</span></div>
+        <div class="game-card" onclick="startQuiz(20,'nursing')"><div class="game-card-icon">💉</div><h3>Nursing Care Focus</h3><p>20 questions · Nursing considerations</p><span class="gc-tag gt-orange">~10 min</span></div>
+        <div class="game-card" onclick="startQuiz(30,'mixed')"><div class="game-card-icon">🏆</div><h3>Full Challenge</h3><p>30 questions · All topics</p><span class="gc-tag gt-orange">~15 min</span></div>
       </div>
     </div>
-
-    <!-- DRUG REFERENCE PAGE -->
-    <div class="page" id="page-drugs">
-      <div class="search-bar">
-        <span class="search-icon">🔍</span>
-        <input type="text" id="drug-search" placeholder="Search by generic name, brand name, or classification..." oninput="filterDrugs()">
-        <button class="btn btn-sm btn-navy" onclick="clearSearch()">Clear</button>
-      </div>
-
-      <div class="alphabet-nav" id="alpha-nav"></div>
-
-      <div class="filter-row">
-        <span class="filter-label">Filter by class:</span>
-        <div id="class-filters"></div>
-      </div>
-
-      <div class="results-count" id="results-count"></div>
-      <div class="drug-grid" id="drug-list">
-        <div class="loading"><div class="spin"></div><br>Loading drug database...</div>
+    <div id="quiz-main" style="display:none">
+      <div class="qwrap">
+        <div class="q-hdr"><div class="q-timer" id="q-timer">30</div><div class="q-pbar"><div class="q-pfill" id="q-pfill"></div></div><div class="q-cnt" id="q-cnt">1/10</div></div>
+        <div class="q-card"><div class="q-cat" id="q-cat"></div><div class="q-question" id="q-question"></div><div class="q-opts" id="q-opts"></div><div class="q-fb" id="q-fb"></div></div>
+        <div style="text-align:center"><button class="btn btn-navy" id="next-q-btn" onclick="nextQ()" style="display:none">Next Question →</button></div>
+        <div class="q-results" id="q-results"><div class="r-emoji" id="r-emoji">🎉</div><div class="r-score" id="r-score"></div><div class="r-lbl" id="r-lbl"></div><div style="display:flex;gap:9px;justify-content:center;flex-wrap:wrap;margin-top:16px"><button class="btn btn-primary" onclick="restartQuiz()">Try Again</button><button class="btn btn-navy" onclick="showQuizStart()">Change Mode</button><button class="btn btn-navy" onclick="navigateTo('flashcards')">Study Flashcards</button></div></div>
       </div>
     </div>
+  </div>
 
-    <!-- BOOKMARKS PAGE -->
-    <div class="page" id="page-bookmarks">
-      <div class="section-header">
-        <div class="section-title">🔖 Bookmarked Drugs</div>
-        <button class="btn btn-sm btn-navy" onclick="clearBookmarks()">Clear All</button>
-      </div>
-      <div class="drug-grid" id="bookmark-list"></div>
+  <!-- CLASS IDENTIFIER -->
+  <div class="page" id="page-classquiz">
+    <div class="sec-hdr"><div class="sec-title">🏷️ Drug Class Identifier</div><div style="display:flex;gap:8px;align-items:center"><span id="cq-score-disp" style="font-family:var(--fd);font-weight:700;font-size:16px;color:var(--navy)">Score: 0</span><button class="btn btn-sm btn-primary" onclick="newCQ()">New Drug</button></div></div>
+    <div class="cq-wrap">
+      <div class="cq-drug"><div style="font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--teal);margin-bottom:9px;font-weight:700">Identify the Pharmacologic Class</div><div class="cq-name" id="cq-name">Loading…</div><div class="cq-hint" id="cq-hint">Choose the correct class</div></div>
+      <div class="cq-choices" id="cq-choices"></div>
+      <div class="cq-fb" id="cq-fb"></div>
+      <div class="cq-stats"><div style="font-family:var(--fd);font-weight:700;font-size:13.5px;color:var(--navy)">📊 Session Stats</div><div class="cq-stat-grid"><div><div class="cq-stat-val" id="cq-cor" style="color:var(--teal)">0</div><div class="cq-stat-lbl">Correct</div></div><div><div class="cq-stat-val" id="cq-tot" style="color:var(--navy)">0</div><div class="cq-stat-lbl">Attempted</div></div><div><div class="cq-stat-val" id="cq-str" style="color:#7c3aed">0</div><div class="cq-stat-lbl">Streak</div></div></div></div>
     </div>
+  </div>
 
-    <!-- FLASHCARDS PAGE -->
-    <div class="page" id="page-flashcards">
-      <div class="section-header">
-        <div class="section-title">🃏 Flashcard Study</div>
-      </div>
-
-      <div class="fc-modes">
-        <button class="fc-mode-btn active" data-mode="action" onclick="setFCMode('action',this)">Mechanism of Action</button>
-        <button class="fc-mode-btn" data-mode="uses" onclick="setFCMode('uses',this)">Clinical Uses</button>
-        <button class="fc-mode-btn" data-mode="sideEffects" onclick="setFCMode('sideEffects',this)">Side Effects</button>
-        <button class="fc-mode-btn" data-mode="nursing" onclick="setFCMode('nursing',this)">Nursing Care</button>
-        <button class="fc-mode-btn" data-mode="precautions" onclick="setFCMode('precautions',this)">Precautions</button>
-      </div>
-
-      <div class="flashcard-controls">
-        <button class="btn btn-sm btn-navy" onclick="shuffleFlashcards()">🔀 Shuffle</button>
-        <button class="btn btn-sm btn-navy" onclick="resetFlashcards()">↩ Reset</button>
-        <span style="font-size:13px; color:var(--gray-400)">Click card to flip</span>
-      </div>
-
-      <div class="fc-progress" id="fc-progress">Card 1 of 475</div>
-
-      <div class="flashcard-scene" id="flashcard" onclick="flipCard()">
-        <div class="flashcard-inner">
-          <div class="flashcard-front">
-            <div class="fc-label">Drug Name</div>
-            <div class="fc-drug" id="fc-drug-name">Loading...</div>
-            <div class="fc-hint">Click to reveal</div>
-          </div>
-          <div class="flashcard-back">
-            <div class="fc-question" id="fc-question-label">Mechanism of Action</div>
-            <div class="fc-answer" id="fc-answer"></div>
-          </div>
-        </div>
-      </div>
-
-      <div class="fc-nav">
-        <button class="btn btn-navy" onclick="prevCard()">← Previous</button>
-        <div style="display:flex; gap:10px">
-          <button class="btn btn-outline btn-navy" onclick="markKnown()" style="background:var(--white); color:#16a34a; border:2px solid #16a34a">✓ Got it</button>
-          <button class="btn btn-outline btn-navy" onclick="markReview()" style="background:var(--white); color:#dc2626; border:2px solid #dc2626">✗ Review</button>
-        </div>
-        <button class="btn btn-navy" onclick="nextCard()">Next →</button>
+  <!-- DRUG MATCH -->
+  <div class="page" id="page-matching">
+    <div class="sec-hdr"><div class="sec-title">🔗 Drug Matching Game</div>
+      <div style="display:flex;gap:8px">
+        <select id="match-mode" style="padding:6px 12px;border-radius:8px;border:1.5px solid var(--g200);font-family:var(--fb);font-size:12.5px;color:var(--navy)">
+          <option value="action">Name → Mechanism</option>
+          <option value="uses">Name → Uses</option>
+          <option value="clinicalClass">Name → Drug Class</option>
+          <option value="sideEffects">Name → Side Effects</option>
+        </select>
+        <button class="btn btn-sm btn-primary" onclick="startMatch()">New Game</button>
       </div>
     </div>
+    <div class="match-info"><div class="mi">Score: <strong id="m-score">0</strong></div><div class="mi">Matched: <strong id="m-matched">0</strong>/4</div><div class="mi">Attempts: <strong id="m-attempts">0</strong></div><div class="mi">Time: <strong id="m-time">0s</strong></div></div>
+    <p style="font-size:12.5px;color:var(--g600);margin-bottom:12px">Match each dark drug-name card to its correct light description card.</p>
+    <div class="match-grid" id="match-grid"></div>
+    <div id="match-success" style="display:none;text-align:center;padding:26px;background:#fff;border-radius:var(--r);border:2px solid #16a34a"><div style="font-size:42px;margin-bottom:9px">🎉</div><div style="font-family:var(--fd);font-size:19px;font-weight:800;color:var(--navy);margin-bottom:6px">All Matched!</div><div style="font-size:13.5px;color:var(--g600);margin-bottom:16px" id="m-res"></div><button class="btn btn-primary" onclick="startMatch()">Play Again</button></div>
+  </div>
 
-    <!-- QUIZ PAGE -->
-    <div class="page" id="page-quiz">
-      <div id="quiz-start-screen">
-        <div class="hero" style="max-width:640px; margin:0 auto 28px">
-          <div class="hero-content">
-            <h2>📝 <span>Quiz</span> Challenge</h2>
-            <p>PNLE-style pharmacology questions. Test your knowledge with timed multiple choice questions. Earn XP for correct answers!</p>
-          </div>
-        </div>
-        <div style="max-width:640px; margin:0 auto; display:grid; grid-template-columns:1fr 1fr; gap:16px">
-          <div class="game-card" onclick="startQuiz(10,'mixed')" style="cursor:pointer">
-            <div class="game-card-icon">⚡</div>
-            <h3>Quick Round</h3>
-            <p>10 questions · Mixed topics</p>
-            <span class="game-card-badge badge-teal">~5 min</span>
-          </div>
-          <div class="game-card" onclick="startQuiz(20,'action')" style="cursor:pointer">
-            <div class="game-card-icon">🧬</div>
-            <h3>Mechanism Focus</h3>
-            <p>20 questions · Drug actions</p>
-            <span class="game-card-badge badge-purple">~10 min</span>
-          </div>
-          <div class="game-card" onclick="startQuiz(20,'nursing')" style="cursor:pointer">
-            <div class="game-card-icon">💉</div>
-            <h3>Nursing Focus</h3>
-            <p>20 questions · Nursing care</p>
-            <span class="game-card-badge badge-orange">~10 min</span>
-          </div>
-          <div class="game-card" onclick="startQuiz(30,'mixed')" style="cursor:pointer">
-            <div class="game-card-icon">🏆</div>
-            <h3>Full Challenge</h3>
-            <p>30 questions · All topics</p>
-            <span class="game-card-badge badge-orange">~15 min</span>
-          </div>
-        </div>
-      </div>
+  <!-- WORD SCRAMBLE -->
+  <div class="page" id="page-scramble">
+    <div class="sec-hdr"><div class="sec-title">🔀 Drug Name Scramble</div><div style="display:flex;gap:8px;align-items:center"><span id="sc-score-disp" style="font-family:var(--fd);font-weight:700;font-size:16px;color:var(--navy)">Score: 0</span><button class="btn btn-sm btn-primary" onclick="newScramble()">New Word</button></div></div>
+    <div class="sc-display"><div style="font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--teal);margin-bottom:9px;font-weight:700">Unscramble the Drug Name</div><div class="sc-letters" id="sc-letters">_ _ _ _ _ _</div><div class="sc-clue" id="sc-clue">Loading clue…</div><div style="font-size:12px;color:rgba(255,255,255,.6);margin-top:8px">Category: <span id="sc-cat" style="color:var(--teal-light)">—</span></div></div>
+    <div class="sc-row"><input class="sc-input" type="text" id="sc-input" placeholder="Type your answer…" onkeydown="if(event.key==='Enter')checkScramble()"><button class="btn btn-primary" onclick="checkScramble()">Submit</button><button class="btn btn-navy" onclick="revealScramble()">💡 Hint</button></div>
+    <div class="sc-fb" id="sc-fb"></div>
+    <div class="sc-stats"><div style="font-family:var(--fd);font-weight:700;font-size:13.5px;color:var(--navy);margin-bottom:11px">🏅 Session Stats</div><div style="display:grid;grid-template-columns:repeat(3,1fr);gap:13px;text-align:center"><div><div style="font-family:var(--fd);font-size:22px;font-weight:800;color:var(--teal)" id="sc-cor">0</div><div style="font-size:11.5px;color:var(--g400)">Correct</div></div><div><div style="font-family:var(--fd);font-size:22px;font-weight:800;color:var(--navy)" id="sc-tot">0</div><div style="font-size:11.5px;color:var(--g400)">Attempted</div></div><div><div style="font-family:var(--fd);font-size:22px;font-weight:800;color:#7c3aed" id="sc-str">0</div><div style="font-size:11.5px;color:var(--g400)">Streak</div></div></div></div>
+  </div>
 
-      <div id="quiz-main" style="display:none">
-        <div class="quiz-container">
-          <div class="quiz-header">
-            <div class="quiz-timer" id="quiz-timer">30</div>
-            <div class="quiz-progress-bar">
-              <div class="quiz-progress-fill" id="quiz-prog-fill"></div>
-            </div>
-            <div class="quiz-q-count" id="quiz-q-count">1 / 10</div>
-          </div>
-
-          <div class="quiz-card" id="quiz-card">
-            <div class="quiz-category" id="quiz-category"></div>
-            <div class="quiz-question" id="quiz-question"></div>
-            <div class="quiz-options" id="quiz-options"></div>
-            <div class="quiz-feedback" id="quiz-feedback"></div>
-          </div>
-
-          <div style="text-align:center">
-            <button class="btn btn-navy" id="next-q-btn" onclick="nextQuestion()" style="display:none">Next Question →</button>
-          </div>
-
-          <div class="quiz-results" id="quiz-results">
-            <div class="result-emoji" id="result-emoji">🎉</div>
-            <div class="result-score" id="result-score-display"></div>
-            <div class="result-label" id="result-label"></div>
-            <div style="display:flex; gap:12px; justify-content:center; flex-wrap:wrap; margin-top:20px">
-              <button class="btn btn-primary" onclick="restartQuiz()">Try Again</button>
-              <button class="btn btn-navy" onclick="showQuizStart()">Change Mode</button>
-              <button class="btn btn-navy" onclick="navigateTo('flashcards')">Study Flashcards</button>
-            </div>
-          </div>
-        </div>
-      </div>
+  <!-- PROGRESS -->
+  <div class="page" id="page-leaderboard">
+    <div class="sec-hdr"><div class="sec-title">🏆 My Progress</div></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px">
+      <div class="lb-hero"><div style="font-family:var(--fd);font-size:11px;font-weight:700;letter-spacing:.06em;color:var(--teal);margin-bottom:6px">YOUR STATS</div><div class="lb-pts" id="lb-pts">0</div><div class="lb-pts-lbl">Total Points Earned</div><div class="lb-mini-grid"><div class="lb-mini"><div class="lb-mini-val" id="lb-level">1</div><div class="lb-mini-lbl">Level</div></div><div class="lb-mini"><div class="lb-mini-val" id="lb-streak">0</div><div class="lb-mini-lbl">Day Streak</div></div><div class="lb-mini"><div class="lb-mini-val" id="lb-quizzes">0</div><div class="lb-mini-lbl">Quizzes</div></div><div class="lb-mini"><div class="lb-mini-val" id="lb-accuracy">—</div><div class="lb-mini-lbl">Accuracy</div></div></div></div>
+      <div style="background:#fff;border-radius:var(--r);padding:20px;border:1px solid var(--g200)"><div style="font-family:var(--fd);font-size:12px;font-weight:700;letter-spacing:.06em;color:var(--teal);margin-bottom:13px">ACHIEVEMENTS</div><div id="ach-list"></div></div>
     </div>
-
-    <!-- MATCHING GAME PAGE -->
-    <div class="page" id="page-matching">
-      <div class="section-header">
-        <div class="section-title">🔗 Drug Matching Game</div>
-        <div style="display:flex;gap:10px">
-          <select id="match-mode" style="padding:8px 14px;border-radius:8px;border:1.5px solid var(--gray-200);font-family:var(--font-body);font-size:13px">
-            <option value="action">Name → Action</option>
-            <option value="uses">Name → Uses</option>
-            <option value="class">Name → Classification</option>
-          </select>
-          <button class="btn btn-sm btn-primary" onclick="startMatching()">New Game</button>
-        </div>
-      </div>
-
-      <div class="match-score-row">
-        <div class="match-score-item">Score: <strong id="match-score">0</strong></div>
-        <div class="match-score-item">Matched: <strong id="match-matched">0</strong>/4</div>
-        <div class="match-score-item">Attempts: <strong id="match-attempts">0</strong></div>
-        <div class="match-score-item">Time: <strong id="match-time">0s</strong></div>
-      </div>
-
-      <p style="font-size:14px; color:var(--gray-600); margin-bottom:16px">Match each drug name (dark cards) to its correct description (light cards).</p>
-
-      <div class="match-grid" id="match-grid"></div>
-
-      <div id="match-success" style="display:none;text-align:center;padding:30px;background:var(--white);border-radius:var(--radius);border:2px solid #16a34a">
-        <div style="font-size:48px;margin-bottom:12px">🎉</div>
-        <div style="font-family:var(--font-display);font-size:22px;font-weight:800;color:var(--navy);margin-bottom:8px">All Matched!</div>
-        <div style="font-size:15px;color:var(--gray-600);margin-bottom:20px" id="match-result-text"></div>
-        <button class="btn btn-primary" onclick="startMatching()">Play Again</button>
-      </div>
-    </div>
-
-    <!-- WORD SCRAMBLE PAGE -->
-    <div class="page" id="page-scramble">
-      <div class="section-header">
-        <div class="section-title">🔀 Drug Name Scramble</div>
-        <div style="display:flex;gap:10px;align-items:center">
-          <span id="scramble-score-display" style="font-family:var(--font-display);font-weight:700;font-size:18px;color:var(--navy)">Score: 0</span>
-          <button class="btn btn-sm btn-primary" onclick="newScramble()">New Word</button>
-        </div>
-      </div>
-
-      <div class="scramble-display">
-        <div style="font-size:11px;letter-spacing:0.1em;text-transform:uppercase;color:var(--teal);margin-bottom:12px;font-weight:700">Unscramble the Drug Name</div>
-        <div class="scramble-letters" id="scramble-letters">_ _ _ _ _ _</div>
-        <div class="scramble-clue" id="scramble-clue">Loading clue...</div>
-        <div class="scramble-hint" style="margin-top:10px">
-          Category: <span id="scramble-category" style="color:var(--teal-light)">—</span>
-        </div>
-      </div>
-
-      <div class="scramble-input-row">
-        <input class="scramble-input" type="text" id="scramble-input" placeholder="Type your answer here..." onkeydown="if(event.key==='Enter')checkScramble()">
-        <button class="btn btn-primary" onclick="checkScramble()">Submit</button>
-        <button class="btn btn-navy" onclick="revealScramble()">💡 Hint</button>
-      </div>
-
-      <div id="scramble-feedback" style="padding:14px 18px;border-radius:var(--radius-sm);margin-bottom:16px;display:none;font-size:14px;font-weight:500"></div>
-
-      <div style="background:var(--white);border-radius:var(--radius);padding:20px;border:1px solid var(--gray-200)">
-        <div style="font-family:var(--font-display);font-weight:700;font-size:14px;color:var(--navy);margin-bottom:12px">🏅 Session Stats</div>
-        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px">
-          <div style="text-align:center">
-            <div style="font-family:var(--font-display);font-size:24px;font-weight:800;color:var(--teal)" id="sc-correct">0</div>
-            <div style="font-size:12px;color:var(--gray-400)">Correct</div>
-          </div>
-          <div style="text-align:center">
-            <div style="font-family:var(--font-display);font-size:24px;font-weight:800;color:var(--navy)" id="sc-total">0</div>
-            <div style="font-size:12px;color:var(--gray-400)">Attempted</div>
-          </div>
-          <div style="text-align:center">
-            <div style="font-family:var(--font-display);font-size:24px;font-weight:800;color:#7c3aed" id="sc-streak">0</div>
-            <div style="font-size:12px;color:var(--gray-400)">Streak</div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- LEADERBOARD PAGE -->
-    <div class="page" id="page-leaderboard">
-      <div class="section-header">
-        <div class="section-title">🏆 Your Progress & Leaderboard</div>
-      </div>
-
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:24px">
-        <div style="background:linear-gradient(135deg,var(--navy),var(--navy-mid));border-radius:var(--radius);padding:28px;color:var(--white)">
-          <div style="font-family:var(--font-display);font-size:13px;font-weight:700;letter-spacing:0.06em;color:var(--teal);margin-bottom:8px">YOUR STATS</div>
-          <div style="font-family:var(--font-display);font-size:40px;font-weight:800;margin-bottom:4px" id="lb-total-pts">0</div>
-          <div style="font-size:14px;color:rgba(255,255,255,0.6);margin-bottom:20px">Total Points Earned</div>
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
-            <div>
-              <div style="font-size:22px;font-weight:800;font-family:var(--font-display)" id="lb-level">1</div>
-              <div style="font-size:12px;color:rgba(255,255,255,0.5)">Current Level</div>
-            </div>
-            <div>
-              <div style="font-size:22px;font-weight:800;font-family:var(--font-display)" id="lb-streak">0</div>
-              <div style="font-size:12px;color:rgba(255,255,255,0.5)">Day Streak</div>
-            </div>
-            <div>
-              <div style="font-size:22px;font-weight:800;font-family:var(--font-display)" id="lb-quizzes">0</div>
-              <div style="font-size:12px;color:rgba(255,255,255,0.5)">Quizzes Done</div>
-            </div>
-            <div>
-              <div style="font-size:22px;font-weight:800;font-family:var(--font-display)" id="lb-accuracy">—</div>
-              <div style="font-size:12px;color:rgba(255,255,255,0.5)">Accuracy</div>
-            </div>
-          </div>
-        </div>
-
-        <div style="background:var(--white);border-radius:var(--radius);padding:28px;border:1px solid var(--gray-200)">
-          <div style="font-family:var(--font-display);font-size:13px;font-weight:700;letter-spacing:0.06em;color:var(--teal);margin-bottom:16px">ACHIEVEMENTS</div>
-          <div id="achievements-list" style="display:flex;flex-direction:column;gap:10px"></div>
-        </div>
-      </div>
-
-      <div style="background:var(--white);border-radius:var(--radius);padding:24px;border:1px solid var(--gray-200)">
-        <div style="font-family:var(--font-display);font-size:16px;font-weight:700;color:var(--navy);margin-bottom:16px">📊 Score History</div>
-        <div id="score-history" style="display:flex;flex-direction:column;gap:8px">
-          <div class="empty-state" style="padding:30px">
-            <div class="empty-state-icon">📊</div>
-            <div class="empty-state-text">Complete quizzes and games to see your history!</div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-  </main>
+    <div style="background:#fff;border-radius:var(--r);padding:20px;border:1px solid var(--g200)"><div style="font-family:var(--fd);font-size:14.5px;font-weight:700;color:var(--navy);margin-bottom:13px">📊 Score History</div><div id="score-hist"></div></div>
+  </div>
+</main>
 </div>
 
-<!-- DRUG DETAIL MODAL -->
+<!-- MODAL -->
 <div class="modal-backdrop" id="drug-modal">
   <div class="modal">
-    <div class="modal-header">
-      <button class="modal-close" onclick="closeModal()">✕</button>
-      <div class="modal-drug-name" id="modal-drug-name"></div>
-      <div class="modal-drug-brand" id="modal-drug-brand"></div>
-      <div>
-        <span class="modal-class-pill" id="modal-class-pill"></span>
-      </div>
+    <div class="m-hdr">
+      <button class="m-close" onclick="closeModal()">✕</button>
+      <div class="m-drug-name" id="m-drug-name"></div>
+      <div class="m-drug-brand" id="m-drug-brand"></div>
+      <span class="m-class-pill" id="m-class-pill"></span>
     </div>
-    <div class="modal-tabs">
-      <div class="modal-tab active" onclick="switchModalTab('overview',this)">📋 Overview</div>
-      <div class="modal-tab" onclick="switchModalTab('mechanism',this)">⚙️ How It Works</div>
-      <div class="modal-tab" onclick="switchModalTab('nursing',this)">💉 Nursing Care</div>
-      <div class="modal-tab" onclick="switchModalTab('safety',this)">⚠️ Safety</div>
+    <div class="m-tabs">
+      <div class="m-tab active" onclick="switchTab('overview',this)">📋 Overview</div>
+      <div class="m-tab" onclick="switchTab('mechanism',this)">⚙️ Mechanism</div>
+      <div class="m-tab" onclick="switchTab('nursing',this)">💉 Nursing</div>
+      <div class="m-tab" onclick="switchTab('safety',this)">⚠️ Safety</div>
     </div>
-    <div class="modal-body">
-
-      <!-- TAB 1: OVERVIEW -->
-      <div class="modal-tab-content active" id="mtab-overview">
-        <div class="drug-summary-grid">
-          <div class="summary-chip"><span class="sc-icon">🏷️</span><span class="sc-label">Drug Class</span><span class="sc-val" id="m-classification"></span></div>
-          <div class="summary-chip"><span class="sc-icon">💊</span><span class="sc-label">Category</span><span class="sc-val" id="m-pharmacoclass-chip"></span></div>
-        </div>
-        <div class="bullet-card teal-card">
-          <div class="bc-header">🎯 What is it used for?</div>
-          <ul class="bc-list" id="m-uses"></ul>
-        </div>
-        <div class="bullet-card orange-card">
-          <div class="bc-header">🚫 Precautions &amp; Contraindications</div>
-          <ul class="bc-list" id="m-precautions"></ul>
-        </div>
+    <div class="m-body">
+      <div class="m-tab-content active" id="mt-overview">
+        <div class="drug-chips"><div class="chip"><span class="chip-lbl">🏷 Drug Class</span><span class="chip-val" id="m-class"></span></div><div class="chip"><span class="chip-lbl">💊 Category</span><span class="chip-val" id="m-category"></span></div></div>
+        <div class="bcard bc-teal"><div class="bc-hdr">🎯 What is it used for?</div><ul class="blist" id="m-uses"></ul></div>
+        <div class="bcard bc-orange"><div class="bc-hdr">🚫 Precautions &amp; Contraindications</div><ul class="blist" id="m-precautions"></ul></div>
       </div>
-
-      <!-- TAB 2: MECHANISM -->
-      <div class="modal-tab-content" id="mtab-mechanism">
-        <div class="mechanism-banner">
-          <div class="mech-icon">⚙️</div>
-          <div>
-            <div class="mech-title">Mechanism of Action</div>
-            <div class="mech-class" id="m-pharmacoclass"></div>
-          </div>
-        </div>
+      <div class="m-tab-content" id="mt-mechanism">
+        <div class="mech-banner"><div class="mech-ico">⚙️</div><div><div class="mech-title">Mechanism of Action</div><div class="mech-cls" id="m-pharma-class"></div></div></div>
         <div class="mech-body" id="m-action"></div>
-        <div class="mech-effect-box" id="m-effect"></div>
+        <div class="mech-eff" id="m-effect" style="display:none"></div>
       </div>
-
-      <!-- TAB 3: NURSING CARE -->
-      <div class="modal-tab-content" id="mtab-nursing">
-        <div class="nursing-columns" id="m-nursing-wrap">
-          <div class="nc-col">
-            <div class="nc-col-header assess-header">📋 Baseline Assessment</div>
-            <ul class="bc-list" id="m-nursing-assess"></ul>
-          </div>
-          <div class="nc-col">
-            <div class="nc-col-header intervene-header">🔍 Intervention / Monitoring</div>
-            <ul class="bc-list" id="m-nursing-intervene"></ul>
-          </div>
-          <div class="nc-col" style="grid-column:1/-1">
-            <div class="nc-col-header teach-header">📢 Patient &amp; Family Teaching</div>
-            <ul class="bc-list" id="m-nursing-teach"></ul>
-          </div>
+      <div class="m-tab-content" id="mt-nursing">
+        <div class="nc-grid">
+          <div class="nc-col"><div class="nc-hdr nc-assess">📋 Baseline Assessment</div><ul class="blist" id="m-assess"></ul></div>
+          <div class="nc-col"><div class="nc-hdr nc-intervene">🔍 Monitor / Intervene</div><ul class="blist" id="m-intervene"></ul></div>
+          <div class="nc-col full-row"><div class="nc-hdr nc-teach">📢 Patient &amp; Family Teaching</div><ul class="blist" id="m-teach"></ul></div>
         </div>
       </div>
-
-      <!-- TAB 4: SAFETY -->
-      <div class="modal-tab-content" id="mtab-safety">
+      <div class="m-tab-content" id="mt-safety">
         <div class="safety-row">
-          <div class="safety-col warn-col">
-            <div class="bc-header warn-header">⚠️ Common Side Effects</div>
-            <ul class="bc-list" id="m-side"></ul>
-          </div>
-          <div class="safety-col danger-col">
-            <div class="bc-header danger-header">🚨 Adverse &amp; Toxic Reactions</div>
-            <ul class="bc-list danger-list" id="m-adverse"></ul>
-          </div>
+          <div class="s-col s-warn"><div class="bc-hdr" style="color:#92400e;margin-bottom:8px">⚠️ Common Side Effects</div><ul class="blist" id="m-side"></ul></div>
+          <div class="s-col s-danger"><div class="bc-hdr" style="color:#991b1b;margin-bottom:8px">🚨 Adverse &amp; Toxic Reactions</div><ul class="blist danger-list" id="m-adverse"></ul></div>
         </div>
-        <div class="pnle-tip-box" id="m-pnle-tip">
-          <div class="pnle-label">📌 PNLE NURSING TIP</div>
-          <div id="m-pnle-content"></div>
-        </div>
+        <div class="tip-box"><div class="tip-lbl">📌 PNLE NURSING TIP</div><div class="tip-body" id="m-tip"></div></div>
       </div>
-
-      <div class="modal-actions">
-        <button class="btn btn-primary" id="modal-bookmark-btn" onclick="toggleBookmarkFromModal()">🔖 Bookmark</button>
-        <button class="btn btn-navy" onclick="addToFlashcards()">🃏 Study Queue</button>
+      <div class="m-acts">
+        <button class="btn btn-primary" id="m-bm-btn" onclick="toggleBM()">🔖 Bookmark</button>
+        <button class="btn btn-navy" onclick="addQueue()">🃏 Study Queue</button>
         <button class="btn btn-navy" onclick="closeModal()">Close</button>
       </div>
     </div>
   </div>
 </div>
-
-<!-- TOAST -->
 <div class="toast" id="toast"></div>
-
-<!-- XP NOTIFICATION -->
-<div class="xp-notification" id="xp-note"></div>
-
+<div class="xp-note" id="xp-note"></div>
 <script>
-// ═══════════════════════════════════════════════
-// DATA LAYER
-// ═══════════════════════════════════════════════
-let DRUGS = [];
-let filteredDrugs = [];
-let currentAlpha = 'ALL';
-let currentClassFilter = 'All';
-let activeModalDrug = null;
+// ═══ STATE ═══
+let DRUGS=[],filteredDrugs=[],curAlpha='ALL',curClass='All',activeDrug=null,studyQueue=[];
+let S=JSON.parse(localStorage.getItem('hct-pharma')||'{}');
+if(!S.xp)S={xp:0,level:1,totalScore:0,streak:0,lastDate:'',studied:[],correct:0,total:0,bookmarks:[],quizzes:0,history:[],scScore:0,cqScore:0};
+const today=new Date().toDateString();
+if(S.lastDate!==today){const y=new Date();y.setDate(y.getDate()-1);S.streak=(S.lastDate===y.toDateString()?S.streak+1:1);S.lastDate=today;save();}
+function save(){localStorage.setItem('hct-pharma',JSON.stringify(S));}
 
-// User state
-let state = JSON.parse(localStorage.getItem('hct-pharma-state') || '{}');
-if (!state.xp) state = {
-  xp: 0, level: 1, totalScore: 0, streak: 0, lastDate: '',
-  studiedDrugs: [], correctAnswers: 0, totalAnswers: 0,
-  bookmarks: [], quizzesDone: 0, scoreHistory: [],
-  scrambleScore: 0, matchScore: 0
-};
-
-// Check streak
-const today = new Date().toDateString();
-if (state.lastDate !== today) {
-  const yesterday = new Date(); yesterday.setDate(yesterday.getDate()-1);
-  if (state.lastDate === yesterday.toDateString()) state.streak++;
-  else state.streak = 1;
-  state.lastDate = today;
-  saveState();
+// ═══ LOAD ═══
+async function loadDrugs(){
+  try{
+    const r=await fetch('./drugs.json');DRUGS=await r.json();filteredDrugs=[...DRUGS];
+    updateStats();buildAlpha();buildFilters();renderGrid();initFC();updateLB();renderRecent();newCQ();newScramble();startMatch();
+  }catch(e){document.getElementById('drug-list').innerHTML='<div class="empty-s" style="grid-column:1/-1"><div class="empty-s-icon">⚠️</div><div>Cannot load drugs.json — place it in the same folder as index.html.</div></div>';}
 }
 
-function saveState() { localStorage.setItem('hct-pharma-state', JSON.stringify(state)); }
+// ═══ NAV ═══
+const TITLES={home:'🏠 Home',drugs:'💊 Drug Reference',bookmarks:'🔖 Bookmarks',flashcards:'🃏 Flashcards',quiz:'📝 PNLE Quiz',classquiz:'🏷️ Class Identifier',matching:'🔗 Drug Match',scramble:'🔀 Word Scramble',leaderboard:'🏆 My Progress'};
+function navigateTo(p){
+  document.querySelectorAll('.page').forEach(x=>x.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(x=>x.classList.remove('active'));
+  document.getElementById('page-'+p).classList.add('active');
+  document.querySelector(`[data-page="${p}"]`).classList.add('active');
+  document.getElementById('page-title').textContent=TITLES[p];
+  if(p==='bookmarks')renderBM();
+  if(p==='leaderboard')updateLB();
+  if(p==='flashcards')updateFC();
+}
+document.querySelectorAll('.nav-item').forEach(el=>el.addEventListener('click',()=>navigateTo(el.dataset.page)));
 
-// ═══════════════════════════════════════════════
-// LOAD DRUGS
-// ═══════════════════════════════════════════════
-async function loadDrugs() {
-  try {
-    const res = await fetch('./drugs.json');
-    DRUGS = await res.json();
-    filteredDrugs = [...DRUGS];
-    updateStats();
-    buildAlphabet();
-    buildClassFilters();
-    renderDrugGrid();
-    initFlashcards();
-    updateLeaderboard();
-    renderRecentDrugs();
-  } catch(e) {
-    document.getElementById('drug-list').innerHTML = '<div class="empty-state"><div class="empty-state-icon">⚠️</div><div>Could not load drug database. Make sure drugs.json is in the same folder as index.html.</div></div>';
-  }
+// ═══ TEXT HELPERS ═══
+function cl(t){
+  return(t||'').replace(/####\s*/g,'').replace(/\*\*/g,'').replace(/\bgreater than or equal to\b/gi,'≥').replace(/\bless than or equal to\b/gi,'≤').replace(/\bgreater than\b/gi,'>').replace(/\bless than\b/gi,'<').replace(/\bin pts\b|\bin patients\b/gi,'').replace(/\bof age\b/gi,'').replace(/\bthe following\b|\bas follows\b/gi,'').replace(/\bTherapeutic Effect:\s*/i,'').replace(/\bNote:\s*/gi,'').replace(/\bsee Appendix [A-Z]\b/gi,'').replace(/\(\s*\)/g,'').replace(/,\s*,/g,',').replace(/\s{2,}/g,' ').trim();
+}
+function pol(s){
+  if(!s)return'';
+  s=s.replace(/\s{2,}/g,' ').replace(/[,;:\-]+$/,'').trim();
+  if(!s)return'';
+  s=s[0].toUpperCase()+s.slice(1);
+  if(!/[.!?]$/.test(s))s+='.';
+  return s;
+}
+function items(text,cap=5){
+  if(!text)return[];
+  const t=cl(text);
+  let parts=t.replace(/\d+\.\s+/g,'|||').replace(/;\s*/g,'|||').replace(/\.\s+(?=[A-Z])/g,'|||')
+    .split('|||').map(s=>s.replace(/\.$/,'').trim()).filter(s=>s.length>8&&!/^(note|see|refer|off-label)/i.test(s));
+  const seen=new Set();
+  parts=parts.filter(p=>{const k=p.slice(0,34).toLowerCase();if(seen.has(k))return false;seen.add(k);return true;});
+  return parts.slice(0,cap).map(pol).filter(Boolean);
+}
+function rend(list,id,fallback='Not available.'){
+  const el=document.getElementById(id);if(!el)return;
+  el.innerHTML=(list.length?list:[fallback]).map(s=>`<li>${s}</li>`).join('');
 }
 
-// ═══════════════════════════════════════════════
-// NAVIGATION
-// ═══════════════════════════════════════════════
-const pageTitles = {
-  home: '🏠 Home', drugs: '💊 Drug Reference', bookmarks: '🔖 Bookmarks',
-  flashcards: '🃏 Flashcards', quiz: '📝 Quiz Mode', matching: '🔗 Matching Game',
-  scramble: '🔀 Word Scramble', leaderboard: '🏆 Leaderboard'
-};
-
-function navigateTo(page) {
-  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-  document.getElementById('page-'+page).classList.add('active');
-  document.querySelector(`[data-page="${page}"]`).classList.add('active');
-  document.getElementById('page-title').textContent = pageTitles[page];
-
-  if (page === 'bookmarks') renderBookmarks();
-  if (page === 'matching') startMatching();
-  if (page === 'scramble') newScramble();
-  if (page === 'leaderboard') updateLeaderboard();
-  if (page === 'flashcards') updateFCDisplay();
+// ═══ DRUG REFERENCE ═══
+function buildAlpha(){
+  document.getElementById('alpha-nav').innerHTML=['ALL',...'ABCDEFGHIJKLMNOPQRSTUVWXYZ'].map(l=>`<button class="alpha-btn ${l==='ALL'?'active':''}" onclick="setAlpha('${l}',this)">${l}</button>`).join('');
 }
-
-document.querySelectorAll('.nav-item').forEach(item => {
-  item.addEventListener('click', () => navigateTo(item.dataset.page));
-});
-
-// ═══════════════════════════════════════════════
-// DRUG REFERENCE
-// ═══════════════════════════════════════════════
-function buildAlphabet() {
-  const nav = document.getElementById('alpha-nav');
-  const letters = ['ALL', ...'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('')];
-  nav.innerHTML = letters.map(l =>
-    `<button class="alpha-btn ${l==='ALL'?'active':''}" onclick="filterAlpha('${l}',this)">${l}</button>`
-  ).join('');
+function buildFilters(){
+  const classes=['All',...new Set(DRUGS.map(d=>d.clinicalClass).filter(Boolean))].slice(0,20);
+  document.getElementById('class-filters').innerHTML=classes.map((c,i)=>`<button class="filter-chip ${i===0?'active':''}" onclick="setClass(this,'${c.replace(/'/g,"\\'")}')"> ${c}</button>`).join('');
 }
-
-function buildClassFilters() {
-  const container = document.getElementById('class-filters');
-  const classes = ['All', ...new Set(DRUGS.map(d=>d.clinicalClass).filter(Boolean))].slice(0, 20);
-  container.innerHTML = classes.map((c,i) =>
-    `<button class="filter-chip ${i===0?'active':''}" onclick="filterClass('${c}',this)">${c}</button>`
-  ).join('');
-}
-
-function filterAlpha(letter, btn) {
-  currentAlpha = letter;
-  document.querySelectorAll('.alpha-btn').forEach(b => b.classList.remove('active'));
-  btn.classList.add('active');
-  applyFilters();
-}
-
-function filterClass(cls, btn) {
-  currentClassFilter = cls;
-  document.querySelectorAll('.filter-chip').forEach(b => b.classList.remove('active'));
-  btn.classList.add('active');
-  applyFilters();
-}
-
-function filterDrugs() { applyFilters(); }
-
-function clearSearch() {
-  document.getElementById('drug-search').value = '';
-  applyFilters();
-}
-
-function applyFilters() {
-  const query = document.getElementById('drug-search').value.toLowerCase();
-  filteredDrugs = DRUGS.filter(d => {
-    const matchSearch = !query || d.name.includes(query) || (d.brand||'').toLowerCase().includes(query) || (d.clinicalClass||'').toLowerCase().includes(query);
-    const matchAlpha = currentAlpha === 'ALL' || d.name.toUpperCase().startsWith(currentAlpha);
-    const matchClass = currentClassFilter === 'All' || d.clinicalClass === currentClassFilter;
-    return matchSearch && matchAlpha && matchClass;
+function setAlpha(l,btn){curAlpha=l;document.querySelectorAll('.alpha-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');applyF();}
+function setClass(btn,c){curClass=c;document.querySelectorAll('.filter-chip').forEach(b=>b.classList.remove('active'));btn.classList.add('active');applyF();}
+function filterDrugs(){applyF();}
+function clearSearch(){document.getElementById('drug-search').value='';applyF();}
+function applyF(){
+  const q=(document.getElementById('drug-search').value||'').toLowerCase();
+  filteredDrugs=DRUGS.filter(d=>{
+    const ms=!q||d.name.includes(q)||(d.brand||'').toLowerCase().includes(q)||(d.clinicalClass||'').toLowerCase().includes(q);
+    const ma=curAlpha==='ALL'||d.name.toUpperCase().startsWith(curAlpha);
+    const mc=curClass==='All'||d.clinicalClass===curClass;
+    return ms&&ma&&mc;
   });
-  renderDrugGrid();
+  renderGrid();
+}
+function renderGrid(){
+  const c=document.getElementById('drug-list');
+  document.getElementById('results-count').textContent=`${filteredDrugs.length} drug${filteredDrugs.length!==1?'s':''} found`;
+  if(!filteredDrugs.length){c.innerHTML='<div class="empty-s" style="grid-column:1/-1"><div class="empty-s-icon">🔍</div><div>No drugs match your search.</div></div>';return;}
+  c.innerHTML=filteredDrugs.slice(0,150).map(d=>`<div class="drug-card" onclick="openDrug('${d.name.replace(/'/g,"\\'")}')"><div class="drug-name">${d.name}</div>${d.brand?`<div class="drug-brand">${d.brand.split(',')[0].trim()}</div>`:''}<span class="drug-class-pill">${d.clinicalClass||d.pharmacoClass||'—'}</span></div>`).join('');
+  if(filteredDrugs.length>150)c.innerHTML+=`<div style="grid-column:1/-1;text-align:center;padding:16px;color:var(--g400);font-size:12px">Showing 150 of ${filteredDrugs.length}. Refine your search.</div>`;
 }
 
-function renderDrugGrid() {
-  const container = document.getElementById('drug-list');
-  document.getElementById('results-count').textContent = `${filteredDrugs.length} drug${filteredDrugs.length!==1?'s':''} found`;
-  if (!filteredDrugs.length) {
-    container.innerHTML = '<div class="empty-state" style="grid-column:1/-1"><div class="empty-state-icon">🔍</div><div>No drugs match your search.</div></div>';
-    return;
-  }
-  container.innerHTML = filteredDrugs.slice(0, 120).map(d =>
-    `<div class="drug-card" onclick="openDrug('${d.name.replace(/'/g,"\\'")}')">
-      <div class="drug-name">${d.name}</div>
-      ${d.brand ? `<div class="drug-brand">${d.brand.split(',')[0].trim()}</div>` : ''}
-      ${d.clinicalClass ? `<span class="drug-class-pill">${d.clinicalClass}</span>` : ''}
-    </div>`
-  ).join('');
-  if (filteredDrugs.length > 120) {
-    container.innerHTML += `<div style="grid-column:1/-1;text-align:center;padding:20px;color:var(--gray-400);font-size:13px">Showing 120 of ${filteredDrugs.length}. Use search or filters to narrow results.</div>`;
-  }
-}
+// ═══ DRUG DETAIL MODAL ═══
+function openDrug(name){
+  const drug=DRUGS.find(d=>d.name===name);if(!drug)return;
+  activeDrug=drug;
+  if(!S.studied.includes(name)){S.studied.push(name);document.getElementById('stat-studied').textContent=S.studied.length;addXP(5);}
+  let rec=JSON.parse(localStorage.getItem('hct-recent')||'[]');
+  rec=[name,...rec.filter(n=>n!==name)].slice(0,6);localStorage.setItem('hct-recent',JSON.stringify(rec));
 
-function openDrug(name) {
-  const drug = DRUGS.find(d => d.name === name);
-  if (!drug) return;
-  activeModalDrug = drug;
+  // Header
+  document.getElementById('m-drug-name').textContent=drug.displayName||drug.name;
+  document.getElementById('m-drug-brand').textContent=drug.brand?`Brand: ${drug.brand.split(',').slice(0,3).join(', ')}`:'';
+  document.getElementById('m-class-pill').textContent=drug.clinicalClass||drug.pharmacoClass||'Unknown Class';
+  document.getElementById('m-class').textContent=drug.clinicalClass||'Not specified';
+  document.getElementById('m-category').textContent=drug.pharmacoClass||'Not specified';
+  document.getElementById('m-pharma-class').textContent=drug.pharmacoClass||'';
 
-  // Track studied
-  if (!state.studiedDrugs.includes(name)) {
-    state.studiedDrugs.push(name);
-    document.getElementById('stat-studied').textContent = state.studiedDrugs.length;
-    addXP(5);
-  }
+  // Mechanism
+  const aRaw=cl(drug.action||'');
+  const effM=aRaw.match(/Therapeutic Effect[:\s]+([^.]+\.?)/i);
+  document.getElementById('m-action').textContent=(effM?aRaw.replace(/Therapeutic Effect[:\s]+[^.]+\.?/i,'').trim():aRaw)||'Not available.';
+  const eff=document.getElementById('m-effect');
+  if(effM){eff.textContent='✓ Result: '+pol(cl(effM[1]));eff.style.display='block';}else eff.style.display='none';
 
-  // Recent
-  let recent = JSON.parse(localStorage.getItem('hct-recent') || '[]');
-  recent = [name, ...recent.filter(n=>n!==name)].slice(0, 6);
-  localStorage.setItem('hct-recent', JSON.stringify(recent));
+  // Uses
+  const usesRaw=(drug.uses||'').replace(/\bTreatment of\b/gi,'').replace(/\bManagement of\b/gi,'').replace(/\bOFF-LABEL:.*$/i,'').replace(/\bTemporary relief of\b|\bRelief of\b|\bProphylaxis of\b/gi,(m)=>m.includes('Proph')?'Prophylaxis:':'');
+  const usesItems=items(usesRaw,5).filter(b=>{const m=b.match(/^(\w+):\s*(\w+)\.$/i);return!(m&&m[1].toLowerCase()===m[2].toLowerCase());});
+  rend(usesItems,'m-uses','See prescribing information.');
 
-  // ── Populate modal ──
-  document.getElementById('modal-drug-name').textContent = drug.displayName || drug.name;
-  document.getElementById('modal-drug-brand').textContent = drug.brand ? `Brand: ${drug.brand.split(',').slice(0,3).join(', ')}` : '';
-  document.getElementById('modal-class-pill').textContent = drug.clinicalClass || drug.pharmacoClass || 'Unknown Class';
-  document.getElementById('m-classification').textContent = drug.clinicalClass || 'Not specified';
-  document.getElementById('m-pharmacoclass-chip').textContent = drug.pharmacoClass || 'Not specified';
-  document.getElementById('m-pharmacoclass').textContent = drug.pharmacoClass || '';
+  // Precautions
+  const pt=drug.precautions||'';
+  const ciR=(pt.match(/Contraindications?:\s*([^.C]+\.?)/i)||[])[1]||'';
+  const cauR=(pt.match(/Cautions?:\s*([\s\S]+?)(?=\.|$)/i)||[])[1]||pt;
+  const pItems=[];
+  if(ciR)pItems.push(pol('Contraindicated: '+cl(ciR).replace(/,\s*$/,'')));
+  items(cauR,3).forEach(c=>pItems.push(c));
+  rend(pItems.length?pItems:items(pt,4),'m-precautions','Follow standard precautions.');
 
-  // ── Text processing helpers ──
+  // Safety
+  const sideRaw=(drug.sideEffects||'').replace(/\(\d+[%–\-\d\s]*\)/g,'').replace(/\b(Frequent|Occasional|Rare)\s*(\(\d[^)]*\))?\s*:/gi,'');
+  rend(items(sideRaw,5),'m-side','No common side effects listed.');
+  rend(items(drug.adverseEffects,4),'m-adverse','Monitor for unexpected reactions.');
 
-  // 1. Deep clean: strip markdown, artifacts, legal padding, double spaces
-  function clean(t) {
-    return (t || '')
-      .replace(/####\s*/g, '')
-      .replace(/\*\*/g, '')
-      .replace(/\bgreater than or equal to\b/gi, '≥')
-      .replace(/\bless than or equal to\b/gi, '≤')
-      .replace(/\bgreater than\b/gi, '>')
-      .replace(/\bless than\b/gi, '<')
-      .replace(/\bin pts\b/gi, '')
-      .replace(/\bin patients\b/gi, '')
-      .replace(/\bof age\b/gi, '')
-      .replace(/\bthe following\b/gi, '')
-      .replace(/\bas follows\b/gi, '')
-      .replace(/\bincluding but not limited to\b/gi, 'including')
-      .replace(/\bTherapeutic Effect:\s*/i, '')
-      .replace(/\bNote:\s*/gi, '')
-      .replace(/\bsee Appendix [A-Z]\b/gi, '')
-      .replace(/\bfor dosage\b/gi, '')
-      .replace(/\bfor more information\b/gi, '')
-      .replace(/\(\s*\)/g, '')           // empty parens
-      .replace(/,\s*,/g, ',')            // double commas
-      .replace(/\s{2,}/g, ' ')
-      .trim();
-  }
+  // PNLE Tip
+  const tipLines=[];
+  if(drug.adverseEffects){const a=cl(drug.adverseEffects).split(/[.;]/)[0].trim();if(a.length>8)tipLines.push('Monitor: '+pol(a));}
+  if(drug.precautions){const ci=(drug.precautions.match(/Contraindications?:\s*([^.]+)/i)||[])[1];if(ci)tipLines.push('Avoid if: '+pol(cl(ci)));}
+  if(drug.sideEffects){const se=cl(drug.sideEffects).replace(/\([^)]+\)/g,'').replace(/\b(Frequent|Occasional|Rare)\s*:/gi,'').split(/[.;]/)[0].trim();if(se.length>8)tipLines.push('Common side effects: '+pol(se));}
+  document.getElementById('m-tip').innerHTML=tipLines.length?tipLines.map(t=>`<div style="margin-bottom:5px">▸ ${t}</div>`).join(''):'▸ Assess patient before giving. Monitor therapeutic response. Educate on proper use and expected effects.';
 
-  // 2. Polish a single bullet: capitalize first letter, ensure it ends with a period, no trailing junk
-  function polish(s) {
-    if (!s) return '';
-    s = s
-      .replace(/\s{2,}/g, ' ')
-      .replace(/[,;:\-]+$/, '')          // trailing punctuation
-      .replace(/\.{2,}$/g, '')           // trailing dots (no ellipsis)
-      .replace(/…+$/, '')               // trailing ellipsis character
-      .trim();
-    if (!s) return '';
-    // Capitalize first letter
-    s = s.charAt(0).toUpperCase() + s.slice(1);
-    // End with period if not already punctuated
-    if (!/[.!?]$/.test(s)) s += '.';
-    return s;
-  }
+  // Nursing
+  const nc=drug.nursingConsiderations||'';
+  function ncSec(...keys){for(const k of keys){const m=nc.match(new RegExp(k+'[:\\s#]+(.*?)(?=BASELINE|INTERVENTION|PATIENT|$)','is'));if(m&&m[1].trim().length>10)return m[1].trim();}return'';}
+  function condNC(text,cap){return items(cl(text).replace(/\bBe alert (for|to)\b/gi,'Watch for').replace(/\bReport (to physician|to provider|promptly)?\b/gi,'Report').replace(/\bPrior to (initiating|starting)\b/gi,'Before starting').replace(/\bObtain (a )?(baseline )?\b/gi,'Obtain '),cap);}
+  const aR=ncSec('BASELINE ASSESSMENT','BASELINE');
+  const iR=ncSec('INTERVENTION/EVALUATION','INTERVENTION');
+  const tR=ncSec('PATIENT/FAMILY TEACHING','TEACHING');
+  if(aR){rend(condNC(aR,4),'m-assess','Obtain baseline data before therapy.');rend(condNC(iR||'Monitor vital signs and therapeutic response.',4),'m-intervene','Monitor patient response.');rend(condNC(tR||'Take as prescribed. Report side effects to provider.',4),'m-teach','Follow medication instructions.');}
+  else{const s=cl(nc).split(/\.\s+/).filter(x=>x.length>10);const n=Math.ceil(s.length/3);rend(s.slice(0,n).slice(0,4).map(x=>pol(x)),'m-assess','Obtain baseline data.');rend(s.slice(n,n*2).slice(0,4).map(x=>pol(x)),'m-intervene','Monitor patient response.');rend(s.slice(n*2).slice(0,4).map(x=>pol(x)),'m-teach','Teach patient about medication.');}
 
-  // 3. Split text into clean bullet items, capped at `cap`
-  function toItems(text, cap = 5) {
-    if (!text) return [];
-    const t = clean(text);
-    // Split boundaries: semicolons, numbered lists, sentence ends before a capital letter
-    let parts = t
-      .replace(/\d+\.\s+/g, '|||')
-      .replace(/;\s*/g, '|||')
-      .replace(/\.\s+(?=[A-Z])/g, '|||')
-      .split('|||')
-      .map(s => s.replace(/\.$/, '').trim())
-      .filter(s => s.length > 8 && !/^(note|see|refer|off-label)/i.test(s));
-
-    // Deduplicate by first 35 chars
-    const seen = new Set();
-    parts = parts.filter(p => {
-      const k = p.slice(0, 35).toLowerCase();
-      if (seen.has(k)) return false;
-      seen.add(k);
-      return true;
-    });
-
-    return parts.slice(0, cap).map(polish).filter(Boolean);
-  }
-
-  // 4. Render <li> list
-  function render(items, elId, fallback = 'Not available.') {
-    const el = document.getElementById(elId);
-    const list = items.length ? items : [fallback];
-    el.innerHTML = list.map(s => `<li>${s}</li>`).join('');
-  }
-
-  // ── OVERVIEW TAB ──
-
-  // Uses: drop verbose lead phrases, keep condition names only
-  const usesRaw = (drug.uses || '')
-    .replace(/\bTreatment of\b/gi, '')
-    .replace(/\bManagement of\b/gi, '')
-    .replace(/\bAdjunctive therapy (to|for)\b/gi, 'Adjunct for')
-    .replace(/\bOFF-LABEL:.*$/i, '')
-    .replace(/\bProphylaxis of\b/gi, 'Prophylaxis:')
-    .replace(/\bReduction of\b/gi, 'Reduces')
-    .replace(/\bTemporary relief of\b/gi, '')
-    .replace(/\bTemporary reduction of\b/gi, '')
-    .replace(/\bRelief of\b/gi, '');
-  // After splitting, drop any bullet where the label and content are the same word (e.g. "Fever: fever")
-  const usesItems = toItems(usesRaw, 5).filter(b => {
-    const m = b.match(/^(\w+):\s*(\w+)\./i);
-    return !(m && m[1].toLowerCase() === m[2].toLowerCase());
-  });
-  render(usesItems, 'm-uses', 'See prescribing information.');
-
-  // Precautions: split CI and Cautions cleanly
-  const precText = drug.precautions || '';
-  const ciRaw  = (precText.match(/Contraindications?:\s*([^.C]+\.?)/i) || [])[1] || '';
-  const cauRaw = (precText.match(/Cautions?:\s*([\s\S]+?)(?=\.|$)/i) || [])[1] || precText;
-  const precItems = [];
-  if (ciRaw) {
-    // CI is one bullet
-    const ciClean = clean(ciRaw).replace(/hypersensitivity to \w+/gi, s => s).replace(/,\s*$/, '');
-    precItems.push(polish('Contraindicated: ' + ciClean));
-  }
-  toItems(cauRaw, 3).forEach(c => precItems.push(c));
-  render(precItems.length ? precItems : toItems(precText, 4), 'm-precautions', 'Follow standard precautions.');
-
-  // ── MECHANISM TAB ──
-  const actionRaw = clean(drug.action || '');
-  const effectM   = actionRaw.match(/Therapeutic Effect[:\s]+([^.]+\.?)/i);
-  const actionBody = actionRaw.replace(/Therapeutic Effect[:\s]+[^.]+\.?/i, '').trim();
-  document.getElementById('m-action').textContent = actionBody || actionRaw;
-  const effectBox = document.getElementById('m-effect');
-  if (effectM) {
-    effectBox.textContent = '✓ Result: ' + polish(clean(effectM[1]));
-    effectBox.style.display = 'block';
-  } else {
-    effectBox.style.display = 'none';
-  }
-
-  // ── SAFETY TAB ──
-
-  // Side effects: remove frequency labels and percentages, split by comma-groups
-  const sideRaw = (drug.sideEffects || '')
-    .replace(/\(\d+[%–\-\d\s]*\)/g, '')
-    .replace(/\b(Frequent|Occasional|Rare)\s*(\(\d[^)]*\))?\s*:/gi, '');
-  render(toItems(sideRaw, 5), 'm-side', 'No common side effects listed.');
-
-  // Adverse effects
-  render(toItems(drug.adverseEffects, 4), 'm-adverse', 'Monitor for unexpected reactions.');
-
-  // PNLE Tip: 3 concise action lines, no ellipsis, properly capitalized
-  const tipLines = [];
-  if (drug.adverseEffects) {
-    const adverseFirst = clean(drug.adverseEffects).split(/[.;]/)[0].trim();
-    if (adverseFirst.length > 8) tipLines.push('Monitor: ' + polish(adverseFirst));
-  }
-  if (drug.precautions) {
-    const ciSnip = (drug.precautions.match(/Contraindications?:\s*([^.]+)/i) || [])[1];
-    if (ciSnip) tipLines.push('Avoid if: ' + polish(clean(ciSnip)));
-  }
-  if (drug.sideEffects) {
-    const seFirst = clean(drug.sideEffects).replace(/\([^)]+\)/g, '').replace(/\b(Frequent|Occasional|Rare)\s*:/gi,'').split(/[.;]/)[0].trim();
-    if (seFirst.length > 8) tipLines.push('Common side effects: ' + polish(seFirst));
-  }
-  document.getElementById('m-pnle-content').innerHTML = tipLines.length
-    ? tipLines.map(t => `<div style="margin-bottom:6px">▸ ${t}</div>`).join('')
-    : '▸ Assess patient before giving. Monitor therapeutic response. Educate on proper use.';
-
-  // ── NURSING TAB ──
-  const nc = drug.nursingConsiderations || '';
-
-  function ncSection(text, ...keys) {
-    for (const k of keys) {
-      const m = text.match(new RegExp(k + '[:\\s#]+(.*?)(?=####|BASELINE|INTERVENTION|PATIENT|$)', 'is'));
-      if (m && m[1].trim().length > 10) return m[1].trim();
-    }
-    return '';
-  }
-
-  function condenseNC(text, cap) {
-    return toItems(
-      clean(text)
-        .replace(/\bBe alert (for|to)\b/gi, 'Watch for')
-        .replace(/\bIn addition to\b/gi, 'Also')
-        .replace(/\bMonitor (for )?the following\b/gi, 'Monitor')
-        .replace(/\bReport (to physician|to provider|promptly)?\b/gi, 'Report')
-        .replace(/\bPrior to (initiating|starting|beginning)\b/gi, 'Before starting')
-        .replace(/\bObtain (a )?(baseline )?\b/gi, 'Obtain '),
-      cap
-    );
-  }
-
-  const assessRaw = ncSection(nc, 'BASELINE ASSESSMENT', 'BASELINE');
-  const interRaw  = ncSection(nc, 'INTERVENTION/EVALUATION', 'INTERVENTION');
-  const teachRaw  = ncSection(nc, 'PATIENT/FAMILY TEACHING', 'TEACHING');
-
-  if (assessRaw) {
-    render(condenseNC(assessRaw, 4), 'm-nursing-assess', 'Obtain baseline data before therapy.');
-    render(condenseNC(interRaw || 'Monitor vital signs and therapeutic response.', 4), 'm-nursing-intervene', 'Monitor patient response.');
-    render(condenseNC(teachRaw || 'Take as prescribed. Report side effects to provider.', 4), 'm-nursing-teach', 'Follow medication instructions.');
-  } else {
-    const sents = clean(nc).split(/\.\s+/).filter(s => s.length > 10);
-    const n = Math.ceil(sents.length / 3);
-    render(sents.slice(0, n).slice(0, 4).map(s => polish(s)), 'm-nursing-assess', 'Obtain baseline data.');
-    render(sents.slice(n, n * 2).slice(0, 4).map(s => polish(s)), 'm-nursing-intervene', 'Monitor patient response.');
-    render(sents.slice(n * 2).slice(0, 4).map(s => polish(s)), 'm-nursing-teach', 'Teach patient about medication.');
-  }
-
-  // Bookmark btn
-  const bookmarked = state.bookmarks.includes(name);
-  document.getElementById('modal-bookmark-btn').textContent = bookmarked ? '✅ Bookmarked' : '🔖 Bookmark';
-
-  // Reset tabs
-  document.querySelectorAll('.modal-tab').forEach(t => t.classList.remove('active'));
-  document.querySelectorAll('.modal-tab-content').forEach(c => c.classList.remove('active'));
-  document.querySelector('.modal-tab').classList.add('active');
-  document.getElementById('mtab-overview').classList.add('active');
-
+  document.getElementById('m-bm-btn').textContent=S.bookmarks.includes(name)?'✅ Bookmarked':'🔖 Bookmark';
+  document.querySelectorAll('.m-tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.m-tab-content').forEach(c=>c.classList.remove('active'));
+  document.querySelector('.m-tab').classList.add('active');
+  document.getElementById('mt-overview').classList.add('active');
   document.getElementById('drug-modal').classList.add('open');
 }
+function closeModal(){document.getElementById('drug-modal').classList.remove('open');activeDrug=null;}
+function switchTab(t,el){document.querySelectorAll('.m-tab').forEach(x=>x.classList.remove('active'));document.querySelectorAll('.m-tab-content').forEach(x=>x.classList.remove('active'));el.classList.add('active');document.getElementById('mt-'+t).classList.add('active');}
+document.getElementById('drug-modal').addEventListener('click',function(e){if(e.target===this)closeModal();});
+function toggleBM(){if(!activeDrug)return;const n=activeDrug.name;const i=S.bookmarks.indexOf(n);if(i===-1){S.bookmarks.push(n);showToast('Bookmarked!','success');addXP(3);}else{S.bookmarks.splice(i,1);showToast('Bookmark removed.');}document.getElementById('stat-bookmarks').textContent=S.bookmarks.length;document.getElementById('m-bm-btn').textContent=S.bookmarks.includes(n)?'✅ Bookmarked':'🔖 Bookmark';save();}
+function addQueue(){if(!activeDrug)return;if(!studyQueue.find(d=>d.name===activeDrug.name)){studyQueue.push(activeDrug);showToast('Added to study queue!','success');}else showToast('Already in queue.');}
 
-function closeModal() {
-  document.getElementById('drug-modal').classList.remove('open');
-  activeModalDrug = null;
+// ═══ BOOKMARKS ═══
+function clearBookmarks(){if(!confirm('Clear all bookmarks?'))return;S.bookmarks=[];save();renderBM();}
+function renderBM(){const c=document.getElementById('bookmark-list');const bm=DRUGS.filter(d=>S.bookmarks.includes(d.name));if(!bm.length){c.innerHTML='<div class="empty-s" style="grid-column:1/-1"><div class="empty-s-icon">🔖</div><div class="empty-s-txt">No bookmarks yet.</div></div>';return;}c.innerHTML=bm.map(d=>`<div class="drug-card" onclick="openDrug('${d.name.replace(/'/g,"\\'")}')"><div class="drug-name">${d.name}</div>${d.brand?`<div class="drug-brand">${d.brand.split(',')[0].trim()}</div>`:''}<span class="drug-class-pill">${d.clinicalClass||'—'}</span></div>`).join('');}
+function renderRecent(){const rec=JSON.parse(localStorage.getItem('hct-recent')||'[]');const c=document.getElementById('recent-drugs');if(!rec.length||!DRUGS.length)return;const rd=rec.map(n=>DRUGS.find(d=>d.name===n)).filter(Boolean);if(!rd.length)return;c.innerHTML=rd.map(d=>`<div class="drug-card" onclick="openDrug('${d.name.replace(/'/g,"\\'")}')"><div class="drug-name">${d.name}</div>${d.brand?`<div class="drug-brand">${d.brand.split(',')[0].trim()}</div>`:''}<span class="drug-class-pill">${d.clinicalClass||'—'}</span></div>`).join('');}
+
+// ═══ FLASHCARDS ═══
+let fcDrugs=[],fcIdx=0,fcMode='action',fcFlip=false;
+const FC_LABELS={action:'Mechanism of Action',uses:'Clinical Uses',sideEffects:'Side Effects',nursingConsiderations:'Nursing Care',precautions:'Precautions'};
+function initFC(){fcDrugs=[...DRUGS].filter(d=>d[fcMode]);shuffle(fcDrugs);fcIdx=0;updateFC();}
+function setFCMode(m,btn){fcMode=m;document.querySelectorAll('.fc-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');fcDrugs=[...(studyQueue.length?studyQueue:DRUGS)].filter(d=>d[m]);shuffle(fcDrugs);fcIdx=0;fcFlip=false;document.getElementById('flashcard').classList.remove('flipped');updateFC();}
+function updateFC(){if(!fcDrugs.length)return;const d=fcDrugs[fcIdx];document.getElementById('fc-drug-name').textContent=d.displayName||d.name;document.getElementById('fc-q-label').textContent=FC_LABELS[fcMode];const raw=d[fcMode]||'';document.getElementById('fc-answer').textContent=items(raw,3).join(' • ')||cl(raw).substring(0,200)||'Not available.';document.getElementById('fc-prog').textContent=`Card ${fcIdx+1} of ${fcDrugs.length}`;fcFlip=false;document.getElementById('flashcard').classList.remove('flipped');}
+function flipCard(){fcFlip=!fcFlip;document.getElementById('flashcard').classList.toggle('flipped',fcFlip);if(fcFlip)addXP(2);}
+function nextCard(){fcIdx=(fcIdx+1)%fcDrugs.length;updateFC();}
+function prevCard(){fcIdx=(fcIdx-1+fcDrugs.length)%fcDrugs.length;updateFC();}
+function shuffleFC(){shuffle(fcDrugs);fcIdx=0;updateFC();showToast('Deck shuffled!');}
+function resetFC(){fcIdx=0;updateFC();}
+function markKnown(){fcDrugs.splice(fcIdx,1);if(!fcDrugs.length){showToast('🎉 Reviewed all cards!');initFC();return;}if(fcIdx>=fcDrugs.length)fcIdx=0;addXP(5);updateFC();showToast('✓ Got it — card removed.','success');}
+function markReview(){const c=fcDrugs.splice(fcIdx,1)[0];fcDrugs.push(c);if(fcIdx>=fcDrugs.length)fcIdx=0;updateFC();}
+
+// ═══ PNLE QUIZ ═══
+let QS={};let QTimer;
+const QTPLS={action:d=>({q:`What is the mechanism of action of ${d.displayName||d.name}?`,a:d.action,cat:'Mechanism of Action'}),uses:d=>({q:`Which is a primary indication for ${d.displayName||d.name}?`,a:d.uses,cat:'Clinical Uses'}),nursing:d=>({q:`Which nursing consideration is MOST important when administering ${d.displayName||d.name}?`,a:d.nursingConsiderations,cat:'Nursing Considerations'}),sideEffects:d=>({q:`Which side effect is most commonly associated with ${d.displayName||d.name}?`,a:d.sideEffects,cat:'Side Effects'}),adverse:d=>({q:`Which serious adverse reaction requires vigilant monitoring with ${d.displayName||d.name}?`,a:d.adverseEffects,cat:'Adverse Effects'})};
+function startQuiz(count,mode){
+  document.getElementById('quiz-start').style.display='none';document.getElementById('quiz-main').style.display='block';document.getElementById('q-results').classList.remove('show');
+  const types=mode==='mixed'?['action','uses','nursing','sideEffects','adverse']:mode==='nursing'?['nursing','sideEffects','adverse']:['action','uses'];
+  const elig=DRUGS.filter(d=>d.action&&d.uses);
+  const picked=shufflePick(elig,count*2);
+  QS={questions:picked.map(drug=>{
+    const type=types[Math.floor(Math.random()*types.length)];
+    const tmpl=QTPLS[type](drug);
+    if(!tmpl.a||tmpl.a.length<15)return null;
+    const correct=items(tmpl.a,1)[0]||cl(tmpl.a).substring(0,130);
+    if(!correct||correct.length<10)return null;
+    const wrongs=shufflePick(elig.filter(d=>d.name!==drug.name),5)
+      .map(d=>{const t=QTPLS[type](d);return t.a?items(t.a,1)[0]||cl(t.a).substring(0,130):null;})
+      .filter(x=>x&&x.length>8&&x!==correct);
+    if(wrongs.length<3)return null;
+    return{q:tmpl.q,opts:shuffle([correct,...wrongs.slice(0,3)]),correct,cat:tmpl.cat};
+  }).filter(Boolean).slice(0,count),cur:0,score:0,total:0,answered:false,mode};
+  if(!QS.questions.length){showToast('Not enough drug data. Try again!','error');showQuizStart();return;}
+  QS.total=QS.questions.length;renderQ();
+}
+function renderQ(){
+  const q=QS.questions[QS.cur];
+  document.getElementById('q-pfill').style.width=((QS.cur/QS.total)*100)+'%';
+  document.getElementById('q-cnt').textContent=`${QS.cur+1}/${QS.total}`;
+  document.getElementById('q-cat').textContent=q.cat;
+  document.getElementById('q-question').textContent=q.q;
+  document.getElementById('q-fb').className='q-fb';
+  document.getElementById('next-q-btn').style.display='none';
+  QS.answered=false;
+  document.getElementById('q-opts').innerHTML=q.opts.map((o,i)=>`<button class="q-opt" onclick="selectAns(${i})"><span class="opt-l">${'ABCD'[i]}</span><span>${o}</span></button>`).join('');
+  clearInterval(QTimer);let t=30;
+  const te=document.getElementById('q-timer');te.textContent=t;te.className='q-timer';
+  QTimer=setInterval(()=>{t--;te.textContent=t;if(t<=8)te.className='q-timer urgent';if(t<=0){clearInterval(QTimer);timeOut();}},1000);
+}
+function timeOut(){if(QS.answered)return;QS.answered=true;const q=QS.questions[QS.cur];document.querySelectorAll('.q-opt').forEach((b,i)=>{b.classList.add('disabled');if(q.opts[i]===q.correct)b.classList.add('correct');});const fb=document.getElementById('q-fb');fb.textContent='⏰ Time\'s up!';fb.className='q-fb wrong';S.total++;save();document.getElementById('next-q-btn').style.display='block';}
+function selectAns(idx){
+  if(QS.answered)return;clearInterval(QTimer);QS.answered=true;
+  const q=QS.questions[QS.cur];const ok=q.opts[idx]===q.correct;
+  document.querySelectorAll('.q-opt').forEach((b,i)=>{b.classList.add('disabled');if(q.opts[i]===q.correct)b.classList.add('correct');else if(i===idx&&!ok)b.classList.add('wrong');});
+  const fb=document.getElementById('q-fb');
+  if(ok){QS.score++;S.correct++;addXP(20);fb.textContent='✓ Correct!';fb.className='q-fb correct';}
+  else{fb.textContent=`✗ Incorrect. Correct answer: "${q.correct.substring(0,100)}"`;fb.className='q-fb wrong';}
+  S.total++;document.getElementById('stat-correct').textContent=S.correct;save();document.getElementById('next-q-btn').style.display='block';
+}
+function nextQ(){QS.cur++;if(QS.cur>=QS.questions.length)finishQuiz();else renderQ();}
+function finishQuiz(){
+  clearInterval(QTimer);document.getElementById('next-q-btn').style.display='none';
+  const pct=Math.round((QS.score/QS.total)*100);
+  const emoji=pct>=90?'🏆':pct>=70?'🎉':pct>=50?'📚':'💪';
+  const lbl=pct>=90?'Excellent — Pharmacology Master!':pct>=70?'Great job! Keep studying.':pct>=50?'Good effort! Review and retry.':'Keep practicing — you will improve!';
+  document.getElementById('r-emoji').textContent=emoji;document.getElementById('r-score').textContent=`${QS.score} / ${QS.total}`;document.getElementById('r-lbl').textContent=lbl+` (${pct}%)`;document.getElementById('q-results').classList.add('show');
+  const pts=QS.score*10;S.totalScore+=pts;S.quizzes++;S.history.unshift({type:'PNLE Quiz',score:QS.score,total:QS.total,pts,date:new Date().toLocaleDateString()});S.history=S.history.slice(0,20);
+  document.getElementById('total-score').textContent=S.totalScore;save();updateStats();addXP(pts);
+}
+function restartQuiz(){document.getElementById('q-results').classList.remove('show');startQuiz(QS.total,QS.mode);}
+function showQuizStart(){clearInterval(QTimer);document.getElementById('quiz-start').style.display='block';document.getElementById('quiz-main').style.display='none';}
+
+// ═══ CLASS IDENTIFIER ═══
+let CQ={drug:null,correct:0,total:0,streak:0,score:0};
+function newCQ(){
+  if(!DRUGS.length)return;
+  const elig=DRUGS.filter(d=>d.clinicalClass&&d.clinicalClass.length>3);
+  if(!elig.length)return;
+  const drug=elig[Math.floor(Math.random()*elig.length)];
+  const allClasses=[...new Set(elig.map(d=>d.clinicalClass))];
+  const wrongs=shuffle(allClasses.filter(c=>c!==drug.clinicalClass)).slice(0,3);
+  const choices=shuffle([drug.clinicalClass,...wrongs]);
+  CQ.drug=drug;CQ.correctClass=drug.clinicalClass;
+  document.getElementById('cq-name').textContent=drug.displayName||drug.name;
+  document.getElementById('cq-hint').textContent=drug.brand?`Brand name: ${drug.brand.split(',')[0].trim()}`:'Select the correct pharmacologic class';
+  document.getElementById('cq-fb').style.display='none';
+  document.getElementById('cq-choices').innerHTML=choices.map(c=>`<button class="cq-choice" onclick="answerCQ('${c.replace(/'/g,"\\'")}',this)">${c}</button>`).join('');
+}
+function answerCQ(chosen,btn){
+  if(!CQ.drug)return;
+  document.querySelectorAll('.cq-choice').forEach(b=>{b.classList.add('disabled');b.onclick=null;});
+  const ok=chosen===CQ.correctClass;
+  btn.classList.add(ok?'correct':'wrong');
+  if(!ok)document.querySelectorAll('.cq-choice').forEach(b=>{if(b.textContent.trim()===CQ.correctClass)b.classList.add('reveal');});
+  if(ok){CQ.correct++;CQ.streak++;CQ.score+=10;S.totalScore+=10;S.correct++;addXP(10);showToast('✓ Correct!','success');}
+  else{CQ.streak=0;showToast('✗ Incorrect','error');}
+  CQ.total++;S.total++;save();
+  document.getElementById('cq-cor').textContent=CQ.correct;document.getElementById('cq-tot').textContent=CQ.total;document.getElementById('cq-str').textContent=CQ.streak;
+  document.getElementById('cq-score-disp').textContent='Score: '+CQ.score;document.getElementById('total-score').textContent=S.totalScore;
+  const fb=document.getElementById('cq-fb');
+  fb.style.cssText=`display:block;background:${ok?'#f0fdf4':'#fef2f2'};color:${ok?'#14532d':'#7f1d1d'};border:1.5px solid ${ok?'#86efac':'#fca5a5'}`;
+  fb.textContent=ok?`✓ Correct! ${CQ.drug.displayName||CQ.drug.name} is a ${CQ.correctClass}.`:`✗ Incorrect. ${CQ.drug.displayName||CQ.drug.name} is a ${CQ.correctClass}.`;
+  setTimeout(()=>newCQ(),2200);
 }
 
-function switchModalTab(tab, el) {
-  document.querySelectorAll('.modal-tab').forEach(t => t.classList.remove('active'));
-  document.querySelectorAll('.modal-tab-content').forEach(c => c.classList.remove('active'));
-  el.classList.add('active');
-  document.getElementById('mtab-'+tab).classList.add('active');
-}
-
-document.getElementById('drug-modal').addEventListener('click', function(e) {
-  if (e.target === this) closeModal();
-});
-
-// ═══════════════════════════════════════════════
-// BOOKMARKS
-// ═══════════════════════════════════════════════
-function toggleBookmarkFromModal() {
-  if (!activeModalDrug) return;
-  toggleBookmark(activeModalDrug.name);
-  const bookmarked = state.bookmarks.includes(activeModalDrug.name);
-  document.getElementById('modal-bookmark-btn').textContent = bookmarked ? '✅ Bookmarked' : '🔖 Bookmark';
-}
-
-function toggleBookmark(name) {
-  const idx = state.bookmarks.indexOf(name);
-  if (idx === -1) {
-    state.bookmarks.push(name);
-    showToast('Bookmarked!', 'success');
-    addXP(3);
-  } else {
-    state.bookmarks.splice(idx, 1);
-    showToast('Removed bookmark');
-  }
-  document.getElementById('stat-bookmarks').textContent = state.bookmarks.length;
-  saveState();
-}
-
-function clearBookmarks() {
-  if (!confirm('Clear all bookmarks?')) return;
-  state.bookmarks = [];
-  saveState();
-  renderBookmarks();
-}
-
-function renderBookmarks() {
-  const container = document.getElementById('bookmark-list');
-  const bookmarked = DRUGS.filter(d => state.bookmarks.includes(d.name));
-  if (!bookmarked.length) {
-    container.innerHTML = '<div class="empty-state" style="grid-column:1/-1"><div class="empty-state-icon">🔖</div><div class="empty-state-text">No bookmarks yet. Click the bookmark button when viewing a drug.</div></div>';
-    return;
-  }
-  container.innerHTML = bookmarked.map(d =>
-    `<div class="drug-card" onclick="openDrug('${d.name.replace(/'/g,"\\'")}')">
-      <div class="drug-name">${d.name}</div>
-      ${d.brand ? `<div class="drug-brand">${d.brand.split(',')[0].trim()}</div>` : ''}
-      ${d.clinicalClass ? `<span class="drug-class-pill">${d.clinicalClass}</span>` : ''}
-    </div>`
-  ).join('');
-}
-
-function renderRecentDrugs() {
-  const recent = JSON.parse(localStorage.getItem('hct-recent') || '[]');
-  const container = document.getElementById('recent-drugs');
-  if (!recent.length || !DRUGS.length) return;
-  const recentDrugs = recent.map(name => DRUGS.find(d => d.name === name)).filter(Boolean);
-  if (!recentDrugs.length) return;
-  container.innerHTML = recentDrugs.map(d =>
-    `<div class="drug-card" onclick="openDrug('${d.name.replace(/'/g,"\\'")}')">
-      <div class="drug-name">${d.name}</div>
-      ${d.brand ? `<div class="drug-brand">${d.brand.split(',')[0].trim()}</div>` : ''}
-      ${d.clinicalClass ? `<span class="drug-class-pill">${d.clinicalClass}</span>` : ''}
-    </div>`
-  ).join('');
-}
-
-// ═══════════════════════════════════════════════
-// FLASHCARDS
-// ═══════════════════════════════════════════════
-let fcDrugs = [];
-let fcIndex = 0;
-let fcMode = 'action';
-let fcFlipped = false;
-let studyQueue = [];
-
-function initFlashcards() {
-  fcDrugs = [...DRUGS].filter(d => d[fcMode]);
-  shuffleArray(fcDrugs);
-  fcIndex = 0;
-  updateFCDisplay();
-}
-
-function setFCMode(mode, btn) {
-  fcMode = mode;
-  document.querySelectorAll('.fc-mode-btn').forEach(b => b.classList.remove('active'));
-  btn.classList.add('active');
-  fcDrugs = [...(studyQueue.length ? studyQueue : DRUGS)].filter(d => d[mode]);
-  shuffleArray(fcDrugs);
-  fcIndex = 0;
-  resetCardFlip();
-  updateFCDisplay();
-}
-
-const fcLabels = {
-  action: 'Mechanism of Action',
-  uses: 'Clinical Uses',
-  sideEffects: 'Side Effects',
-  nursing: 'Nursing Considerations',
-  precautions: 'Precautions'
-};
-
-function updateFCDisplay() {
-  if (!fcDrugs.length) return;
-  const drug = fcDrugs[fcIndex];
-  document.getElementById('fc-drug-name').textContent = drug.displayName || drug.name;
-  document.getElementById('fc-question-label').textContent = fcLabels[fcMode];
-  document.getElementById('fc-answer').textContent = drug[fcMode] || 'Not available';
-  document.getElementById('fc-progress').textContent = `Card ${fcIndex+1} of ${fcDrugs.length}`;
-  resetCardFlip();
-}
-
-function flipCard() {
-  fcFlipped = !fcFlipped;
-  document.getElementById('flashcard').classList.toggle('flipped', fcFlipped);
-  if (fcFlipped) addXP(2);
-}
-
-function resetCardFlip() {
-  fcFlipped = false;
-  document.getElementById('flashcard').classList.remove('flipped');
-}
-
-function nextCard() { fcIndex = (fcIndex+1) % fcDrugs.length; updateFCDisplay(); }
-function prevCard() { fcIndex = (fcIndex - 1 + fcDrugs.length) % fcDrugs.length; updateFCDisplay(); }
-
-function shuffleFlashcards() {
-  shuffleArray(fcDrugs);
-  fcIndex = 0;
-  updateFCDisplay();
-  showToast('Deck shuffled!');
-}
-
-function resetFlashcards() { fcIndex = 0; updateFCDisplay(); }
-
-function markKnown() {
-  fcDrugs.splice(fcIndex, 1);
-  if (fcDrugs.length === 0) { showToast('🎉 You reviewed all cards!'); initFlashcards(); return; }
-  if (fcIndex >= fcDrugs.length) fcIndex = 0;
-  addXP(5);
-  updateFCDisplay();
-  showToast('✓ Marked as known', 'success');
-}
-
-function markReview() {
-  const card = fcDrugs.splice(fcIndex, 1)[0];
-  fcDrugs.push(card);
-  if (fcIndex >= fcDrugs.length) fcIndex = 0;
-  updateFCDisplay();
-}
-
-function addToFlashcards() {
-  if (!activeModalDrug) return;
-  if (!studyQueue.find(d => d.name === activeModalDrug.name)) {
-    studyQueue.push(activeModalDrug);
-    showToast('Added to study queue!', 'success');
-  } else {
-    showToast('Already in queue');
-  }
-}
-
-// ═══════════════════════════════════════════════
-// QUIZ
-// ═══════════════════════════════════════════════
-let quizState = {};
-let quizTimer;
-
-const quizTemplates = {
-  action: (drug) => ({
-    q: `What is the mechanism of action of ${drug.displayName || drug.name}?`,
-    a: drug.action,
-    cat: 'Mechanism of Action'
-  }),
-  uses: (drug) => ({
-    q: `Which of the following is a primary indication for ${drug.displayName || drug.name}?`,
-    a: drug.uses,
-    cat: 'Clinical Uses'
-  }),
-  nursing: (drug) => ({
-    q: `Which nursing consideration is most important when administering ${drug.displayName || drug.name}?`,
-    a: drug.nursingConsiderations,
-    cat: 'Nursing Considerations'
-  }),
-  sideEffects: (drug) => ({
-    q: `Which side effect is most commonly associated with ${drug.displayName || drug.name}?`,
-    a: drug.sideEffects,
-    cat: 'Side Effects'
-  }),
-  adverse: (drug) => ({
-    q: `What is the most serious adverse effect that must be monitored with ${drug.displayName || drug.name}?`,
-    a: drug.adverseEffects,
-    cat: 'Adverse Effects'
-  })
-};
-
-function startQuiz(count, mode) {
-  document.getElementById('quiz-start-screen').style.display = 'none';
-  document.getElementById('quiz-main').style.display = 'block';
-  document.getElementById('quiz-results').classList.remove('show');
-
-  const types = mode === 'mixed'
-    ? ['action','uses','nursing','sideEffects']
-    : [mode === 'nursing' ? 'nursing' : 'action'];
-
-  const eligible = DRUGS.filter(d => d.action && d.uses && d.nursingConsiderations);
-  const picked = shufflePick(eligible, count);
-
-  quizState = {
-    questions: picked.map(drug => {
-      const type = types[Math.floor(Math.random() * types.length)];
-      const tmpl = quizTemplates[type](drug);
-      if (!tmpl.a || tmpl.a.length < 20) return null;
-      // Generate 3 distractors
-      const wrongDrugs = eligible.filter(d => d.name !== drug.name);
-      const distractors = shufflePick(wrongDrugs, 3).map(d => {
-        const t = quizTemplates[type](d);
-        return t.a ? truncate(t.a, 140) : null;
-      }).filter(Boolean);
-      if (distractors.length < 3) return null;
-      const correctText = truncate(tmpl.a, 140);
-      const options = shuffleArray([correctText, ...distractors.slice(0,3)]);
-      return { q: tmpl.q, options, correct: correctText, cat: tmpl.cat, drug: drug.name };
-    }).filter(Boolean).slice(0, count),
-    current: 0, score: 0, total: 0, answered: false, mode
-  };
-
-  if (!quizState.questions.length) { showToast('Not enough data for quiz. Try again!', 'error'); showQuizStart(); return; }
-  quizState.total = quizState.questions.length;
-  renderQuestion();
-}
-
-function renderQuestion() {
-  const q = quizState.questions[quizState.current];
-  const pct = (quizState.current / quizState.total) * 100;
-  document.getElementById('quiz-prog-fill').style.width = pct + '%';
-  document.getElementById('quiz-q-count').textContent = `${quizState.current+1} / ${quizState.total}`;
-  document.getElementById('quiz-category').textContent = q.cat;
-  document.getElementById('quiz-question').textContent = q.q;
-  document.getElementById('quiz-feedback').className = 'quiz-feedback';
-  document.getElementById('next-q-btn').style.display = 'none';
-  quizState.answered = false;
-
-  const letters = ['A','B','C','D'];
-  document.getElementById('quiz-options').innerHTML = q.options.map((opt, i) =>
-    `<button class="quiz-option" onclick="selectAnswer(${i})">
-      <span class="option-letter">${letters[i]}</span>
-      <span>${opt}</span>
-    </button>`
-  ).join('');
-
-  // Timer
-  clearInterval(quizTimer);
-  let t = 30;
-  const timerEl = document.getElementById('quiz-timer');
-  timerEl.textContent = t;
-  timerEl.className = 'quiz-timer';
-  quizTimer = setInterval(() => {
-    t--;
-    timerEl.textContent = t;
-    if (t <= 8) timerEl.className = 'quiz-timer urgent';
-    if (t <= 0) { clearInterval(quizTimer); timeOut(); }
-  }, 1000);
-}
-
-function timeOut() {
-  if (quizState.answered) return;
-  quizState.answered = true;
-  const q = quizState.questions[quizState.current];
-  document.querySelectorAll('.quiz-option').forEach((btn, i) => {
-    btn.classList.add('disabled');
-    if (q.options[i] === q.correct) btn.classList.add('correct');
-  });
-  const fb = document.getElementById('quiz-feedback');
-  fb.textContent = '⏰ Time\'s up! The correct answer has been highlighted.';
-  fb.className = 'quiz-feedback wrong';
-  state.totalAnswers++;
-  saveState();
-  document.getElementById('next-q-btn').style.display = 'block';
-}
-
-function selectAnswer(idx) {
-  if (quizState.answered) return;
-  clearInterval(quizTimer);
-  quizState.answered = true;
-  const q = quizState.questions[quizState.current];
-  const selected = q.options[idx];
-  const correct = selected === q.correct;
-
-  document.querySelectorAll('.quiz-option').forEach((btn, i) => {
-    btn.classList.add('disabled');
-    if (q.options[i] === q.correct) btn.classList.add('correct');
-    else if (i === idx && !correct) btn.classList.add('wrong');
-  });
-
-  const fb = document.getElementById('quiz-feedback');
-  if (correct) {
-    quizState.score++;
-    state.correctAnswers++;
-    addXP(20);
-    fb.textContent = '✓ Correct! Well done.';
-    fb.className = 'quiz-feedback correct';
-  } else {
-    fb.textContent = `✗ Incorrect. The correct answer is: "${q.correct.substring(0,100)}..."`;
-    fb.className = 'quiz-feedback wrong';
-  }
-  state.totalAnswers++;
-  document.getElementById('stat-correct').textContent = state.correctAnswers;
-  saveState();
-  document.getElementById('next-q-btn').style.display = 'block';
-}
-
-function nextQuestion() {
-  quizState.current++;
-  if (quizState.current >= quizState.questions.length) {
-    finishQuiz();
-  } else {
-    renderQuestion();
-  }
-}
-
-function finishQuiz() {
-  clearInterval(quizTimer);
-  document.getElementById('next-q-btn').style.display = 'none';
-  const pct = Math.round((quizState.score / quizState.total) * 100);
-  const emoji = pct >= 90 ? '🏆' : pct >= 70 ? '🎉' : pct >= 50 ? '📚' : '💪';
-  const label = pct >= 90 ? 'Excellent! You\'re a Pharmacology Master!' : pct >= 70 ? 'Great job! Keep it up!' : pct >= 50 ? 'Good effort! Review and try again.' : 'Keep practicing! You\'ll get better!';
-
-  document.getElementById('result-emoji').textContent = emoji;
-  document.getElementById('result-score-display').textContent = `${quizState.score} / ${quizState.total}`;
-  document.getElementById('result-label').textContent = label + ` (${pct}%)`;
-  document.getElementById('quiz-results').classList.add('show');
-
-  const pts = quizState.score * 10;
-  state.totalScore += pts;
-  state.quizzesDone++;
-  state.scoreHistory.unshift({ type: 'Quiz', score: quizState.score, total: quizState.total, pts, date: new Date().toLocaleDateString() });
-  state.scoreHistory = state.scoreHistory.slice(0, 20);
-  document.getElementById('total-score').textContent = state.totalScore;
-  saveState();
-  updateStats();
-  addXP(pts);
-}
-
-function restartQuiz() {
-  const mode = quizState.mode;
-  const count = quizState.total;
-  document.getElementById('quiz-results').classList.remove('show');
-  startQuiz(count, mode);
-}
-
-function showQuizStart() {
-  clearInterval(quizTimer);
-  document.getElementById('quiz-start-screen').style.display = 'block';
-  document.getElementById('quiz-main').style.display = 'none';
-}
-
-// ═══════════════════════════════════════════════
-// MATCHING GAME
-// ═══════════════════════════════════════════════
-let matchState = {};
-let matchTimerInt;
-
-function startMatching() {
-  document.getElementById('match-success').style.display = 'none';
-  clearInterval(matchTimerInt);
-  const mode = document.getElementById('match-mode').value;
-  const eligible = DRUGS.filter(d => d[mode] && d[mode].length > 20);
-  const drugs = shufflePick(eligible, 4);
-
-  matchState = {
-    drugs, mode,
-    selected: null, matched: 0, attempts: 0, score: 0,
-    startTime: Date.now(), done: false
-  };
-
+// ═══ DRUG MATCH ═══
+let MS={};let MTimer;
+function startMatch(){
+  document.getElementById('match-success').style.display='none';
+  clearInterval(MTimer);
+  const mode=document.getElementById('match-mode').value;
+  const elig=DRUGS.filter(d=>d[mode]&&cl(d[mode]).length>12);
+  const drugs=shufflePick(elig,4);
+  MS={drugs,mode,sel:null,matched:0,attempts:0,score:0,start:Date.now(),done:false};
   updateMatchUI();
-
-  matchTimerInt = setInterval(() => {
-    if (matchState.done) return;
-    const elapsed = Math.round((Date.now() - matchState.startTime) / 1000);
-    document.getElementById('match-time').textContent = elapsed + 's';
-  }, 1000);
-
-  renderMatchGrid();
+  MTimer=setInterval(()=>{if(!MS.done)document.getElementById('m-time').textContent=Math.round((Date.now()-MS.start)/1000)+'s';},1000);
+  const drugCards=drugs.map((d,i)=>({type:'drug',text:d.displayName||d.name,id:i}));
+  const defCards=drugs.map((d,i)=>({type:'def',text:items(cl(d[mode]),1)[0]||cl(d[mode]).substring(0,80)+'.',id:i}));
+  const all=shuffle([...drugCards,...defCards]);
+  document.getElementById('match-grid').innerHTML=all.map(c=>`<div class="match-card${c.type==='drug'?' mc-drug':''}" data-id="${c.id}" data-type="${c.type}" onclick="selMatch(this)">${c.text}</div>`).join('');
 }
-
-function renderMatchGrid() {
-  const { drugs, mode } = matchState;
-  const drugCards = drugs.map((d, i) => ({ type: 'drug', text: d.displayName || d.name, id: i }));
-  const defCards = drugs.map((d, i) => ({ type: 'def', text: truncate(d[mode], 90), id: i }));
-  const allCards = shuffleArray([...drugCards, ...defCards]);
-
-  document.getElementById('match-grid').innerHTML = allCards.map(card =>
-    `<div class="match-card ${card.type}" data-id="${card.id}" data-type="${card.type}" onclick="selectMatchCard(this)">
-      ${card.text}
-    </div>`
-  ).join('');
+function selMatch(el){
+  if(el.classList.contains('mc-matched')||MS.done)return;
+  if(!MS.sel){el.classList.add('mc-selected');MS.sel=el;return;}
+  const prev=MS.sel;if(prev===el){prev.classList.remove('mc-selected');MS.sel=null;return;}
+  const id1=+prev.dataset.id,id2=+el.dataset.id,t1=prev.dataset.type,t2=el.dataset.type;
+  MS.attempts++;
+  if(id1===id2&&t1!==t2){
+    prev.classList.remove('mc-selected');[prev,el].forEach(x=>x.classList.add('mc-matched'));
+    MS.sel=null;MS.matched++;MS.score+=Math.max(10,50-MS.attempts*3);addXP(15);updateMatchUI();
+    if(MS.matched===4){MS.done=true;clearInterval(MTimer);const elapsed=Math.round((Date.now()-MS.start)/1000);S.totalScore+=MS.score;S.history.unshift({type:'Drug Match',score:MS.matched,total:4,pts:MS.score,date:new Date().toLocaleDateString()});save();document.getElementById('total-score').textContent=S.totalScore;document.getElementById('m-res').textContent=`Completed in ${elapsed}s · ${MS.attempts} attempt${MS.attempts!==1?'s':''} · +${MS.score} pts`;document.getElementById('match-success').style.display='block';}
+  }else{
+    [el,prev].forEach(x=>{x.classList.add('mc-wrong');setTimeout(()=>x.classList.remove('mc-wrong','mc-selected'),650);});MS.sel=null;
+  }
+  document.getElementById('m-attempts').textContent=MS.attempts;
 }
+function updateMatchUI(){document.getElementById('m-score').textContent=MS.score;document.getElementById('m-matched').textContent=MS.matched;}
 
-function selectMatchCard(el) {
-  if (el.classList.contains('matched') || matchState.done) return;
-
-  if (!matchState.selected) {
-    el.classList.add('selected');
-    matchState.selected = el;
-  } else {
-    const prev = matchState.selected;
-    if (prev === el) { prev.classList.remove('selected'); matchState.selected = null; return; }
-
-    const id1 = parseInt(prev.dataset.id);
-    const id2 = parseInt(el.dataset.id);
-    const type1 = prev.dataset.type;
-    const type2 = el.dataset.type;
-    matchState.attempts++;
-
-    if (id1 === id2 && type1 !== type2) {
-      // Match!
-      prev.classList.remove('selected');
-      prev.classList.add('matched');
-      el.classList.add('matched');
-      matchState.selected = null;
-      matchState.matched++;
-      matchState.score += Math.max(10, 50 - matchState.attempts * 3);
-      addXP(15);
-      updateMatchUI();
-
-      if (matchState.matched === 4) {
-        matchState.done = true;
-        clearInterval(matchTimerInt);
-        const elapsed = Math.round((Date.now() - matchState.startTime) / 1000);
-        state.totalScore += matchState.score;
-        state.matchScore = (state.matchScore || 0) + matchState.score;
-        state.scoreHistory.unshift({ type: 'Matching', score: matchState.matched, total: 4, pts: matchState.score, date: new Date().toLocaleDateString() });
-        saveState();
-        document.getElementById('match-result-text').textContent = `Completed in ${elapsed}s with ${matchState.attempts} attempts! +${matchState.score} points`;
-        document.getElementById('match-success').style.display = 'block';
-        document.getElementById('total-score').textContent = state.totalScore;
-      }
-    } else {
-      // Wrong
-      el.classList.add('wrong-flash');
-      prev.classList.add('wrong-flash');
-      setTimeout(() => {
-        el.classList.remove('wrong-flash','selected');
-        prev.classList.remove('wrong-flash','selected');
-      }, 700);
-      matchState.selected = null;
-    }
-
-    document.getElementById('match-attempts').textContent = matchState.attempts;
+// ═══ WORD SCRAMBLE ═══
+let SCR={drug:null,name:'',hintUsed:false,scScore:0,correct:0,total:0,streak:0};
+function newScramble(){
+  if(!DRUGS.length)return;
+  const elig=DRUGS.filter(d=>d.name.length>=5&&d.name.length<=16&&/^[a-z]+$/.test(d.name));
+  const drug=elig[Math.floor(Math.random()*elig.length)]||DRUGS[Math.floor(Math.random()*DRUGS.length)];
+  const name=drug.name.toUpperCase();
+  let sc=name.split('');while(sc.join('')===name)shuffle(sc);
+  SCR={drug,name,scrambled:sc.join(''),hintUsed:false,scScore:SCR.scScore||0,correct:SCR.correct||0,total:SCR.total||0,streak:SCR.streak||0};
+  document.getElementById('sc-letters').textContent=sc.join(' ');
+  const clue=items(drug.uses||drug.action||'',1)[0]||cl(drug.uses||drug.action||'').substring(0,100);
+  document.getElementById('sc-clue').textContent=clue?`Clue: ${clue}`:'Clue: See drug reference for details.';
+  document.getElementById('sc-cat').textContent=drug.clinicalClass||drug.pharmacoClass||'—';
+  document.getElementById('sc-input').value='';
+  const fb=document.getElementById('sc-fb');fb.style.display='none';
+}
+function checkScramble(){
+  const ans=(document.getElementById('sc-input').value||'').trim().toUpperCase();
+  const fb=document.getElementById('sc-fb');fb.style.display='block';
+  if(ans===SCR.name){
+    const pts=SCR.hintUsed?5:10;SCR.scScore+=pts;SCR.correct++;SCR.streak++;SCR.total++;
+    S.totalScore+=pts;S.history.unshift({type:'Scramble',score:1,total:1,pts,date:new Date().toLocaleDateString()});save();
+    document.getElementById('total-score').textContent=S.totalScore;document.getElementById('sc-score-disp').textContent='Score: '+SCR.scScore;
+    fb.style.cssText='display:block;background:#f0fdf4;color:#14532d;border:1.5px solid #86efac';
+    fb.textContent=`✓ Correct! "${SCR.drug.displayName||SCR.drug.name}" — +${pts} pts`;
+    addXP(pts);updateSCStats();setTimeout(()=>newScramble(),1800);
+  }else{
+    SCR.streak=0;SCR.total++;
+    fb.style.cssText='display:block;background:#fef2f2;color:#7f1d1d;border:1.5px solid #fca5a5';
+    fb.textContent='✗ Not quite. Try again!';
+    updateSCStats();
   }
 }
+function revealScramble(){SCR.hintUsed=true;const h=SCR.name.slice(0,Math.ceil(SCR.name.length/3)).toLowerCase();showToast(`💡 Hint: starts with "${h}"`);}
+function updateSCStats(){document.getElementById('sc-cor').textContent=SCR.correct;document.getElementById('sc-tot').textContent=SCR.total;document.getElementById('sc-str').textContent=SCR.streak;}
 
-function updateMatchUI() {
-  document.getElementById('match-score').textContent = matchState.score;
-  document.getElementById('match-matched').textContent = matchState.matched;
-}
-
-// ═══════════════════════════════════════════════
-// WORD SCRAMBLE
-// ═══════════════════════════════════════════════
-let scrambleState = {};
-
-function newScramble() {
-  const drug = DRUGS[Math.floor(Math.random() * DRUGS.length)];
-  const name = drug.name.toUpperCase();
-  const scrambled = name.split('').sort(() => Math.random()-0.5).join('');
-  scrambleState = { drug, name, scrambled, hintUsed: false };
-
-  document.getElementById('scramble-letters').textContent = scrambled;
-  document.getElementById('scramble-clue').textContent = `Clue: ${truncate(drug.uses || drug.action || '', 100)}`;
-  document.getElementById('scramble-category').textContent = drug.clinicalClass || drug.pharmacoClass || '—';
-  document.getElementById('scramble-input').value = '';
-  document.getElementById('scramble-feedback').style.display = 'none';
-}
-
-function checkScramble() {
-  const answer = document.getElementById('scramble-input').value.trim().toUpperCase();
-  const fb = document.getElementById('scramble-feedback');
-  fb.style.display = 'block';
-
-  if (answer === scrambleState.name) {
-    const pts = scrambleState.hintUsed ? 5 : 10;
-    scrambleState.drug; // used
-    state.scrambleScore = (state.scrambleScore || 0) + pts;
-    state.totalScore += pts;
-    state.scoreHistory.unshift({ type: 'Scramble', score: 1, total: 1, pts, date: new Date().toLocaleDateString() });
-    saveState();
-    document.getElementById('scramble-score-display').textContent = 'Score: ' + state.scrambleScore;
-    document.getElementById('total-score').textContent = state.totalScore;
-    fb.textContent = `✓ Correct! "${scrambleState.drug.displayName || scrambleState.drug.name}" — +${pts} pts`;
-    fb.style.background = '#f0fdf4'; fb.style.color = '#14532d'; fb.style.border = '1.5px solid #86efac';
-    addXP(pts);
-
-    const sc = document.getElementById('sc-correct');
-    const st = document.getElementById('sc-total');
-    const ss = document.getElementById('sc-streak');
-    sc.textContent = parseInt(sc.textContent) + 1;
-    st.textContent = parseInt(st.textContent) + 1;
-    ss.textContent = parseInt(ss.textContent) + 1;
-
-    setTimeout(() => newScramble(), 1800);
-  } else {
-    fb.textContent = `✗ Not quite. Try again!`;
-    fb.style.background = '#fef2f2'; fb.style.color = '#7f1d1d'; fb.style.border = '1.5px solid #fca5a5';
-    const st = document.getElementById('sc-total');
-    const ss = document.getElementById('sc-streak');
-    st.textContent = parseInt(st.textContent) + 1;
-    ss.textContent = 0;
-  }
-}
-
-function revealScramble() {
-  scrambleState.hintUsed = true;
-  const hint = scrambleState.name.substring(0, Math.ceil(scrambleState.name.length/2)) + '...';
-  showToast(`Hint: starts with "${hint.substring(0,3).toLowerCase()}"...`);
-}
-
-// ═══════════════════════════════════════════════
-// LEADERBOARD & ACHIEVEMENTS
-// ═══════════════════════════════════════════════
-const achievements = [
-  { id: 'first_drug', name: 'First Look', icon: '👁', desc: 'View your first drug', check: s => s.studiedDrugs.length >= 1 },
-  { id: 'ten_drugs', name: 'Explorer', icon: '🗺', desc: 'View 10 drugs', check: s => s.studiedDrugs.length >= 10 },
-  { id: 'fifty_drugs', name: 'Pharmacist', icon: '💊', desc: 'View 50 drugs', check: s => s.studiedDrugs.length >= 50 },
-  { id: 'first_quiz', name: 'Quiz Debut', icon: '📝', desc: 'Complete first quiz', check: s => s.quizzesDone >= 1 },
-  { id: 'five_quizzes', name: 'Quiz Master', icon: '🏅', desc: 'Complete 5 quizzes', check: s => s.quizzesDone >= 5 },
-  { id: 'bookmark_5', name: 'Collector', icon: '🔖', desc: 'Bookmark 5 drugs', check: s => s.bookmarks.length >= 5 },
-  { id: 'streak_3', name: '3-Day Streak', icon: '🔥', desc: '3-day study streak', check: s => s.streak >= 3 },
-  { id: 'score_100', name: 'Point Scorer', icon: '⭐', desc: 'Earn 100 points', check: s => s.totalScore >= 100 },
-  { id: 'score_500', name: 'High Scorer', icon: '💫', desc: 'Earn 500 points', check: s => s.totalScore >= 500 },
-  { id: 'accuracy_80', name: 'Sharp Mind', icon: '🎯', desc: '80%+ quiz accuracy', check: s => s.totalAnswers >= 10 && (s.correctAnswers/s.totalAnswers) >= 0.8 },
+// ═══ PROGRESS / LEADERBOARD ═══
+const ACHIEVEMENTS=[
+  {id:'first_drug',name:'First Look',icon:'👁',desc:'View your first drug',check:s=>s.studied.length>=1},
+  {id:'ten_drugs',name:'Explorer',icon:'🗺',desc:'View 10 drugs',check:s=>s.studied.length>=10},
+  {id:'fifty_drugs',name:'Drug Expert',icon:'💊',desc:'View 50 drugs',check:s=>s.studied.length>=50},
+  {id:'first_quiz',name:'Quiz Debut',icon:'📝',desc:'Complete your first quiz',check:s=>s.quizzes>=1},
+  {id:'five_quizzes',name:'Quiz Regular',icon:'🏅',desc:'Complete 5 quizzes',check:s=>s.quizzes>=5},
+  {id:'ten_quizzes',name:'Quiz Master',icon:'🎓',desc:'Complete 10 quizzes',check:s=>s.quizzes>=10},
+  {id:'bookmark_5',name:'Collector',icon:'🔖',desc:'Bookmark 5 drugs',check:s=>s.bookmarks.length>=5},
+  {id:'streak_3',name:'3-Day Streak',icon:'🔥',desc:'Study 3 days in a row',check:s=>s.streak>=3},
+  {id:'streak_7',name:'7-Day Streak',icon:'🌟',desc:'Study 7 days in a row',check:s=>s.streak>=7},
+  {id:'score_100',name:'Point Scorer',icon:'⭐',desc:'Earn 100 points',check:s=>s.totalScore>=100},
+  {id:'score_500',name:'High Scorer',icon:'💫',desc:'Earn 500 points',check:s=>s.totalScore>=500},
+  {id:'accuracy_80',name:'Sharp Mind',icon:'🎯',desc:'Maintain 80%+ accuracy (min 10 answers)',check:s=>s.total>=10&&(s.correct/s.total)>=0.8},
 ];
-
-function updateLeaderboard() {
-  document.getElementById('lb-total-pts').textContent = state.totalScore;
-  document.getElementById('lb-level').textContent = state.level;
-  document.getElementById('lb-streak').textContent = state.streak;
-  document.getElementById('lb-quizzes').textContent = state.quizzesDone;
-  const acc = state.totalAnswers > 0 ? Math.round((state.correctAnswers/state.totalAnswers)*100)+'%' : '—';
-  document.getElementById('lb-accuracy').textContent = acc;
-
-  // Achievements
-  const list = document.getElementById('achievements-list');
-  list.innerHTML = achievements.map(a => {
-    const unlocked = a.check(state);
-    return `<div style="display:flex;align-items:center;gap:10px;opacity:${unlocked?1:0.35}">
-      <div style="font-size:24px">${a.icon}</div>
-      <div>
-        <div style="font-size:13px;font-weight:700;color:var(--navy)">${a.name}</div>
-        <div style="font-size:12px;color:var(--gray-400)">${a.desc}</div>
-      </div>
-      ${unlocked ? '<span style="margin-left:auto;font-size:11px;background:var(--teal-dim);color:var(--teal);padding:2px 8px;border-radius:99px;font-weight:700">UNLOCKED</span>' : ''}
-    </div>`;
-  }).join('');
-
-  // Score history
-  const hist = document.getElementById('score-history');
-  if (state.scoreHistory.length) {
-    hist.innerHTML = state.scoreHistory.map(h =>
-      `<div style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:var(--gray-100);border-radius:8px;font-size:13px">
-        <span style="font-weight:600;color:var(--navy)">${h.type}</span>
-        <span style="color:var(--gray-600)">${h.score}/${h.total} correct</span>
-        <span style="font-weight:700;color:var(--teal)">+${h.pts} pts</span>
-        <span style="color:var(--gray-400);font-size:11px">${h.date}</span>
-      </div>`
-    ).join('');
-  }
+function updateLB(){
+  document.getElementById('lb-pts').textContent=S.totalScore;document.getElementById('lb-level').textContent=S.level;document.getElementById('lb-streak').textContent=S.streak;document.getElementById('lb-quizzes').textContent=S.quizzes;
+  document.getElementById('lb-accuracy').textContent=S.total>0?Math.round((S.correct/S.total)*100)+'%':'—';
+  document.getElementById('ach-list').innerHTML=ACHIEVEMENTS.map(a=>{const ok=a.check(S);return`<div class="ach-row${ok?'':' locked'}"><div class="ach-icon">${a.icon}</div><div><div class="ach-name">${a.name}</div><div class="ach-desc">${a.desc}</div></div>${ok?'<span style="margin-left:auto;font-size:10px;background:var(--teal-dim);color:var(--teal);padding:2px 7px;border-radius:99px;font-weight:700">DONE</span>':''}</div>`;}).join('');
+  const hist=document.getElementById('score-hist');
+  if(S.history.length)hist.innerHTML=S.history.map(h=>`<div class="hist-item"><span style="font-weight:600;color:var(--navy)">${h.type}</span><span style="color:var(--g600)">${h.score}/${h.total} correct</span><span style="font-weight:700;color:var(--teal)">+${h.pts} pts</span><span style="color:var(--g400);font-size:11.5px">${h.date}</span></div>`).join('');
+  else hist.innerHTML='<div class="empty-s" style="padding:28px"><div class="empty-s-icon">📊</div><div class="empty-s-txt">Complete quizzes and games to see history.</div></div>';
 }
 
-// ═══════════════════════════════════════════════
-// XP & STATS
-// ═══════════════════════════════════════════════
-function addXP(amount) {
-  state.xp += amount;
-  const xpPerLevel = 500;
-  while (state.xp >= xpPerLevel) { state.xp -= xpPerLevel; state.level++; showToast(`🎉 Level up! You're now Level ${state.level}`, 'success'); }
-  document.getElementById('xp-fill').style.width = (state.xp / xpPerLevel * 100) + '%';
-  document.getElementById('xp-display').textContent = `${state.xp} / ${xpPerLevel}`;
-  document.getElementById('user-level').textContent = state.level;
-
-  const note = document.getElementById('xp-note');
-  note.textContent = `+${amount} XP`;
-  note.classList.add('show');
-  setTimeout(() => note.classList.remove('show'), 1800);
-  saveState();
+// ═══ XP / STATS ═══
+function addXP(n){
+  S.xp+=n;const XPL=500;
+  while(S.xp>=XPL){S.xp-=XPL;S.level++;showToast(`🎉 Level Up! You are now Level ${S.level}!`,'success');}
+  document.getElementById('xp-fill').style.width=(S.xp/XPL*100)+'%';document.getElementById('xp-display').textContent=`${S.xp} / ${XPL}`;document.getElementById('user-level').textContent=S.level;
+  const n2=document.getElementById('xp-note');n2.textContent=`+${n} XP`;n2.classList.add('show');setTimeout(()=>n2.classList.remove('show'),1800);save();
 }
+function updateStats(){document.getElementById('stat-studied').textContent=S.studied.length;document.getElementById('stat-correct').textContent=S.correct;document.getElementById('stat-bookmarks').textContent=S.bookmarks.length;document.getElementById('streak-count').textContent=S.streak;document.getElementById('total-score').textContent=S.totalScore;document.getElementById('xp-fill').style.width=(S.xp/500*100)+'%';document.getElementById('xp-display').textContent=`${S.xp} / 500`;document.getElementById('user-level').textContent=S.level;}
 
-function updateStats() {
-  document.getElementById('stat-studied').textContent = state.studiedDrugs.length;
-  document.getElementById('stat-correct').textContent = state.correctAnswers;
-  document.getElementById('stat-bookmarks').textContent = state.bookmarks.length;
-  document.getElementById('streak-count').textContent = state.streak;
-  document.getElementById('total-score').textContent = state.totalScore;
-  document.getElementById('xp-fill').style.width = (state.xp / 500 * 100) + '%';
-  document.getElementById('xp-display').textContent = `${state.xp} / 500`;
-  document.getElementById('user-level').textContent = state.level;
-}
+// ═══ UTILITIES ═══
+function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+function shufflePick(a,n){return shuffle([...a]).slice(0,n);}
+function showToast(msg,type=''){const t=document.getElementById('toast');t.textContent=msg;t.className='toast'+(type?' '+type:'');t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2600);}
 
-// ═══════════════════════════════════════════════
-// UTILITIES
-// ═══════════════════════════════════════════════
-function shuffleArray(arr) { for (let i=arr.length-1;i>0;i--) { const j=Math.floor(Math.random()*(i+1));[arr[i],arr[j]]=[arr[j],arr[i]]; } return arr; }
-function shufflePick(arr, n) { return shuffleArray([...arr]).slice(0, n); }
-function truncate(str, n) { if (!str) return ''; return str.length > n ? str.substring(0, n) + '...' : str; }
-
-function showToast(msg, type='') {
-  const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.className = 'toast' + (type ? ' '+type : '');
-  t.classList.add('show');
-  setTimeout(() => t.classList.remove('show'), 2500);
-}
-
-// HCT Logo — load both and pick navy for sidebar
-const logoImg = document.getElementById('hct-logo');
-logoImg.src = './hctlogonavy.png';
-logoImg.onerror = () => {
-  // Fallback SVG circle
-  logoImg.style.display = 'none';
-};
-
-// ═══════════════════════════════════════════════
-// INIT
-// ═══════════════════════════════════════════════
+// ═══ INIT ═══
 loadDrugs();
 </script>
 </body>
