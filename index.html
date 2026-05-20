@@ -629,48 +629,56 @@ function openDrug(name){
   document.getElementById('m-category').textContent=drug.pharmacoClass||'Not specified';
   document.getElementById('m-pharma-class').textContent=drug.pharmacoClass||'';
 
-  // Mechanism
-  const aRaw=cl(drug.action||'');
-  const effM=aRaw.match(/Therapeutic Effect[:\s]+([^.]+\.?)/i);
-  document.getElementById('m-action').textContent=(effM?aRaw.replace(/Therapeutic Effect[:\s]+[^.]+\.?/i,'').trim():aRaw)||'Not available.';
+  // ── Mechanism ──
+  // Data is pre-cleaned; extract "Result:" suffix if present
+  const aFull=drug.action||'';
+  const resultM=aFull.match(/\bResult:\s+([^.]+\.)/i);
+  const aBody=resultM?aFull.replace(/\bResult:\s+[^.]+\./i,'').trim():aFull;
+  document.getElementById('m-action').textContent=aBody||'Not available.';
   const eff=document.getElementById('m-effect');
-  if(effM){eff.textContent='✓ Result: '+pol(cl(effM[1]));eff.style.display='block';}else eff.style.display='none';
+  if(resultM){eff.textContent='✓ Result: '+resultM[1].trim();eff.style.display='block';}
+  else eff.style.display='none';
 
-  // Uses
-  const usesRaw=(drug.uses||'').replace(/\bTreatment of\b/gi,'').replace(/\bManagement of\b/gi,'').replace(/\bOFF-LABEL:.*$/i,'').replace(/\bTemporary relief of\b|\bRelief of\b|\bProphylaxis of\b/gi,(m)=>m.includes('Proph')?'Prophylaxis:':'');
-  const usesItems=items(usesRaw,5).filter(b=>{const m=b.match(/^(\w+):\s*(\w+)\.$/i);return!(m&&m[1].toLowerCase()===m[2].toLowerCase());});
-  rend(usesItems,'m-uses','See prescribing information.');
+  // ── Uses — pre-cleaned; just split into bullet items ──
+  const usesSplit=splitClean(drug.uses||'',5);
+  rend(usesSplit,'m-uses','See prescribing information.');
 
-  // Precautions
-  const pt=drug.precautions||'';
-  const ciR=(pt.match(/Contraindications?:\s*([^.C]+\.?)/i)||[])[1]||'';
-  const cauR=(pt.match(/Cautions?:\s*([\s\S]+?)(?=\.|$)/i)||[])[1]||pt;
-  const pItems=[];
-  if(ciR)pItems.push(pol('Contraindicated: '+cl(ciR).replace(/,\s*$/,'')));
-  items(cauR,3).forEach(c=>pItems.push(c));
-  rend(pItems.length?pItems:items(pt,4),'m-precautions','Follow standard precautions.');
+  // ── Precautions — pre-cleaned; split on ". Contraindicated" / ". Caution" ──
+  rend(splitClean(drug.precautions||'',5),'m-precautions','Follow standard precautions.');
 
-  // Safety
-  const sideRaw=(drug.sideEffects||'').replace(/\(\d+[%–\-\d\s]*\)/g,'').replace(/\b(Frequent|Occasional|Rare)\s*(\(\d[^)]*\))?\s*:/gi,'');
-  rend(items(sideRaw,5),'m-side','No common side effects listed.');
-  rend(items(drug.adverseEffects,4),'m-adverse','Monitor for unexpected reactions.');
+  // ── Side Effects — pre-cleaned comma list; render as bullets ──
+  const sideItems=commaToItems(drug.sideEffects||'',6);
+  rend(sideItems,'m-side','No common side effects listed.');
 
-  // PNLE Tip
+  // ── Adverse Effects ──
+  rend(splitClean(drug.adverseEffects||'',4),'m-adverse','Monitor for unexpected reactions.');
+
+  // ── PNLE Tip: crisp 3-line clinical summary ──
   const tipLines=[];
-  if(drug.adverseEffects){const a=cl(drug.adverseEffects).split(/[.;]/)[0].trim();if(a.length>8)tipLines.push('Monitor: '+pol(a));}
-  if(drug.precautions){const ci=(drug.precautions.match(/Contraindications?:\s*([^.]+)/i)||[])[1];if(ci)tipLines.push('Avoid if: '+pol(cl(ci)));}
-  if(drug.sideEffects){const se=cl(drug.sideEffects).replace(/\([^)]+\)/g,'').replace(/\b(Frequent|Occasional|Rare)\s*:/gi,'').split(/[.;]/)[0].trim();if(se.length>8)tipLines.push('Common side effects: '+pol(se));}
-  document.getElementById('m-tip').innerHTML=tipLines.length?tipLines.map(t=>`<div style="margin-bottom:5px">▸ ${t}</div>`).join(''):'▸ Assess patient before giving. Monitor therapeutic response. Educate on proper use and expected effects.';
+  if(drug.adverseEffects){const a=drug.adverseEffects.split(/[.;]/)[0].trim();if(a.length>8)tipLines.push('Monitor: '+ensurePeriod(a));}
+  if(drug.precautions){const ci=(drug.precautions.match(/Contraindicated:\s*([^.]+)/i)||[])[1];if(ci)tipLines.push('Contraindicated: '+ensurePeriod(ci.trim()));}
+  if(drug.sideEffects){const se=drug.sideEffects.split(/[.,]/)[0].trim();if(se.length>6)tipLines.push('Common SE: '+ensurePeriod(se));}
+  document.getElementById('m-tip').innerHTML=tipLines.length
+    ?tipLines.map(t=>`<div style="margin-bottom:5px">▸ ${t}</div>`).join('')
+    :'▸ Assess patient before giving. Monitor therapeutic response. Educate on proper use and expected effects.';
 
-  // Nursing
+  // ── Nursing Considerations — sections already labelled in data ──
   const nc=drug.nursingConsiderations||'';
-  function ncSec(...keys){for(const k of keys){const m=nc.match(new RegExp(k+'[:\\s#]+(.*?)(?=BASELINE|INTERVENTION|PATIENT|$)','is'));if(m&&m[1].trim().length>10)return m[1].trim();}return'';}
-  function condNC(text,cap){return items(cl(text).replace(/\bBe alert (for|to)\b/gi,'Watch for').replace(/\bReport (to physician|to provider|promptly)?\b/gi,'Report').replace(/\bPrior to (initiating|starting)\b/gi,'Before starting').replace(/\bObtain (a )?(baseline )?\b/gi,'Obtain '),cap);}
-  const aR=ncSec('BASELINE ASSESSMENT','BASELINE');
-  const iR=ncSec('INTERVENTION/EVALUATION','INTERVENTION');
-  const tR=ncSec('PATIENT/FAMILY TEACHING','TEACHING');
-  if(aR){rend(condNC(aR,4),'m-assess','Obtain baseline data before therapy.');rend(condNC(iR||'Monitor vital signs and therapeutic response.',4),'m-intervene','Monitor patient response.');rend(condNC(tR||'Take as prescribed. Report side effects to provider.',4),'m-teach','Follow medication instructions.');}
-  else{const s=cl(nc).split(/\.\s+/).filter(x=>x.length>10);const n=Math.ceil(s.length/3);rend(s.slice(0,n).slice(0,4).map(x=>pol(x)),'m-assess','Obtain baseline data.');rend(s.slice(n,n*2).slice(0,4).map(x=>pol(x)),'m-intervene','Monitor patient response.');rend(s.slice(n*2).slice(0,4).map(x=>pol(x)),'m-teach','Teach patient about medication.');}
+  function ncGet(...keys){for(const k of keys){const m=nc.match(new RegExp(k+'\\s+(.*?)(?=BASELINE|INTERVENTION|PATIENT|$)','is'));if(m&&m[1].trim().length>10)return m[1].trim();}return'';}
+  const nAssess=ncGet('BASELINE ASSESSMENT','BASELINE');
+  const nInter=ncGet('INTERVENTION/EVALUATION','INTERVENTION');
+  const nTeach=ncGet('PATIENT/FAMILY TEACHING','TEACHING');
+  if(nAssess){
+    rend(splitClean(nAssess,4),'m-assess','Obtain baseline data before therapy.');
+    rend(splitClean(nInter||'Monitor vital signs and therapeutic response.',4),'m-intervene','Monitor patient response.');
+    rend(splitClean(nTeach||'Take as prescribed. Report side effects.',4),'m-teach','Follow medication instructions.');
+  }else{
+    const sents=nc.split(/\.\s+(?=[A-Z])/).filter(x=>x.trim().length>10);
+    const n=Math.ceil(sents.length/3);
+    rend(sents.slice(0,n).slice(0,4).map(s=>ensurePeriod(s.trim())),'m-assess','Obtain baseline data.');
+    rend(sents.slice(n,n*2).slice(0,4).map(s=>ensurePeriod(s.trim())),'m-intervene','Monitor patient response.');
+    rend(sents.slice(n*2).slice(0,4).map(s=>ensurePeriod(s.trim())),'m-teach','Teach patient about medication.');
+  }
 
   document.getElementById('m-bm-btn').textContent=S.bookmarks.includes(name)?'✅ Bookmarked':'🔖 Bookmark';
   document.querySelectorAll('.m-tab').forEach(t=>t.classList.remove('active'));
@@ -903,6 +911,39 @@ function updateStats(){document.getElementById('stat-studied').textContent=S.stu
 function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
 function shufflePick(a,n){return shuffle([...a]).slice(0,n);}
 function showToast(msg,type=''){const t=document.getElementById('toast');t.textContent=msg;t.className='toast'+(type?' '+type:'');t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2600);}
+
+// ─── TEXT HELPERS (data is pre-cleaned; these just format for display) ───
+function ensurePeriod(s){s=(s||'').trim();return s&&!/[.!?]$/.test(s)?s+'.':s;}
+
+function splitClean(text,cap=5){
+  // Split clean pre-processed text into bullet items
+  if(!text)return[];
+  let parts=text
+    .replace(/\d+\.\s+/g,'|||')
+    .replace(/;\s*/g,'|||')
+    .replace(/\.\s+(?=[A-Z])/g,'|||')
+    .split('|||')
+    .map(s=>s.replace(/\.$/,'').trim())
+    .filter(s=>s.length>8&&!/^(note|see|refer)/i.test(s));
+  const seen=new Set();
+  parts=parts.filter(p=>{const k=p.slice(0,34).toLowerCase();if(seen.has(k))return false;seen.add(k);return true;});
+  return parts.slice(0,cap).map(s=>ensurePeriod(s[0]?s[0].toUpperCase()+s.slice(1):s)).filter(Boolean);
+}
+
+function commaToItems(text,cap=6){
+  // Side effects arrive as comma-separated — render each as a bullet
+  if(!text)return[];
+  const parts=text.replace(/\.$/,'').split(/,\s*/).map(s=>s.trim()).filter(s=>s.length>3);
+  const seen=new Set();
+  const unique=parts.filter(p=>{const k=p.slice(0,20).toLowerCase();if(seen.has(k))return false;seen.add(k);return true;});
+  // Group into 1 bullet per 2-3 items for readability
+  const result=[];
+  for(let i=0;i<unique.length&&result.length<cap;i+=3){
+    const chunk=unique.slice(i,i+3).join(', ');
+    if(chunk)result.push(ensurePeriod(chunk[0].toUpperCase()+chunk.slice(1)));
+  }
+  return result;
+}
 
 // ═══ INIT ═══
 loadDrugs();
